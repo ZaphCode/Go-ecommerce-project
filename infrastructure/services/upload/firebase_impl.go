@@ -1,41 +1,54 @@
 package upload
 
 import (
+	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"mime/multipart"
-	"net/http"
+
+	"firebase.google.com/go/v4/storage"
+	"github.com/google/uuid"
 )
 
-func NewFirebaseUploadService() UploadService {
-	return &firebaseUploadServiceImpl{}
+func NewFirebaseUploadService(client *storage.Client, bucketName string, folder string) UploadService {
+	return &firebaseUploadServiceImpl{
+		client:     client,
+		bucketName: bucketName,
+		folder:     folder,
+	}
 }
 
-type firebaseUploadServiceImpl struct{}
+type firebaseUploadServiceImpl struct {
+	client     *storage.Client
+	bucketName string
+	folder     string
+}
 
 func (s *firebaseUploadServiceImpl) Upload(file multipart.File) (string, error) {
-	return "", nil
-}
+	bucket, err := s.client.Bucket(s.bucketName)
 
-func (s *firebaseUploadServiceImpl) ValidateFileType(file multipart.File, extencions []string) error {
-	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		return err
-	}
-	mimeType := http.DetectContentType(bytes) // []string{"image/png", "image/jpeg", "image/jpg"}
-
-	if ok := s.stringInSlice(mimeType, extencions); !ok {
-		return fmt.Errorf("file type: %s is not supported", mimeType)
+		return "", fmt.Errorf("client.Bucket() error : %w", err)
 	}
 
-	return nil
-}
+	id, err := uuid.NewUUID()
 
-func (s *firebaseUploadServiceImpl) stringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
+	if err != nil {
+		return "", fmt.Errorf("uuid.NewUUID() error : %w", err)
 	}
-	return false
+
+	wc := bucket.Object(s.folder + "/" + id.String()).NewWriter(context.Background())
+
+	if _, err := io.Copy(wc, file); err != nil {
+		return "", fmt.Errorf("io.Copy: %v", err)
+	}
+	if err := wc.Close(); err != nil {
+		return "", fmt.Errorf("Writer.Close: %v", err)
+	}
+
+	return fmt.Sprintf(
+		"https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media",
+		s.bucketName,
+		s.folder+"%2F"+id.String(),
+	), nil
 }

@@ -9,6 +9,7 @@ import (
 
 func init() {
 	config.LoadYAMLConfig()
+	config.LoadFireBaseJsonConfig()
 }
 
 func main() {

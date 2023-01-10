@@ -1,8 +1,12 @@
 package config
 
 import (
+	"context"
 	"log"
 	"os"
+
+	firebase "firebase.google.com/go/v4"
+	"google.golang.org/api/option"
 
 	"gopkg.in/yaml.v3"
 )
@@ -22,9 +26,9 @@ type oauth struct {
 	ClientSecret string `yaml:"client_secret"`
 }
 
-type firestore struct {
-	Bucket       string `yaml:"client_id"`
-	ClientSecret string `yaml:"client_secret"`
+type storage struct {
+	Bucket       string `yaml:"bucket"`
+	UploadFolder string `yaml:"upload_folder"`
 }
 
 type Config struct {
@@ -33,6 +37,8 @@ type Config struct {
 }
 
 var config Config
+
+var firebaseApp *firebase.App
 
 func LoadYAMLConfig() {
 	file, err := os.ReadFile("./config/dev_config.yaml")
@@ -50,8 +56,28 @@ func LoadYAMLConfig() {
 	}
 }
 
+func LoadFireBaseJsonConfig() {
+	path := "./firebase_config.json"
+
+	ctx := context.Background()
+
+	opt := option.WithCredentialsFile(path)
+
+	app, err := firebase.NewApp(ctx, nil, opt)
+
+	if err != nil {
+		log.Fatal("firebase connection fail:", err)
+	}
+
+	firebaseApp = app
+}
+
 func GetConfig() *Config {
 	return &config
+}
+
+func GetFirebaseApp() *firebase.App {
+	return firebaseApp
 }
 
 func IsProduction() bool {
