@@ -1,4 +1,4 @@
-package dto
+package dtos
 
 import "github.com/ZaphCode/clean-arch/domain"
 
@@ -9,7 +9,7 @@ type SignupDTO struct {
 	Age      uint16 `json:"age" validate:"required,number,min=15"`
 }
 
-func (dto *SignupDTO) AdaptToUser() domain.User {
+func (dto SignupDTO) AdaptToUser() domain.User {
 	return domain.User{
 		Username: dto.Username,
 		Email:    dto.Email,

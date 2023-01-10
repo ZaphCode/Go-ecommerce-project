@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/ZaphCode/clean-arch/domain"
-	"github.com/ZaphCode/clean-arch/infrastructure/controllers/auth/dto"
+	"github.com/ZaphCode/clean-arch/infrastructure/controllers/auth/dtos"
 	"github.com/ZaphCode/clean-arch/infrastructure/services/validation"
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,7 +20,7 @@ func NewUserController(
 }
 
 func (c *userController) SignUp(ctx *fiber.Ctx) error {
-	body := dto.SignupDTO{}
+	body := dtos.SignupDTO{}
 
 	if err := ctx.BodyParser(&body); err != nil {
 		return err

@@ -1,2 +1,4 @@
 /tmp
 .air.toml
+config/firebase_config.json
+config/dev_config.yaml

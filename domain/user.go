@@ -2,20 +2,28 @@ package domain
 
 import "github.com/google/uuid"
 
+const (
+	UserRole  = "user"
+	AdminRole = "mod"
+)
+
 type User struct {
-	ID        uuid.UUID
-	Username  string
-	Email     string
-	IsAdmin   bool
-	Password  string
-	ImageUrl  string
-	Age       uint16
-	CreatedAt int64
-	UpdatedAt int64
+	ID            uuid.UUID `json:"id"`
+	CustomerID    string    `json:"customer_id"`
+	Username      string    `json:"username"`
+	Email         string    `json:"email"`
+	Role          string    `json:"role"`
+	Password      string    `json:"-"`
+	VerifiedEmail bool      `json:"verified_email"`
+	ImageUrl      string    `json:"image_url"`
+	Age           uint16    `json:"age"`
+	CreatedAt     int64     `json:"created_at"`
+	UpdatedAt     int64     `json:"updated_at"`
 }
 
 type UserService interface {
 	Create(*User) error
+	CreateFromGoogleUser(*User) error
 	GetAll() ([]User, error)
 	GetByID(uuid.UUID) (*User, error)
 	Delete(uuid.UUID) error
