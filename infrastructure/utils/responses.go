@@ -1,12 +1,12 @@
 package utils
 
-type OkResponse struct {
+type RespOk struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
 	Data    any    `json:"data,omitempty"`
 }
 
-type ErrResponse struct {
+type RespErr struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
 	Detail  any    `json:"detail,omitempty"`

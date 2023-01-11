@@ -15,12 +15,17 @@ var (
 	googleRedirectUrl = cfg.Api.ServerHost + "/api/auth/google/callback"
 	googleOAuthUrl    = "https://accounts.google.com/o/oauth2/v2/auth"
 	googleTokenUrl    = "https://oauth2.googleapis.com/token"
+	googleUserUrl     = "https://www.googleapis.com/oauth2/v1/userinfo"
 )
 
 // Custom types
 type GoogleTokens struct {
-	AccessToken string `json:"access_token"`
-	IdToken     string `json:"id_token"`
+	AccessToken  string `json:"access_token"`
+	ExpiresIn    int    `json:"expires_in"`
+	RefreshToken string `json:"refresh_token"`
+	Scope        string `json:"scope"`
+	TokenType    string `json:"token_type"`
+	IDToken      string `json:"id_token"`
 }
 
 type GoogleUser struct {
@@ -34,26 +39,25 @@ type GoogleUser struct {
 	Locale        string `json:"locale"`
 }
 
-func (u GoogleUser) AdaptToUser() domain.User {
-	return domain.User{
-		Username:      u.Name,
-		Email:         u.Email,
-		Password:      "",
-		ImageUrl:      u.Picture,
-		VerifiedEmail: u.VerifiedEmail,
-		Age:           18,
-	}
+func (u GoogleUser) AdaptToUser() (user domain.User) {
+	user.Username = u.Name
+	user.Email = u.Email
+	user.Password = ""
+	user.ImageUrl = u.Picture
+	user.VerifiedEmail = u.VerifiedEmail
+	user.Age = 18
+	return
 }
 
 // Construtor
-func NewOAuthGoogleService() OAuthService {
-	return &oauthGoogleServiceImpl{}
+func NewGoogleOAuthService() OAuthService {
+	return &googleOAuthServiceImpl{}
 }
 
 // Implementation
-type oauthGoogleServiceImpl struct{}
+type googleOAuthServiceImpl struct{}
 
-func (s *oauthGoogleServiceImpl) GetOAuthUrl() string {
+func (s *googleOAuthServiceImpl) GetOAuthUrl() string {
 	params := url.Values{}
 
 	scopes := []string{
@@ -73,7 +77,7 @@ func (s *oauthGoogleServiceImpl) GetOAuthUrl() string {
 	return url
 }
 
-func (s *oauthGoogleServiceImpl) GetOAuthUser(code string) (*domain.User, error) {
+func (s *googleOAuthServiceImpl) GetOAuthUser(code string) (*domain.User, error) {
 	tokens, err := s.getGoogleTokens(code)
 
 	if err != nil {
@@ -91,7 +95,7 @@ func (s *oauthGoogleServiceImpl) GetOAuthUser(code string) (*domain.User, error)
 	return &user, nil
 }
 
-func (s *oauthGoogleServiceImpl) getGoogleTokens(code string) (*GoogleTokens, error) {
+func (s *googleOAuthServiceImpl) getGoogleTokens(code string) (*GoogleTokens, error) {
 	form := url.Values{}
 
 	form.Add("code", code)
@@ -131,8 +135,8 @@ func (s *oauthGoogleServiceImpl) getGoogleTokens(code string) (*GoogleTokens, er
 	return &tokens, nil
 }
 
-func (s *oauthGoogleServiceImpl) getGoogleUser(tokens *GoogleTokens) (*GoogleUser, error) {
-	url := "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + tokens.AccessToken
+func (s *googleOAuthServiceImpl) getGoogleUser(tokens *GoogleTokens) (*GoogleUser, error) {
+	url := googleUserUrl + "?alt=json&access_token=" + tokens.AccessToken
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 
@@ -140,7 +144,7 @@ func (s *oauthGoogleServiceImpl) getGoogleUser(tokens *GoogleTokens) (*GoogleUse
 		return nil, err
 	}
 
-	req.Header.Add("Authorization", "Bearer "+tokens.IdToken)
+	req.Header.Add("Authorization", "Bearer "+tokens.IDToken)
 
 	res, err := http.DefaultClient.Do(req)
 
@@ -159,7 +163,7 @@ func (s *oauthGoogleServiceImpl) getGoogleUser(tokens *GoogleTokens) (*GoogleUse
 	user := GoogleUser{}
 
 	if err := json.Unmarshal(resBody, &user); err != nil || user.Email == "" {
-		return nil, fmt.Errorf("error getting user: %w", err)
+		return nil, fmt.Errorf("error parsing user. %w", err)
 	}
 
 	return &user, nil
