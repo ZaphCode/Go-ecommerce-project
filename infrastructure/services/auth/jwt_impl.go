@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/google/uuid"
 )
 
 var (
@@ -13,19 +12,27 @@ var (
 	refreshJwtSecret = []byte(cfg.Api.AccessTokenSecret)
 )
 
+// Custom types
+type CustomJwtClaims struct {
+	Claims
+	jwt.RegisteredClaims
+}
+
 // Constructor
 func NewAuthService() JwtAuthService {
-	return &authJwtServiceImpl{}
+	return &jwtAuthServiceImpl{}
 }
 
 // Implementation
-type authJwtServiceImpl struct{}
+type jwtAuthServiceImpl struct{}
 
-func (s *authJwtServiceImpl) CreateToken(claims JwtClaims, exp time.Duration, isRefreshType bool) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"exp":       time.Now().Add(exp).Unix(),
-		"user_id":   claims.ID.String(),
-		"user_role": claims.Role,
+func (s *jwtAuthServiceImpl) CreateToken(claims Claims, exp time.Duration, isRefreshType bool) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, CustomJwtClaims{
+		Claims: claims,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    claims.ID.String(),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(exp)),
+		},
 	})
 
 	var tokenString string
@@ -44,7 +51,7 @@ func (s *authJwtServiceImpl) CreateToken(claims JwtClaims, exp time.Duration, is
 	return tokenString, nil
 }
 
-func (s *authJwtServiceImpl) CreateTokens(claims JwtClaims, access_exp, refresh_exp time.Duration) (string, string, error) {
+func (s *jwtAuthServiceImpl) CreateTokens(claims Claims, access_exp, refresh_exp time.Duration) (string, string, error) {
 	accessTokenString, err_1 := s.CreateToken(claims, access_exp, false)
 
 	refreshTokenString, err_2 := s.CreateToken(claims, refresh_exp, true)
@@ -56,8 +63,10 @@ func (s *authJwtServiceImpl) CreateTokens(claims JwtClaims, access_exp, refresh_
 	return accessTokenString, refreshTokenString, nil
 }
 
-func (s *authJwtServiceImpl) DecodeToken(jwtoken string, refreshType bool) (*JwtClaims, error) {
-	token, err := jwt.Parse(jwtoken, func(token *jwt.Token) (interface{}, error) {
+func (s *jwtAuthServiceImpl) DecodeToken(jwtoken string, refreshType bool) (*Claims, error) {
+	var customJwtClais CustomJwtClaims
+
+	token, err := jwt.ParseWithClaims(jwtoken, &customJwtClais, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
@@ -68,19 +77,9 @@ func (s *authJwtServiceImpl) DecodeToken(jwtoken string, refreshType bool) (*Jwt
 		}
 	})
 
-	if err != nil {
+	if err != nil || !token.Valid {
 		return nil, err
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); !(ok && token.Valid) {
-		return nil, fmt.Errorf("error getting the claims")
-	} else {
-		userID := claims["user_id"].(string)
-		userRole := claims["user_role"].(string)
-
-		return &JwtClaims{
-			ID:   uuid.MustParse(userID),
-			Role: userRole,
-		}, nil
-	}
+	return &customJwtClais.Claims, nil
 }

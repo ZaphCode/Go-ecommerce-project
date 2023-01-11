@@ -12,17 +12,17 @@ var (
 	cfg = config.GetConfig()
 )
 
-type JwtClaims struct {
-	ID   uuid.UUID
-	Role string
+type Claims struct {
+	ID   uuid.UUID `json:"id"`
+	Role string    `json:"role"`
 }
 
 //* Services
 
 type JwtAuthService interface {
-	CreateToken(JwtClaims, time.Duration, bool) (string, error)
-	DecodeToken(string, bool) (*JwtClaims, error)
-	CreateTokens(JwtClaims, time.Duration, time.Duration) (string, string, error)
+	CreateToken(Claims, time.Duration, bool) (string, error)
+	DecodeToken(string, bool) (*Claims, error)
+	CreateTokens(Claims, time.Duration, time.Duration) (string, string, error)
 }
 
 type OAuthService interface {

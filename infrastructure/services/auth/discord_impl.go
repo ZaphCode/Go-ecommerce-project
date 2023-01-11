@@ -18,6 +18,7 @@ var (
 	discordOAuthUserUrl  = "https://discord.com/api/users/@me"
 )
 
+// Custom types
 type DiscordTokens struct {
 	AccessToken  string `json:"access_token"`
 	TokenType    string `json:"token_type"`
@@ -62,10 +63,12 @@ func (u DiscordUser) AdaptToUser() (user domain.User) {
 	return
 }
 
+// Constructor
 func NewDiscordOAuthService() OAuthService {
 	return &discordOAuthServiceImpl{}
 }
 
+// Implementation
 type discordOAuthServiceImpl struct{}
 
 func (s discordOAuthServiceImpl) GetOAuthUrl() string {
