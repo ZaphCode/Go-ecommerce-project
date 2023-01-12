@@ -2,61 +2,78 @@ package config
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"os"
 
 	firebase "firebase.google.com/go/v4"
 	"google.golang.org/api/option"
-
-	"gopkg.in/yaml.v3"
 )
 
 type api struct {
-	Port               string `yaml:"port"`
-	ServerHost         string `yaml:"server_host"`
-	AccessTokenSecret  string `yaml:"access_token_secret"`
-	RefreshTokenSecret string `yaml:"refresh_token_secret"`
-	AccessTokenHeader  string `yaml:"access_token_header"`
-	RefreshTokenHeader string `yaml:"refresh_token_header"`
-	RefreshTokenCookie string `yaml:"refresh_token_cookie"`
+	Port               string `json:"port"`
+	ClientOrigin       string `json:"client_origin"`
+	ServerHost         string `json:"server_host"`
+	AccessTokenSecret  string `json:"access_token_secret"`
+	RefreshTokenSecret string `json:"refresh_token_secret"`
+	AccessTokenHeader  string `json:"access_token_header"`
+	RefreshTokenHeader string `json:"refresh_token_header"`
+	RefreshTokenCookie string `json:"refresh_token_cookie"`
+	AccessTokenExp     int    `json:"access_token_exp"`
+	RefreshTokenExp    int    `json:"refresh_token_exp"`
 }
 
-type oauth struct {
-	ClientID     string `yaml:"client_id"`
-	ClientSecret string `yaml:"client_secret"`
+type oauthServices struct {
+	Google  oauthCredentials `json:"google"`
+	Discord oauthCredentials `json:"discord"`
+	Github  oauthCredentials `json:"github"`
+}
+
+type oauthCredentials struct {
+	ClientID     string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
 }
 
 type storage struct {
-	Bucket       string `yaml:"bucket"`
-	UploadFolder string `yaml:"upload_folder"`
+	Bucket       string `json:"bucket"`
+	UploadFolder string `json:"upload_folder"`
 }
 
 type Config struct {
-	Api   api
-	OAuth oauth
+	Api     api           `json:"api"`
+	OAuth   oauthServices `json:"oauth"`
+	Storage storage       `json:"storage"`
 }
 
-var config Config
+var (
+	config      Config
+	firebaseApp *firebase.App
+)
 
-var firebaseApp *firebase.App
+func LoadConfig() {
+	var file []byte
+	var err error
 
-func LoadYAMLConfig() {
-	file, err := os.ReadFile("./config/dev_config.yaml")
+	if IsProduction() {
+		file, err = os.ReadFile("./config/prod_config.json")
+	} else {
+		file, err = os.ReadFile("./config/dev_config.json")
+	}
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := yaml.Unmarshal(file, &config); err != nil {
+	if err = json.Unmarshal(file, &config); err != nil {
 		log.Fatal(err)
 	}
 
-	if config.Api.Port == "" || config.OAuth.ClientID == "" {
-		log.Fatal("yaml config not readed")
+	if config.Api.Port == "" || config.Api.ServerHost == "" {
+		log.Fatal("json config not readed")
 	}
 }
 
-func LoadFireBaseJsonConfig() {
+func LoadFirebaseConfig() {
 	path := "./firebase_config.json"
 
 	ctx := context.Background()
@@ -81,5 +98,5 @@ func GetFirebaseApp() *firebase.App {
 }
 
 func IsProduction() bool {
-	return os.Getenv("NODE_ENV") == "prod"
+	return os.Getenv("NODE_ENV") == "production"
 }

@@ -66,7 +66,7 @@ func (s *googleOAuthServiceImpl) GetOAuthUrl() string {
 	}
 
 	params.Add("redirect_uri", googleRedirectUrl)
-	params.Add("client_id", cfg.OAuth.ClientID)
+	params.Add("client_id", cfg.OAuth.Google.ClientID)
 	params.Add("access_type", "offline")
 	params.Add("response_type", "code")
 	params.Add("prompt", "consent")
@@ -99,8 +99,8 @@ func (s *googleOAuthServiceImpl) getGoogleTokens(code string) (*GoogleTokens, er
 	form := url.Values{}
 
 	form.Add("code", code)
-	form.Add("client_id", cfg.OAuth.ClientID)
-	form.Add("client_secret", cfg.OAuth.ClientSecret)
+	form.Add("client_id", cfg.OAuth.Github.ClientID)
+	form.Add("client_secret", cfg.OAuth.Google.ClientSecret)
 	form.Add("redirect_uri", googleRedirectUrl)
 	form.Add("grant_type", "authorization_code")
 

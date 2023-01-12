@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 
 	"github.com/ZaphCode/clean-arch/domain"
@@ -74,7 +73,7 @@ type discordOAuthServiceImpl struct{}
 func (s discordOAuthServiceImpl) GetOAuthUrl() string {
 	return fmt.Sprintf(
 		"https://discord.com/api/oauth2/authorize?client_id=%s&redirect_uri=%s&response_type=code&scope=",
-		os.Getenv("DISCORD_CLIENT_ID"),
+		cfg.OAuth.Discord.ClientID,
 		discordRedirectUrl,
 	) + "identify"
 }
@@ -101,8 +100,8 @@ func (s discordOAuthServiceImpl) getDiscordTokens(code string) (*DiscordTokens, 
 	form := url.Values{}
 
 	form.Add("code", code)
-	form.Add("client_id", os.Getenv("DISCORD_CLIENT_ID"))
-	form.Add("client_secret", os.Getenv("DISCORD_CLIENT_SECRET"))
+	form.Add("client_id", cfg.OAuth.Discord.ClientID)
+	form.Add("client_secret", cfg.OAuth.Discord.ClientSecret)
 	form.Add("redirect_uri", discordRedirectUrl)
 	form.Add("grant_type", "authorization_code")
 	form.Add("scope", "identify")
