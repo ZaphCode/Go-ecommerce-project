@@ -11,3 +11,8 @@ type RespErr struct {
 	Message string `json:"message"`
 	Detail  any    `json:"detail,omitempty"`
 }
+
+const (
+	StatusOk  = "success"
+	StatusErr = "fail"
+)

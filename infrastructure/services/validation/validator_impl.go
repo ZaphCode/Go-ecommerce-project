@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"net/http"
 
+	"github.com/ZaphCode/clean-arch/infrastructure/utils"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -51,20 +52,11 @@ func (s *validationServiceImpl) ValidateFileType(file multipart.File, extencions
 	}
 	mimeType := http.DetectContentType(bytes) // []string{"image/png", "image/jpeg", "image/jpg"}
 
-	if ok := s.stringInSlice(mimeType, extencions); !ok {
+	if ok := utils.ItemInSlice(mimeType, extencions); !ok {
 		return fmt.Errorf("file type: %s is not supported", mimeType)
 	}
 
 	return nil
-}
-
-func (s *validationServiceImpl) stringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
 }
 
 func (s *validationServiceImpl) getErrorMsg(fe validator.FieldError) string {
