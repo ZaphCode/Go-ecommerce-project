@@ -4,17 +4,19 @@ import (
 	"strings"
 
 	"github.com/ZaphCode/clean-arch/config"
+	"github.com/ZaphCode/clean-arch/infrastructure/api/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-var cfg = config.GetConfig()
-
 func Setup() *fiber.App {
+	cfg := config.Get()
+
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: cfg.Api.ClientOrigin,
+		//AllowOrigins: cfg.Api.ClientOrigin,
+		AllowOrigins: "*",
 		AllowHeaders: strings.Join([]string{
 			"Origin",
 			"Content-Type",
@@ -26,7 +28,15 @@ func Setup() *fiber.App {
 		AllowCredentials: true,
 	}))
 
-	CreateRoutes(app.Group("/api"))
+	api := app.Group("/api")
+
+	// Health check
+	api.Get("/test", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusOK).SendString("Hello world")
+	})
+
+	// Routes
+	routes.CreateAuthRoutes(api.Group("/auth"))
 
 	return app
 }

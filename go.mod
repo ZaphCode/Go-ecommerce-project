@@ -3,6 +3,7 @@ module github.com/ZaphCode/clean-arch
 go 1.18
 
 require (
+	cloud.google.com/go/firestore v1.6.1
 	firebase.google.com/go/v4 v4.10.0
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/gofiber/fiber/v2 v2.40.1
@@ -10,12 +11,12 @@ require (
 	github.com/google/uuid v1.3.0
 	golang.org/x/crypto v0.4.0
 	google.golang.org/api v0.96.0
+	google.golang.org/grpc v1.48.0
 )
 
 require (
 	cloud.google.com/go v0.102.1 // indirect
 	cloud.google.com/go/compute v1.7.0 // indirect
-	cloud.google.com/go/firestore v1.6.1 // indirect
 	cloud.google.com/go/iam v0.3.0 // indirect
 	cloud.google.com/go/storage v1.26.0 // indirect
 	github.com/MicahParks/keyfunc v1.5.1 // indirect
@@ -45,7 +46,6 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/appengine/v2 v2.0.2 // indirect
 	google.golang.org/genproto v0.0.0-20220810155839-1856144b1d9c // indirect
-	google.golang.org/grpc v1.48.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

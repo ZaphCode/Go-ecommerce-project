@@ -118,6 +118,10 @@ func (s *userService) GetByID(ID uuid.UUID) (*domain.User, error) {
 	return s.repo.FindByID(ID)
 }
 
+func (s *userService) GetByEmail(email string) (*domain.User, error) {
+	return s.repo.FindByField("Email", email)
+}
+
 func (s *userService) Delete(ID uuid.UUID) error {
 	return s.repo.Remove(ID)
 }

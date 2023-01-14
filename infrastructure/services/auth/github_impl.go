@@ -8,12 +8,12 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ZaphCode/clean-arch/config"
 	"github.com/ZaphCode/clean-arch/domain"
 )
 
 var (
 	githubTokenUrl      = "https://github.com/login/oauth/access_token"
-	githubRedirectURL   = cfg.Api.ServerHost + "/api/auth/github/callback"
 	githubUserUrl       = "https://api.github.com/user"
 	githubUserEmailsUrl = "https://api.github.com/user/emails"
 )
@@ -66,8 +66,8 @@ type githubOAuthServiceImpl struct{}
 func (s githubOAuthServiceImpl) GetOAuthUrl() string {
 	return fmt.Sprintf(
 		"https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=user:email",
-		cfg.OAuth.Github.ClientID,
-		githubRedirectURL,
+		config.Get().OAuth.Github.ClientID,
+		config.Get().Api.ServerHost+"/api/auth/github/callback",
 	)
 }
 
@@ -92,6 +92,8 @@ func (s githubOAuthServiceImpl) GetOAuthUser(code string) (*domain.User, error) 
 }
 
 func (s githubOAuthServiceImpl) getGitHubTokens(code string) (*GithubToken, error) {
+	cfg := config.Get()
+
 	body := fmt.Sprintf(`{
 		"client_id": "%s", 
 		"client_secret": "%s",

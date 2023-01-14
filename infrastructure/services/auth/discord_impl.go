@@ -8,11 +8,11 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/ZaphCode/clean-arch/config"
 	"github.com/ZaphCode/clean-arch/domain"
 )
 
 var (
-	discordRedirectUrl   = cfg.Api.ServerHost + "/api/auth/discord/callback"
 	discordOAuthTokenUrl = "https://discord.com/api/oauth2/token"
 	discordOAuthUserUrl  = "https://discord.com/api/users/@me"
 )
@@ -73,8 +73,8 @@ type discordOAuthServiceImpl struct{}
 func (s discordOAuthServiceImpl) GetOAuthUrl() string {
 	return fmt.Sprintf(
 		"https://discord.com/api/oauth2/authorize?client_id=%s&redirect_uri=%s&response_type=code&scope=",
-		cfg.OAuth.Discord.ClientID,
-		discordRedirectUrl,
+		config.Get().OAuth.Discord.ClientID,
+		config.Get().Api.ServerHost+"/api/auth/discord/callback",
 	) + "identify"
 }
 
@@ -100,9 +100,9 @@ func (s discordOAuthServiceImpl) getDiscordTokens(code string) (*DiscordTokens, 
 	form := url.Values{}
 
 	form.Add("code", code)
-	form.Add("client_id", cfg.OAuth.Discord.ClientID)
-	form.Add("client_secret", cfg.OAuth.Discord.ClientSecret)
-	form.Add("redirect_uri", discordRedirectUrl)
+	form.Add("client_id", config.Get().OAuth.Discord.ClientID)
+	form.Add("client_secret", config.Get().OAuth.Discord.ClientSecret)
+	form.Add("redirect_uri", config.Get().Api.ServerHost+"/api/auth/discord/callback")
 	form.Add("grant_type", "authorization_code")
 	form.Add("scope", "identify")
 

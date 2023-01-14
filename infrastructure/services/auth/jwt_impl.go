@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ZaphCode/clean-arch/config"
 	"github.com/golang-jwt/jwt/v4"
 )
 
-var (
-	accessJwtSecret  = []byte(cfg.Api.AccessTokenSecret)
-	refreshJwtSecret = []byte(cfg.Api.AccessTokenSecret)
-)
+// var (
+// 	accessJwtSecret  = []byte(cfg.Api.AccessTokenSecret)
+// 	refreshJwtSecret = []byte(cfg.Api.AccessTokenSecret)
+// )
 
 // Custom types
 type CustomJwtClaims struct {
@@ -19,12 +20,18 @@ type CustomJwtClaims struct {
 }
 
 // Constructor
-func NewAuthService() JwtAuthService {
-	return &jwtAuthServiceImpl{}
+func NewJwtAuthService() JwtAuthService {
+	return &jwtAuthServiceImpl{
+		accessJwtSecret:  []byte(config.Get().Api.AccessTokenSecret),
+		refreshJwtSecret: []byte(config.Get().Api.RefreshTokenSecret),
+	}
 }
 
 // Implementation
-type jwtAuthServiceImpl struct{}
+type jwtAuthServiceImpl struct {
+	accessJwtSecret  []byte
+	refreshJwtSecret []byte
+}
 
 func (s *jwtAuthServiceImpl) CreateToken(claims Claims, exp time.Duration, isRefreshType bool) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, CustomJwtClaims{
@@ -39,9 +46,9 @@ func (s *jwtAuthServiceImpl) CreateToken(claims Claims, exp time.Duration, isRef
 	var err error
 
 	if isRefreshType {
-		tokenString, err = token.SignedString(refreshJwtSecret)
+		tokenString, err = token.SignedString(s.refreshJwtSecret)
 	} else {
-		tokenString, err = token.SignedString(accessJwtSecret)
+		tokenString, err = token.SignedString(s.refreshJwtSecret)
 	}
 
 	if err != nil {
@@ -71,9 +78,9 @@ func (s *jwtAuthServiceImpl) DecodeToken(jwtoken string, refreshType bool) (*Cla
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		if refreshType {
-			return refreshJwtSecret, nil
+			return s.refreshJwtSecret, nil
 		} else {
-			return accessJwtSecret, nil
+			return s.accessJwtSecret, nil
 		}
 	})
 

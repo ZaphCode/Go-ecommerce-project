@@ -3,14 +3,19 @@ package auth
 import (
 	"time"
 
-	"github.com/ZaphCode/clean-arch/config"
 	"github.com/ZaphCode/clean-arch/domain"
 	"github.com/google/uuid"
 )
 
-var (
-	cfg = config.GetConfig()
+const (
+	GoogleProvider  = "google"
+	DiscordProvider = "discord"
+	GithubProvider  = "github"
 )
+
+func GetOAuthProviders() []string {
+	return []string{GoogleProvider, DiscordProvider, GithubProvider}
+}
 
 type Claims struct {
 	ID   uuid.UUID `json:"id"`

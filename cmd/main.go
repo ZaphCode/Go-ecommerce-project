@@ -16,9 +16,9 @@ func init() {
 func main() {
 	fmt.Println("Hello world")
 
-	utils.PrettyPrint(config.GetConfig())
+	utils.PrettyPrint(config.Get())
 
 	app := api.Setup()
 
-	app.Listen(":" + config.GetConfig().Api.Port)
+	app.Listen(":" + config.Get().Api.Port)
 }

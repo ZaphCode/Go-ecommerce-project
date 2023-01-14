@@ -19,8 +19,6 @@ type api struct {
 	AccessTokenHeader  string `json:"access_token_header"`
 	RefreshTokenHeader string `json:"refresh_token_header"`
 	RefreshTokenCookie string `json:"refresh_token_cookie"`
-	AccessTokenExp     int    `json:"access_token_exp"`
-	RefreshTokenExp    int    `json:"refresh_token_exp"`
 }
 
 type oauthServices struct {
@@ -74,7 +72,7 @@ func LoadConfig() {
 }
 
 func LoadFirebaseConfig() {
-	path := "./firebase_config.json"
+	path := "./config/firebase_config.json"
 
 	ctx := context.Background()
 
@@ -82,14 +80,14 @@ func LoadFirebaseConfig() {
 
 	app, err := firebase.NewApp(ctx, nil, opt)
 
-	if err != nil {
+	if err != nil || app == nil {
 		log.Fatal("firebase connection fail:", err)
 	}
 
 	firebaseApp = app
 }
 
-func GetConfig() *Config {
+func Get() *Config {
 	return &config
 }
 

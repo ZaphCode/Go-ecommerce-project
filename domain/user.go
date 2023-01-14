@@ -31,6 +31,7 @@ type UserService interface {
 	CreateFromOAuth(*User) error
 	GetAll() ([]User, error)
 	GetByID(uuid.UUID) (*User, error)
+	GetByEmail(email string) (*User, error)
 	VerifyEmail(uuid.UUID) error
 	UpdatePassword(uuid.UUID, string) error
 	Update(uuid.UUID, *User) error

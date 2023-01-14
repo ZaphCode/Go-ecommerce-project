@@ -8,14 +8,14 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/ZaphCode/clean-arch/config"
 	"github.com/ZaphCode/clean-arch/domain"
 )
 
 var (
-	googleRedirectUrl = cfg.Api.ServerHost + "/api/auth/google/callback"
-	googleOAuthUrl    = "https://accounts.google.com/o/oauth2/v2/auth"
-	googleTokenUrl    = "https://oauth2.googleapis.com/token"
-	googleUserUrl     = "https://www.googleapis.com/oauth2/v1/userinfo"
+	googleOAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth"
+	googleTokenUrl = "https://oauth2.googleapis.com/token"
+	googleUserUrl  = "https://www.googleapis.com/oauth2/v1/userinfo"
 )
 
 // Custom types
@@ -58,6 +58,7 @@ func NewGoogleOAuthService() OAuthService {
 type googleOAuthServiceImpl struct{}
 
 func (s *googleOAuthServiceImpl) GetOAuthUrl() string {
+	cfg := config.Get()
 	params := url.Values{}
 
 	scopes := []string{
@@ -65,7 +66,7 @@ func (s *googleOAuthServiceImpl) GetOAuthUrl() string {
 		"https://www.googleapis.com/auth/userinfo.email",
 	}
 
-	params.Add("redirect_uri", googleRedirectUrl)
+	params.Add("redirect_uri", cfg.Api.ServerHost+"/api/auth/google/callback")
 	params.Add("client_id", cfg.OAuth.Google.ClientID)
 	params.Add("access_type", "offline")
 	params.Add("response_type", "code")
@@ -96,12 +97,13 @@ func (s *googleOAuthServiceImpl) GetOAuthUser(code string) (*domain.User, error)
 }
 
 func (s *googleOAuthServiceImpl) getGoogleTokens(code string) (*GoogleTokens, error) {
+	cfg := config.Get()
 	form := url.Values{}
 
 	form.Add("code", code)
 	form.Add("client_id", cfg.OAuth.Github.ClientID)
 	form.Add("client_secret", cfg.OAuth.Google.ClientSecret)
-	form.Add("redirect_uri", googleRedirectUrl)
+	form.Add("redirect_uri", cfg.Api.ServerHost+"/api/auth/google/callback")
 	form.Add("grant_type", "authorization_code")
 
 	req, err := http.NewRequest(http.MethodPost, googleTokenUrl, strings.NewReader(form.Encode()))
