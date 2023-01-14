@@ -116,8 +116,8 @@ func (s discordOAuthServiceImpl) getDiscordTokens(code string) (*DiscordTokens, 
 
 	res, err := http.DefaultClient.Do(req)
 
-	if err != nil || res.StatusCode != 200 {
-		return nil, fmt.Errorf("error fetching to google api | %w", err)
+	if err != nil {
+		return nil, err
 	}
 
 	resBody, err := io.ReadAll(res.Body)
@@ -126,6 +126,11 @@ func (s discordOAuthServiceImpl) getDiscordTokens(code string) (*DiscordTokens, 
 
 	if err != nil {
 		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		fmt.Println(string(resBody))
+		return nil, fmt.Errorf("error fetching to discord api")
 	}
 
 	fmt.Println(string(resBody))

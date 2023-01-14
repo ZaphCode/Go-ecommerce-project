@@ -101,7 +101,7 @@ func (s *googleOAuthServiceImpl) getGoogleTokens(code string) (*GoogleTokens, er
 	form := url.Values{}
 
 	form.Add("code", code)
-	form.Add("client_id", cfg.OAuth.Github.ClientID)
+	form.Add("client_id", cfg.OAuth.Google.ClientID)
 	form.Add("client_secret", cfg.OAuth.Google.ClientSecret)
 	form.Add("redirect_uri", cfg.Api.ServerHost+"/api/auth/google/callback")
 	form.Add("grant_type", "authorization_code")
@@ -116,7 +116,7 @@ func (s *googleOAuthServiceImpl) getGoogleTokens(code string) (*GoogleTokens, er
 
 	res, err := http.DefaultClient.Do(req)
 
-	if err != nil || res.StatusCode != 200 {
+	if err != nil {
 		return nil, fmt.Errorf("error fetching to google api | %w", err)
 	}
 
@@ -126,6 +126,11 @@ func (s *googleOAuthServiceImpl) getGoogleTokens(code string) (*GoogleTokens, er
 
 	if err != nil {
 		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		fmt.Println(string(resBody))
+		return nil, fmt.Errorf("error fetching to google api")
 	}
 
 	tokens := GoogleTokens{}

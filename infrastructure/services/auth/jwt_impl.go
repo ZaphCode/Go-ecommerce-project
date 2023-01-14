@@ -8,11 +8,6 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-// var (
-// 	accessJwtSecret  = []byte(cfg.Api.AccessTokenSecret)
-// 	refreshJwtSecret = []byte(cfg.Api.AccessTokenSecret)
-// )
-
 // Custom types
 type CustomJwtClaims struct {
 	Claims

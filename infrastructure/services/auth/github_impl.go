@@ -146,8 +146,8 @@ func (s githubOAuthServiceImpl) getGithubUser(token *GithubToken) (*GithubUser, 
 
 	res, err := http.DefaultClient.Do(req)
 
-	if err != nil || res.StatusCode != 200 {
-		return nil, fmt.Errorf("error fetching to github api. %w", err)
+	if err != nil {
+		return nil, err
 	}
 
 	resBody, err := io.ReadAll(res.Body)
@@ -156,6 +156,11 @@ func (s githubOAuthServiceImpl) getGithubUser(token *GithubToken) (*GithubUser, 
 
 	if err != nil {
 		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		fmt.Println(string(resBody))
+		return nil, fmt.Errorf("error fetching to github api")
 	}
 
 	user := GithubUser{}
@@ -191,7 +196,7 @@ func (s githubOAuthServiceImpl) getGithubUserEmail(token *GithubToken) (*GithubE
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil || res.StatusCode != 200 {
-		return nil, fmt.Errorf("error fetching to github api. %w", err)
+		return nil, err
 	}
 
 	resBody, err := io.ReadAll(res.Body)
@@ -200,6 +205,11 @@ func (s githubOAuthServiceImpl) getGithubUserEmail(token *GithubToken) (*GithubE
 
 	if err != nil {
 		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		fmt.Println(string(resBody))
+		return nil, fmt.Errorf("error fetching to github api (emails)")
 	}
 
 	var emails []GithubEmail
