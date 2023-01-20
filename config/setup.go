@@ -37,9 +37,17 @@ type storage struct {
 	UploadFolder string `json:"upload_folder"`
 }
 
+type smtp struct {
+	Email    string `json:"email"`
+	Host     string `json:"host"`
+	Port     string `json:"post"`
+	Password string `json:"password"`
+}
+
 type Config struct {
 	Api     api           `json:"api"`
 	OAuth   oauthServices `json:"oauth"`
+	Smtp    smtp          `json:"smtp"`
 	Storage storage       `json:"storage"`
 }
 
@@ -48,14 +56,14 @@ var (
 	firebaseApp *firebase.App
 )
 
-func LoadConfig() {
+func MustLoadConfig(path string) {
 	var file []byte
 	var err error
 
 	if IsProduction() {
-		file, err = os.ReadFile("./config/prod_config.json")
+		file, err = os.ReadFile(path + "/prod_config.json")
 	} else {
-		file, err = os.ReadFile("./config/dev_config.json")
+		file, err = os.ReadFile(path + "/dev_config.json")
 	}
 
 	if err != nil {
@@ -71,12 +79,10 @@ func LoadConfig() {
 	}
 }
 
-func LoadFirebaseConfig() {
-	path := "./config/firebase_config.json"
-
+func MustLoadFirebaseConfig(path string) {
 	ctx := context.Background()
 
-	opt := option.WithCredentialsFile(path)
+	opt := option.WithCredentialsFile(path + "/firebase_config.json")
 
 	app, err := firebase.NewApp(ctx, nil, opt)
 

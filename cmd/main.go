@@ -4,21 +4,19 @@ import (
 	"fmt"
 
 	"github.com/ZaphCode/clean-arch/config"
-	"github.com/ZaphCode/clean-arch/infrastructure/api"
-	"github.com/ZaphCode/clean-arch/infrastructure/utils"
+	//"github.com/ZaphCode/clean-arch/infrastructure/api"
 )
 
 func init() {
-	config.LoadConfig()
-	config.LoadFirebaseConfig()
+	config.MustLoadConfig("./config")
+	config.MustLoadFirebaseConfig("./config")
 }
 
 func main() {
+	// go api.InitBackgroundWorker()
+
+	// app := api.Setup()
+
+	// app.Listen(":" + config.Get().Api.Port)
 	fmt.Println("Hello world")
-
-	utils.PrettyPrint(config.Get())
-
-	app := api.Setup()
-
-	app.Listen(":" + config.Get().Api.Port)
 }

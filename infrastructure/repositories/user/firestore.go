@@ -13,6 +13,15 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+//* Implementation
+
+type firestoreUserRepositoryImpl struct {
+	client   *firestore.Client
+	collName string
+}
+
+//* Constructor
+
 func NewFirestoreUserRepository(
 	client *firestore.Client,
 	collName string,
@@ -23,10 +32,7 @@ func NewFirestoreUserRepository(
 	}
 }
 
-type firestoreUserRepositoryImpl struct {
-	client   *firestore.Client
-	collName string
-}
+//* Methods
 
 func (r *firestoreUserRepositoryImpl) Save(user *domain.User) error {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -48,7 +54,7 @@ func (r *firestoreUserRepositoryImpl) Save(user *domain.User) error {
 	_, err = docRef.Create(ctx, user)
 
 	if err != nil {
-		return fmt.Errorf("docRef.Create(): %w", err)
+		return fmt.Errorf("creating user error: %w", err)
 	}
 
 	return nil
@@ -65,16 +71,16 @@ func (r *firestoreUserRepositoryImpl) Find() ([]domain.User, error) {
 		return nil, fmt.Errorf("documents.GetAll(): %w", err)
 	}
 
-	var users []domain.User
+	users := make([]domain.User, len(snapshots))
 
-	for _, snapshot := range snapshots {
+	for i, snapshot := range snapshots {
 		var user domain.User
 
 		if err := snapshot.DataTo(&user); err != nil {
 			return nil, fmt.Errorf("snapshot.DataTo(): %w", err)
 		}
 
-		users = append(users, user)
+		users[i] = user
 	}
 
 	return users, nil

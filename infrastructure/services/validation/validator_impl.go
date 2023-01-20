@@ -10,27 +10,19 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-// Custom types
-type FieldError struct {
-	Field   string `json:"field"`
-	Message string `json:"message"`
-}
+//* Implementation
 
-type ValidationErrors []FieldError
-
-func (ValidationErrors) Error() string {
-	return "someting wentwrong"
+type validationServiceImpl struct {
+	validator *validator.Validate
 }
 
 //* Constructor
+
 func NewValidationService() ValidationService {
 	return &validationServiceImpl{validator: validator.New()}
 }
 
-//* Implementation
-type validationServiceImpl struct {
-	validator *validator.Validate
-}
+//* Methods
 
 func (s *validationServiceImpl) Validate(data any) error {
 	err := s.validator.Struct(data)
@@ -75,4 +67,17 @@ func (s *validationServiceImpl) getErrorMsg(fe validator.FieldError) string {
 		return "Invalid email"
 	}
 	return "Unknown error"
+}
+
+//* Custom types
+
+type FieldError struct {
+	Field   string `json:"field"`
+	Message string `json:"message"`
+}
+
+type ValidationErrors []FieldError
+
+func (ValidationErrors) Error() string {
+	return "someting wentwrong"
 }

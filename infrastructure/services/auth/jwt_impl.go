@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ZaphCode/clean-arch/config"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -16,19 +15,13 @@ type CustomJwtClaims struct {
 
 // Constructor
 func NewJwtAuthService() JwtAuthService {
-	return &jwtAuthServiceImpl{
-		accessJwtSecret:  []byte(config.Get().Api.AccessTokenSecret),
-		refreshJwtSecret: []byte(config.Get().Api.RefreshTokenSecret),
-	}
+	return new(jwtAuthServiceImpl)
 }
 
 // Implementation
-type jwtAuthServiceImpl struct {
-	accessJwtSecret  []byte
-	refreshJwtSecret []byte
-}
+type jwtAuthServiceImpl struct{}
 
-func (s *jwtAuthServiceImpl) CreateToken(claims Claims, exp time.Duration, isRefreshType bool) (string, error) {
+func (s *jwtAuthServiceImpl) CreateToken(claims Claims, exp time.Duration, secret string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, CustomJwtClaims{
 		Claims: claims,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -40,11 +33,7 @@ func (s *jwtAuthServiceImpl) CreateToken(claims Claims, exp time.Duration, isRef
 	var tokenString string
 	var err error
 
-	if isRefreshType {
-		tokenString, err = token.SignedString(s.refreshJwtSecret)
-	} else {
-		tokenString, err = token.SignedString(s.refreshJwtSecret)
-	}
+	tokenString, err = token.SignedString([]byte(secret))
 
 	if err != nil {
 		return "", err
@@ -53,30 +42,14 @@ func (s *jwtAuthServiceImpl) CreateToken(claims Claims, exp time.Duration, isRef
 	return tokenString, nil
 }
 
-func (s *jwtAuthServiceImpl) CreateTokens(claims Claims, access_exp, refresh_exp time.Duration) (string, string, error) {
-	accessTokenString, err_1 := s.CreateToken(claims, access_exp, false)
-
-	refreshTokenString, err_2 := s.CreateToken(claims, refresh_exp, true)
-
-	if err_1 != nil || err_2 != nil {
-		return "", "", fmt.Errorf("error creating tokens")
-	}
-
-	return accessTokenString, refreshTokenString, nil
-}
-
-func (s *jwtAuthServiceImpl) DecodeToken(jwtoken string, refreshType bool) (*Claims, error) {
+func (s *jwtAuthServiceImpl) DecodeToken(jwtoken string, secret string) (*Claims, error) {
 	var customJwtClais CustomJwtClaims
 
 	token, err := jwt.ParseWithClaims(jwtoken, &customJwtClais, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		if refreshType {
-			return s.refreshJwtSecret, nil
-		} else {
-			return s.accessJwtSecret, nil
-		}
+		return []byte(secret), nil
 	})
 
 	if err != nil || !token.Valid {

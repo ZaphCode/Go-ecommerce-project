@@ -10,7 +10,19 @@ import (
 	"github.com/google/uuid"
 )
 
-func NewFirebaseUploadService(client *storage.Client, bucketName string, folder string) UploadService {
+//* Implementation
+
+type firebaseUploadServiceImpl struct {
+	client     *storage.Client
+	bucketName string
+	folder     string
+}
+
+//* Contructor
+
+func NewFirebaseUploadService(
+	client *storage.Client, bucketName, folder string,
+) UploadService {
 	return &firebaseUploadServiceImpl{
 		client:     client,
 		bucketName: bucketName,
@@ -18,11 +30,7 @@ func NewFirebaseUploadService(client *storage.Client, bucketName string, folder 
 	}
 }
 
-type firebaseUploadServiceImpl struct {
-	client     *storage.Client
-	bucketName string
-	folder     string
-}
+//* Methods
 
 func (s *firebaseUploadServiceImpl) Upload(file multipart.File) (string, error) {
 	bucket, err := s.client.Bucket(s.bucketName)

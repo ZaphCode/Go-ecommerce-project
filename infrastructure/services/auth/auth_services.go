@@ -25,9 +25,8 @@ type Claims struct {
 //* Services
 
 type JwtAuthService interface {
-	CreateToken(Claims, time.Duration, bool) (string, error)
-	DecodeToken(string, bool) (*Claims, error)
-	CreateTokens(Claims, time.Duration, time.Duration) (string, string, error)
+	CreateToken(claims Claims, exp time.Duration, secret string) (string, error)
+	DecodeToken(jwtoken string, secret string) (*Claims, error)
 }
 
 type OAuthService interface {

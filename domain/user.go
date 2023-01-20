@@ -2,15 +2,7 @@ package domain
 
 import "github.com/google/uuid"
 
-const (
-	UserRole      = "user"
-	ModeratorRole = "moderator"
-	AdminRole     = "admin"
-)
-
-func GetUserRoles() []string {
-	return []string{UserRole, ModeratorRole, AdminRole}
-}
+// * Model
 
 type User struct {
 	ID            uuid.UUID `json:"id"`
@@ -26,24 +18,32 @@ type User struct {
 	UpdatedAt     int64     `json:"updated_at"`
 }
 
+//* Service
+
 type UserService interface {
-	Create(*User) error
+	serviceCrudOperation[User]
 	CreateFromOAuth(*User) error
-	GetAll() ([]User, error)
-	GetByID(uuid.UUID) (*User, error)
 	GetByEmail(email string) (*User, error)
 	VerifyEmail(uuid.UUID) error
 	UpdatePassword(uuid.UUID, string) error
-	Update(uuid.UUID, *User) error
-	Delete(uuid.UUID) error
 }
 
+//* Repository
+
 type UserRepository interface {
-	Save(*User) error
-	Find() ([]User, error)
-	FindByID(uuid.UUID) (*User, error)
+	repositoryCrudOperation[User]
 	FindByField(string, any) (*User, error)
-	Remove(uuid.UUID) error
-	Update(uuid.UUID, *User) error
 	UpdateField(uuid.UUID, string, any) error
+}
+
+//* Utils
+
+const (
+	UserRole      = "user"
+	ModeratorRole = "moderator"
+	AdminRole     = "admin"
+)
+
+func GetUserRoles() []string {
+	return []string{UserRole, ModeratorRole, AdminRole}
 }

@@ -1,4 +1,4 @@
-package user
+package core
 
 import (
 	"fmt"
@@ -10,12 +10,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func NewUserService(repo domain.UserRepository) domain.UserService {
-	return &userService{repo: repo}
-}
-
 type userService struct {
 	repo domain.UserRepository
+}
+
+func NewUserService(repo domain.UserRepository) domain.UserService {
+	return &userService{repo: repo}
 }
 
 func (s *userService) Create(user *domain.User) error {
@@ -83,6 +83,18 @@ func (s *userService) CreateFromOAuth(user *domain.User) error {
 	return nil
 }
 
+func (s *userService) GetAll() ([]domain.User, error) {
+	return s.repo.Find()
+}
+
+func (s *userService) GetByID(ID uuid.UUID) (*domain.User, error) {
+	return s.repo.FindByID(ID)
+}
+
+func (s *userService) GetByEmail(email string) (*domain.User, error) {
+	return s.repo.FindByField("Email", email)
+}
+
 func (s *userService) VerifyEmail(ID uuid.UUID) error {
 	return s.repo.UpdateField(ID, "VerifiedEmail", true)
 }
@@ -108,18 +120,6 @@ func (s *userService) Update(ID uuid.UUID, user *domain.User) error {
 		Age:        user.Age,
 		Role:       user.Role,
 	})
-}
-
-func (s *userService) GetAll() ([]domain.User, error) {
-	return s.repo.Find()
-}
-
-func (s *userService) GetByID(ID uuid.UUID) (*domain.User, error) {
-	return s.repo.FindByID(ID)
-}
-
-func (s *userService) GetByEmail(email string) (*domain.User, error) {
-	return s.repo.FindByField("Email", email)
 }
 
 func (s *userService) Delete(ID uuid.UUID) error {
