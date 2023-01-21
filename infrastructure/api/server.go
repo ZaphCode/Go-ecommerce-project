@@ -40,10 +40,19 @@ type fiberServer struct {
 
 //* Constructor
 
-func NewServer() Server {
+func NewServer(
+	userSvc domain.UserService,
+	emailSvc email.EmailService,
+	jwtSvc auth.JwtAuthService,
+	validationSvc validation.ValidationService,
+) Server {
 	return &fiberServer{
-		tasksCh: make(chan func()),
-		app:     fiberSetup(),
+		tasksCh:       make(chan func()),
+		app:           fiberSetup(),
+		userSvc:       userSvc,
+		emailSvc:      emailSvc,
+		jwtSvc:        jwtSvc,
+		validationSvc: validationSvc,
 	}
 }
 
