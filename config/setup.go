@@ -14,6 +14,8 @@ type api struct {
 	Port               string `json:"port"`
 	ClientOrigin       string `json:"client_origin"`
 	ServerHost         string `json:"server_host"`
+	VerificationSecret string `json:"verification_secret"`
+	ChangepassSecret   string `json:"changepass_secret"`
 	AccessTokenSecret  string `json:"access_token_secret"`
 	RefreshTokenSecret string `json:"refresh_token_secret"`
 	AccessTokenHeader  string `json:"access_token_header"`
@@ -39,8 +41,6 @@ type storage struct {
 
 type smtp struct {
 	Email    string `json:"email"`
-	Host     string `json:"host"`
-	Port     string `json:"post"`
 	Password string `json:"password"`
 }
 

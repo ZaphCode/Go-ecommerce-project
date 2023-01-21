@@ -20,7 +20,10 @@ func (s *smtpEmailServiceImpl) SendEmail(data EmailData) error {
 
 	subject := fmt.Sprintf("Subject: %s!\n", data.Subject)
 	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
-	t, err := template.ParseFiles("./templates/" + data.Template)
+
+	t, err := template.ParseFiles(
+		"./infrastructure/services/email/templates/" + data.Template,
+	)
 
 	if err != nil {
 		return err
@@ -38,14 +41,12 @@ func (s *smtpEmailServiceImpl) SendEmail(data EmailData) error {
 
 	sender := cfg.Smtp.Email
 
-	host := cfg.Smtp.Host
-
-	auth := smtp.PlainAuth("", sender, cfg.Smtp.Password, host)
+	auth := smtp.PlainAuth("", sender, "tgruuykixcvtnzvj", "smtp.gmail.com")
 
 	recibers := []string{data.Email}
 
 	err = smtp.SendMail(
-		host+":"+cfg.Api.Port,
+		"smtp.gmail.com:587",
 		auth,
 		sender,
 		recibers,

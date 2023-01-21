@@ -18,6 +18,7 @@ import (
 
 func (s *fiberServer) signUp(c *fiber.Ctx) error {
 	body := dtos.SignupDTO{}
+	cfg := config.Get()
 
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.RespErr{
@@ -41,33 +42,37 @@ func (s *fiberServer) signUp(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.RespErr{
 			Status:  utils.StatusErr,
 			Message: "Create user error",
-			Detail:  err,
+			Detail:  err.Error(),
 		})
 	}
 
+	// Send verification email
 	go func() {
 		tokenCode, err := s.jwtSvc.CreateToken(
 			auth.Claims{ID: user.ID, Role: user.Role},
-			time.Hour*24*3, "super_secret",
+			time.Hour*24*3, cfg.Api.VerificationSecret,
 		)
 
 		if err != nil {
-			fmt.Println("Error")
+			fmt.Println("Error sending email")
 			return
 		}
 
 		if err := s.emailSvc.SendEmail(email.EmailData{
 			Email:    user.Email,
-			Subject:  "Verify email",
-			Template: "verify_email.hfiber",
+			Subject:  "Pulse | Verify your email!",
+			Template: "change_password.html",
 			Data: fiber.Map{
+				"Name":  user.Username,
 				"Email": user.Email,
 				"Code":  tokenCode,
 			},
 		}); err != nil {
-			fmt.Println("Error")
+			fmt.Println("Error sending email")
 			return
 		}
+
+		fmt.Println(">>> Email Sent to:", user.Email)
 	}()
 
 	return c.Status(fiber.StatusCreated).JSON(utils.RespOk{
@@ -233,6 +238,36 @@ func (s *fiberServer) signInWihOAuth(c *fiber.Ctx) error {
 			})
 		}
 		user = oauthUser
+	}
+
+	if !user.VerifiedEmail {
+		go func() {
+			tokenCode, err := s.jwtSvc.CreateToken(
+				auth.Claims{ID: user.ID, Role: user.Role},
+				time.Hour*24*3, cfg.Api.VerificationSecret,
+			)
+
+			if err != nil {
+				fmt.Println("Error sending email")
+				return
+			}
+
+			if err := s.emailSvc.SendEmail(email.EmailData{
+				Email:    user.Email,
+				Subject:  "Pulse | Verify your email!",
+				Template: "change_password.html",
+				Data: fiber.Map{
+					"Name":  user.Username,
+					"Email": user.Email,
+					"Code":  tokenCode,
+				},
+			}); err != nil {
+				fmt.Println("Error sending email")
+				return
+			}
+
+			fmt.Println(">>> Email Sent to:", user.Email)
+		}()
 	}
 
 	accessToken, atErr := s.jwtSvc.CreateToken(

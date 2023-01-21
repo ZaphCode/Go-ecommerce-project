@@ -77,13 +77,27 @@ func (s *fiberServer) InitBackgroundTaks() {
 func (s *fiberServer) CreateRoutes() {
 	r := s.app.Group("/api")
 
+	// Test route
+	r.Get("/", func(c *fiber.Ctx) error {
+		s.tasksCh <- func() {
+			time.Sleep(2 * time.Second)
+			fmt.Println("Hello from background tasks")
+		}
+
+		return c.SendString("Hello world!")
+	})
+
+	r.Get("/email", func(c *fiber.Ctx) error {
+		return c.SendString("Email sent")
+	})
+
 	{ //* Auth Routes
 		r = r.Group("/auth")
 		r.Get("/:provider/url", s.getOAuthUrl)
 		r.Get("/:provider/callback", s.signInWihOAuth)
 		r.Get("/signout", s.signOut)
 		r.Post("/signin", s.signIn)
-		r.Post("/singup", s.signUp)
+		r.Post("/signup", s.signUp)
 	}
 }
 
