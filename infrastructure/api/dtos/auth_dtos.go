@@ -2,6 +2,11 @@ package dtos
 
 import "github.com/ZaphCode/clean-arch/domain"
 
+type SigninDTO struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
+}
+
 type SignupDTO struct {
 	Username string `json:"username" validate:"required,min=4,max=15"`
 	Email    string `json:"email" validate:"required,email"`

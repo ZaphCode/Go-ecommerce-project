@@ -10,6 +10,7 @@ import (
 
 	"github.com/ZaphCode/clean-arch/config"
 	"github.com/ZaphCode/clean-arch/domain"
+	"github.com/ZaphCode/clean-arch/infrastructure/utils"
 )
 
 var (
@@ -56,9 +57,8 @@ func (u DiscordUser) AdaptToUser() (user domain.User) {
 	} else {
 		user.ImageUrl = "https://cdn.discordapp.com/embed/avatars/0.png"
 	}
-	user.Password = ""
+	user.Password = utils.RandomString(20)
 	user.VerifiedEmail = u.Verified
-	user.Age = 18
 	return
 }
 

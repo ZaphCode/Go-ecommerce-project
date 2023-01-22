@@ -75,10 +75,10 @@ func (s *fiberServer) InitBackgroundTaks() {
 }
 
 func (s *fiberServer) CreateRoutes() {
-	r := s.app.Group("/api")
+	router := s.app.Group("/api")
 
 	//* Test route
-	r.Get("/", func(c *fiber.Ctx) error {
+	router.Get("/", func(c *fiber.Ctx) error {
 		s.tasksCh <- func() {
 			time.Sleep(2 * time.Second)
 			fmt.Println("Hello from background tasks")
@@ -87,7 +87,7 @@ func (s *fiberServer) CreateRoutes() {
 	})
 
 	{ //* Auth routes
-		r = r.Group("/auth")
+		r := router.Group("/auth")
 		r.Get("/:provider/url", s.getOAuthUrl)
 		r.Get("/:provider/callback", s.signInWihOAuth)
 		r.Get("/me", s.authRequired, s.getAuthUser)
@@ -96,6 +96,16 @@ func (s *fiberServer) CreateRoutes() {
 		r.Post("/signin", s.signIn)
 		r.Post("/signup", s.signUp)
 	}
+
+	{ //* User routes
+		r := router.Group("/user")
+		r.Get("/all", s.authRequired, s.roleRequired(domain.ModeratorRole), s.getUsers)
+		r.Get("/get/:id", s.authRequired, s.roleRequired(domain.ModeratorRole), s.getUser)
+		r.Post("/create", s.authRequired, s.roleRequired(domain.AdminRole), s.createUser)
+		r.Put("/update/:id", s.authRequired, s.roleRequired(domain.AdminRole), s.updateUser)
+		r.Delete("/delete/:id", s.authRequired, s.roleRequired(domain.AdminRole), s.deleteUser)
+	}
+
 }
 
 func (s *fiberServer) TryRoute(req *http.Request) (*http.Response, error) {

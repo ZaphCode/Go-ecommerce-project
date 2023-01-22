@@ -230,7 +230,7 @@ func (s *fiberServer) signInWihOAuth(c *fiber.Ctx) error {
 	}
 
 	if user == nil {
-		if err := s.userSvc.CreateFromOAuth(oauthUser); err != nil {
+		if err := s.userSvc.Create(oauthUser); err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.RespErr{
 				Status:  utils.StatusErr,
 				Message: "Creating user error",

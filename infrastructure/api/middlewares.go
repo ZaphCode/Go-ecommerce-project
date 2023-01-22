@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/ZaphCode/clean-arch/config"
+	"github.com/ZaphCode/clean-arch/domain"
 	"github.com/ZaphCode/clean-arch/infrastructure/services/auth"
 	"github.com/ZaphCode/clean-arch/infrastructure/utils"
 	"github.com/gofiber/fiber/v2"
@@ -47,13 +48,13 @@ func (s *fiberServer) roleRequired(role string) fiber.Handler {
 			})
 		}
 
-		if ud.Role != role {
-			return c.Status(fiber.StatusForbidden).JSON(utils.RespErr{
-				Status:  utils.StatusErr,
-				Message: "Missing permisions",
-			})
+		if ud.Role == role || ud.Role == domain.AdminRole {
+			return c.Next()
 		}
 
-		return c.Next()
+		return c.Status(fiber.StatusForbidden).JSON(utils.RespErr{
+			Status:  utils.StatusErr,
+			Message: "Missing permisions",
+		})
 	}
 }

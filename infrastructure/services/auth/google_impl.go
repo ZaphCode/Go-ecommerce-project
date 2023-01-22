@@ -10,6 +10,7 @@ import (
 
 	"github.com/ZaphCode/clean-arch/config"
 	"github.com/ZaphCode/clean-arch/domain"
+	"github.com/ZaphCode/clean-arch/infrastructure/utils"
 )
 
 var (
@@ -42,10 +43,9 @@ type GoogleUser struct {
 func (u GoogleUser) AdaptToUser() (user domain.User) {
 	user.Username = u.Name
 	user.Email = u.Email
-	user.Password = ""
+	user.Password = utils.RandomString(20)
 	user.ImageUrl = u.Picture
 	user.VerifiedEmail = u.VerifiedEmail
-	user.Age = 18
 	return
 }
 

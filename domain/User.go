@@ -22,7 +22,6 @@ type User struct {
 
 type UserService interface {
 	serviceCrudOperation[User]
-	CreateFromOAuth(*User) error
 	GetByEmail(email string) (*User, error)
 	VerifyEmail(uuid.UUID) error
 	UpdatePassword(uuid.UUID, string) error

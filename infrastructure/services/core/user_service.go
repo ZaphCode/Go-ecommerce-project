@@ -22,57 +22,31 @@ func (s *userService) Create(user *domain.User) error {
 	ID, err := uuid.NewUUID()
 
 	if err != nil {
-		return fmt.Errorf("uuid.NewUUID: %w", err)
+		return fmt.Errorf("uuid generation error: %w", err)
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		return fmt.Errorf("bycrypt.GenPass(): %w", err)
+		return fmt.Errorf("error hashing password: %w", err)
 	}
 
 	user.ID = ID
 	user.Password = string(hash)
 	user.CreatedAt = time.Now().Unix()
 	user.UpdatedAt = time.Now().Unix()
-	user.Role = domain.UserRole
-	user.ImageUrl = fmt.Sprintf("https://api.dicebear.com/5.x/bottts-neutral/svg?seed=%d", user.CreatedAt)
-	user.VerifiedEmail = false
 
-	if err := s.repo.Save(user); err != nil {
-		return err
+	if user.Age == 0 {
+		user.Age = 18
 	}
 
-	user.Password = ""
-
-	return nil
-}
-
-func (s *userService) CreateFromOAuth(user *domain.User) error {
-	ID, err := uuid.NewUUID()
-
-	if err != nil {
-		return fmt.Errorf("uuid.NewUUID() err: %w", err)
+	if user.Role == "" {
+		user.Role = domain.UserRole
 	}
 
-	random, err := uuid.NewRandom()
-
-	if err != nil {
-		return fmt.Errorf("uuid.NewRandom() err: %w", err)
+	if user.ImageUrl == "" {
+		user.ImageUrl = fmt.Sprintf("https://api.dicebear.com/5.x/bottts-neutral/svg?seed=%d", user.CreatedAt)
 	}
-
-	hash, err := bcrypt.GenerateFromPassword([]byte(random.String()), bcrypt.DefaultCost)
-
-	if err != nil {
-		return fmt.Errorf("bycrypt.GenPass() err: %w", err)
-	}
-
-	user.ID = ID
-	user.Password = string(hash)
-	user.CreatedAt = time.Now().Unix()
-	user.UpdatedAt = time.Now().Unix()
-	user.Role = domain.UserRole
-	user.Age = 18
 
 	if err := s.repo.Save(user); err != nil {
 		return err

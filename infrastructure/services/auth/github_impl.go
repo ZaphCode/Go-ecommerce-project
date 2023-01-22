@@ -10,6 +10,7 @@ import (
 
 	"github.com/ZaphCode/clean-arch/config"
 	"github.com/ZaphCode/clean-arch/domain"
+	"github.com/ZaphCode/clean-arch/infrastructure/utils"
 )
 
 var (
@@ -50,10 +51,9 @@ type GithubUser struct {
 func (u GithubUser) AdaptToUser() (user domain.User) {
 	user.Username = u.Login
 	user.Email = u.Email
-	user.Password = ""
+	user.Password = utils.RandomString(20)
 	user.ImageUrl = u.AvatarURL
 	user.VerifiedEmail = u.Verified
-	user.Age = 18
 	return
 }
 
