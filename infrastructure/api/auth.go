@@ -335,3 +335,78 @@ func (s *fiberServer) getOAuthUrl(c *fiber.Ctx) error {
 		Data:    oauthSvc.GetOAuthUrl(),
 	})
 }
+
+func (s *fiberServer) getAuthUser(c *fiber.Ctx) error {
+	ud, ok := c.Locals("user-data").(*auth.Claims)
+
+	if !ok {
+		return c.Status(fiber.StatusInternalServerError).JSON(utils.RespErr{
+			Status:  utils.StatusErr,
+			Message: "Internal server error",
+		})
+	}
+
+	user, err := s.userSvc.GetByID(ud.ID)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(utils.RespErr{
+			Status:  utils.StatusErr,
+			Message: "Internal server error",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(utils.RespOk{
+		Status:  utils.StatusOk,
+		Message: "Auth user",
+		Data:    user,
+	})
+}
+
+func (s *fiberServer) refreshToken(c *fiber.Ctx) error {
+	method := c.Query("method", "cookie")
+	cfg := config.Get()
+
+	var rt string
+
+	switch method {
+	case "cookie":
+		rt = c.Cookies(cfg.Api.RefreshTokenCookie)
+	case "header":
+		rt = c.Get(cfg.Api.RefreshTokenHeader)
+	default:
+		rt = c.Cookies(cfg.Api.RefreshTokenCookie)
+	}
+
+	if rt == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(utils.RespErr{
+			Status:  utils.StatusErr,
+			Message: "Missing refresh token",
+		})
+	}
+
+	claims, err := s.jwtSvc.DecodeToken(rt, cfg.Api.RefreshTokenSecret)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(utils.RespErr{
+			Status:  utils.StatusErr,
+			Message: "Invalid refresh token",
+			Detail:  err.Error(),
+		})
+	}
+
+	at, err := s.jwtSvc.CreateToken(*claims, 5*time.Minute, cfg.Api.AccessTokenSecret)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(utils.RespErr{
+			Status:  utils.StatusErr,
+			Message: "Creating token error",
+			Detail:  err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(utils.RespOk{
+		Status:  utils.StatusOk,
+		Message: "Token refreshed successfully",
+		Data:    at,
+	})
+}
