@@ -4,13 +4,15 @@ import (
 	"log"
 
 	"github.com/ZaphCode/clean-arch/config"
-	"github.com/ZaphCode/clean-arch/infrastructure/api"
-	"github.com/ZaphCode/clean-arch/infrastructure/repositories/user"
-	"github.com/ZaphCode/clean-arch/infrastructure/services/auth"
-	"github.com/ZaphCode/clean-arch/infrastructure/services/core"
-	"github.com/ZaphCode/clean-arch/infrastructure/services/email"
-	"github.com/ZaphCode/clean-arch/infrastructure/services/validation"
-	"github.com/ZaphCode/clean-arch/infrastructure/utils"
+	"github.com/ZaphCode/clean-arch/src/api"
+	"github.com/ZaphCode/clean-arch/src/api/handlers"
+	"github.com/ZaphCode/clean-arch/src/api/middlewares"
+	"github.com/ZaphCode/clean-arch/src/repositories/user"
+	"github.com/ZaphCode/clean-arch/src/services/auth"
+	"github.com/ZaphCode/clean-arch/src/services/core"
+	"github.com/ZaphCode/clean-arch/src/services/email"
+	"github.com/ZaphCode/clean-arch/src/services/validation"
+	"github.com/ZaphCode/clean-arch/src/utils"
 )
 
 func init() {
@@ -21,25 +23,30 @@ func init() {
 func main() {
 	cfg := config.Get()
 	client := utils.GetFirestoreClient(config.GetFirebaseApp())
-	// utils.PrettyPrint(cfg)
 
 	//* Repos
-	userRepo := user.NewFirestoreUserRepository(client, "users")
+	userRepo := user.NewFirestoreUserRepository(client, utils.UserColl)
 
 	//* Services
 	userSvc := core.NewUserService(userRepo)
 	emailSvc := email.NewSmtpEmailService()
-	validationSvc := validation.NewValidationService()
-	jwtAuthSvc := auth.NewJwtAuthService()
+	vldSvc := validation.NewValidationService()
+	jwtSvc := auth.NewJWTService()
 
-	server := api.NewServer(
-		userSvc,
-		emailSvc,
-		jwtAuthSvc,
-		validationSvc,
-	)
+	//* Midlewares
+	authMdlw := middlewares.NewAuthMiddleware(jwtSvc)
 
-	server.CreateRoutes()
+	//* Handlers
+	usrHdlr := handlers.NewUserHandler(userSvc, vldSvc)
+	authHdlr := handlers.NewAuthHandler(userSvc, emailSvc, jwtSvc, vldSvc)
+
+	//* Server
+	server := api.New()
+
+	server.SetGlobalMiddlewares()
+
+	server.CreateAuthRoutes(authHdlr, authMdlw)
+	server.CreateUserRoutes(usrHdlr, authMdlw)
 
 	go server.InitBackgroundTaks()
 
