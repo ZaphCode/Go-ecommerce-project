@@ -37,12 +37,23 @@ func NewAuthHandler(
 	}
 }
 
+// @Summary      Sign up
+// @Description  Register new user
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param user_data body dtos.SignupDTO true "Sign up user"
+// @Success      201  {object}  dtos.RespOK[domain.User]
+// @Failure      422  {object}  dtos.RespDetailErr
+// @Failure      400  {object}  dtos.RespValErr
+// @Failure      500  {object}  dtos.RespDetailErr
+// @Router       /auth/signup [post]
 func (h *AuthHandler) SignUp(c *fiber.Ctx) error {
 	body := dtos.SignupDTO{}
 	cfg := config.Get()
 
 	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Error parsing the request body",
 			Detail:  err.Error(),
@@ -50,17 +61,17 @@ func (h *AuthHandler) SignUp(c *fiber.Ctx) error {
 	}
 
 	if err := h.vldSvc.Validate(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespValErr{
 			Status:  dtos.StatusErr,
 			Message: "One or more fields are invalid",
-			Detail:  err,
+			Errors:  err.(validation.ValidationErrors),
 		})
 	}
 
 	user := body.AdaptToUser()
 
 	if err := h.usrSvc.Create(&user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Create user error",
 			Detail:  err.Error(),
@@ -98,19 +109,32 @@ func (h *AuthHandler) SignUp(c *fiber.Ctx) error {
 		fmt.Println(">>> Email Sent to:", user.Email)
 	}()
 
-	return c.Status(fiber.StatusCreated).JSON(dtos.RespOK{
+	return c.Status(fiber.StatusCreated).JSON(dtos.RespOK[domain.User]{
 		Status:  dtos.StatusOK,
 		Message: "Signup successfully",
 		Data:    user,
 	})
 }
 
+// @Summary      Sign in
+// @Description  Login user
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param credentials body dtos.SigninDTO true "Sign in user"
+// @Success      200  {object}  dtos.RespOK[dtos.SignInResp]
+// @Failure      422  {object}  dtos.RespDetailErr
+// @Failure      400  {object}  dtos.RespValErr
+// @Failure      500  {object}  dtos.RespDetailErr
+// @Failure      404  {object}  dtos.RespErr
+// @Failure      403  {object}  dtos.RespErr
+// @Router       /auth/signin [post]
 func (h *AuthHandler) SignIn(c *fiber.Ctx) error {
 	body := dtos.SigninDTO{}
 	cfg := config.Get()
 
 	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Error parsing the request body",
 			Detail:  err.Error(),
@@ -118,32 +142,32 @@ func (h *AuthHandler) SignIn(c *fiber.Ctx) error {
 	}
 
 	if err := h.vldSvc.Validate(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespValErr{
 			Status:  dtos.StatusErr,
 			Message: "One or more fields are invalid",
-			Detail:  err,
+			Errors:  err.(validation.ValidationErrors),
 		})
 	}
 
 	user, err := h.usrSvc.GetByEmail(body.Email)
 
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Searching user error",
-			Detail:  err,
+			Detail:  err.Error(),
 		})
 	}
 
 	if user == nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusNotFound).JSON(dtos.RespErr{
 			Status:  dtos.StatusErr,
 			Message: "User not found",
 		})
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusForbidden).JSON(dtos.RespErr{
 			Status:  dtos.StatusErr,
 			Message: "Invalid password",
 		})
@@ -160,9 +184,10 @@ func (h *AuthHandler) SignIn(c *fiber.Ctx) error {
 	)
 
 	if atErr != nil || rtErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Error creating tokens",
+			Detail:  "somethin went wrong",
 		})
 	}
 
@@ -174,17 +199,23 @@ func (h *AuthHandler) SignIn(c *fiber.Ctx) error {
 		SameSite: "lax",
 	})
 
-	return c.Status(fiber.StatusOK).JSON(dtos.RespOK{
+	return c.Status(fiber.StatusOK).JSON(dtos.RespOK[dtos.SignInResp]{
 		Status:  dtos.StatusOK,
 		Message: "Signin successfully",
-		Data: fiber.Map{
-			"user":          user,
-			"access_token":  accessToken,
-			"refresh_token": refreshToken,
+		Data: dtos.SignInResp{
+			User:         user,
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
 		},
 	})
 }
 
+// @Summary      Sign out
+// @Description  Logout user
+// @Tags         auth
+// @Produce      json
+// @Success      200  {object}  dtos.RespOK[dtos.None]
+// @Router       /auth/signout [get]
 func (h *AuthHandler) SignOut(c *fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     config.Get().Api.RefreshTokenCookie,
@@ -194,12 +225,24 @@ func (h *AuthHandler) SignOut(c *fiber.Ctx) error {
 		SameSite: "lax",
 	})
 
-	return c.Status(fiber.StatusOK).JSON(dtos.RespOK{
+	return c.Status(fiber.StatusOK).JSON(dtos.RespOK[interface{}]{
 		Status:  dtos.StatusOK,
 		Message: "Sign out successfully",
 	})
 }
 
+// @Summary      Sign in OAuth
+// @Description  Sing in by OAuth provider (google/github/discord)
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param code query string true "OAuth code"
+// @Param provider path string true "OAuth provider"
+// @Success      200  {object}  dtos.RespOK[dtos.SignInResp]
+// @Failure      406  {object}  dtos.RespDetailErr
+// @Failure      400  {object}  dtos.RespErr
+// @Failure      500  {object}  dtos.RespDetailErr
+// @Router       /auth/{provider}/callback [get]
 func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 	code := c.Query("code")
 	provider := c.Params("provider")
@@ -214,7 +257,7 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 	}
 
 	if !utils.ItemInSlice(provider, providers) {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusNotAcceptable).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Invalid oauth provider",
 			Detail:  fmt.Sprintf("The avalible proveders are: %s", strings.Join(providers, ", ")),
@@ -235,7 +278,7 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 	oauthUser, err := oauthSvc.GetOAuthUser(code)
 
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Error getting user from " + provider,
 			Detail:  err.Error(),
@@ -245,7 +288,7 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 	user, err := h.usrSvc.GetByEmail(oauthUser.Email)
 
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Searching user error",
 			Detail:  err.Error(),
@@ -254,7 +297,7 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 
 	if user == nil {
 		if err := h.usrSvc.Create(oauthUser); err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespErr{
+			return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespDetailErr{
 				Status:  dtos.StatusErr,
 				Message: "Creating user error",
 				Detail:  err.Error(),
@@ -306,9 +349,10 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 	)
 
 	if atErr != nil || rtErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Error creating tokens",
+			Detail:  "something went wrong",
 		})
 	}
 
@@ -320,23 +364,32 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 		SameSite: "lax",
 	})
 
-	return c.Status(fiber.StatusOK).JSON(dtos.RespOK{
+	return c.Status(fiber.StatusOK).JSON(dtos.RespOK[dtos.SignInResp]{
 		Status:  dtos.StatusOK,
 		Message: "Signin successfully",
-		Data: fiber.Map{
-			"user":          user,
-			"access_token":  accessToken,
-			"refresh_token": refreshToken,
+		Data: dtos.SignInResp{
+			User:         user,
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
 		},
 	})
 }
 
+// @Summary      Get OAuth url
+// @Description  Get OAuth url from provider (google/github/discord)
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param 		 provider path string true "OAuth provider"
+// @Success      200  {object}  dtos.RespOK[string]
+// @Failure      406  {object}  dtos.RespDetailErr
+// @Router       /auth/{provider}/url [get]
 func (h *AuthHandler) GetOAuthUrl(c *fiber.Ctx) error {
 	provider := c.Params("provider")
 	providers := utils.GetOAuthProviders()
 
 	if !utils.ItemInSlice(provider, providers) {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusNotAcceptable).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Invalid oauth provider",
 			Detail:  fmt.Sprintf("The avalible proveders are: %s", strings.Join(providers, ", ")),
@@ -354,13 +407,21 @@ func (h *AuthHandler) GetOAuthUrl(c *fiber.Ctx) error {
 		oauthSvc = auth.NewGithubOAuthService()
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dtos.RespOK{
+	return c.Status(fiber.StatusOK).JSON(dtos.RespOK[string]{
 		Status:  dtos.StatusOK,
 		Message: "OAuth url for " + provider,
 		Data:    oauthSvc.GetOAuthUrl(),
 	})
 }
 
+// @Summary      Get auth user
+// @Description  Get the current authenticated user
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  dtos.RespOK[domain.User]
+// @Failure      500  {object}  dtos.RespErr
+// @Router       /auth/me [get]
 func (h *AuthHandler) GetAuthUser(c *fiber.Ctx) error {
 	ud, ok := c.Locals("user-data").(*auth.Claims)
 
@@ -380,13 +441,24 @@ func (h *AuthHandler) GetAuthUser(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dtos.RespOK{
+	return c.Status(fiber.StatusOK).JSON(dtos.RespOK[domain.User]{
 		Status:  dtos.StatusOK,
 		Message: "Auth user",
-		Data:    user,
+		Data:    *user,
 	})
 }
 
+// @Summary      Refresh token
+// @Description  Refresh access jwtoken
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param method query string false "Send refresh token method"
+// @Success      200  {object}  dtos.RespOK[string]
+// @Failure      500  {object}  dtos.RespDetailErr
+// @Failure      403  {object}  dtos.RespDetailErr
+// @Failure      400  {object}  dtos.RespErr
+// @Router       /auth/refresh [get]
 func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error {
 	method := c.Query("method", "cookie")
 	cfg := config.Get()
@@ -412,7 +484,7 @@ func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error {
 	claims, err := h.jwtSvc.DecodeToken(rt, cfg.Api.RefreshTokenSecret)
 
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusForbidden).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Invalid refresh token",
 			Detail:  err.Error(),
@@ -422,14 +494,14 @@ func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error {
 	at, err := h.jwtSvc.CreateToken(*claims, 10*time.Minute, cfg.Api.AccessTokenSecret)
 
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Creating token error",
 			Detail:  err.Error(),
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dtos.RespOK{
+	return c.Status(fiber.StatusOK).JSON(dtos.RespOK[string]{
 		Status:  dtos.StatusOK,
 		Message: "Token refreshed successfully",
 		Data:    at,

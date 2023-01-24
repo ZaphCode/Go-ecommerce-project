@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/ZaphCode/clean-arch/config"
+	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -75,6 +76,9 @@ func (s *Server) SetGlobalMiddlewares() {
 			"message": "Hello world!",
 		})
 	})
+
+	s.app.Get("/docs/*", swagger.HandlerDefault)
+
 }
 
 func (s *Server) TryRoute(req *http.Request) (*http.Response, error) {

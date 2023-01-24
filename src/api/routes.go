@@ -12,7 +12,7 @@ func (s *Server) CreateAuthRoutes(
 ) {
 	r := s.app.Group("/api/auth")
 	r.Get("/:provider/url", authHdlr.GetOAuthUrl)
-	r.Get("/:provider/callback", authHdlr.GetAuthUser)
+	r.Get("/:provider/callback", authHdlr.SignInWihOAuth)
 	r.Get("/refresh", authHdlr.RefreshToken)
 	r.Get("/me", authMdlw.AuthRequired, authHdlr.GetAuthUser)
 	r.Get("/signout", authHdlr.SignOut)

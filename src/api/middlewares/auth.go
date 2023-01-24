@@ -31,7 +31,7 @@ func (m *AuthMiddleware) AuthRequired(c *fiber.Ctx) error {
 	claims, err := m.jwtSvc.DecodeToken(token, cfg.Api.AccessTokenSecret)
 
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(dtos.RespErr{
+		return c.Status(fiber.StatusUnauthorized).JSON(dtos.RespDetailErr{
 			Status:  dtos.StatusErr,
 			Message: "Invalid token",
 			Detail:  err.Error(),
