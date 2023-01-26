@@ -1,84 +1,98 @@
 basePath: /api
 definitions:
-  github_com_ZaphCode_clean-arch_src_api_dtos.None:
-    type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr:
+  github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO:
     properties:
       detail:
+        example: error querying the database
         type: string
       message:
+        example: something went wrong
         type: string
       status:
+        example: failure
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.RespErr:
+  github_com_ZaphCode_clean-arch_src_api_dtos.NewUserDTO:
+    properties:
+      age:
+        example: 20
+        minimum: 15
+        type: integer
+      email:
+        example: john@gmail.com
+        type: string
+      image_url:
+        example: https://nwdistrict.ifas.ufl.edu/nat/files/2021/01/Groundhog.jpg
+        type: string
+      password:
+        example: password123
+        minLength: 8
+        type: string
+      role:
+        enum:
+        - user
+        - moderator
+        example: user
+        type: string
+      username:
+        example: John Doe
+        maxLength: 15
+        minLength: 4
+        type: string
+      verified_email:
+        example: false
+        type: boolean
+    required:
+    - age
+    - email
+    - password
+    - username
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO:
     properties:
       message:
+        example: something went wrong
         type: string
       status:
+        example: failure
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_api_dtos_None:
+  github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO:
+    properties:
+      message:
+        example: Data retrived!
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.SignInRespOKDTO:
     properties:
       data:
-        $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.None'
+        properties:
+          access_token:
+            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+            type: string
+          refresh_token:
+            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNDE0NTYzNiIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.Bl1Rpmk-BrbqtgJA6F9pTAuiOlaPLpdDQ7MJvZ7URSU
+            type: string
+          user:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserDTO'
+        type: object
       message:
+        example: Data retrived!
         type: string
       status:
+        example: success
         type: string
-    type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_api_dtos_SignInResp:
-    properties:
-      data:
-        $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.SignInResp'
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_domain_User:
-    properties:
-      data:
-        $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_domain.User'
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-string:
-    properties:
-      data:
-        type: string
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.RespValErr:
-    properties:
-      errors:
-        items:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_services_validation.FieldError'
-        type: array
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.SignInResp:
-    properties:
-      access_token:
-        type: string
-      refresh_token:
-        type: string
-      user:
-        $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_domain.User'
     type: object
   github_com_ZaphCode_clean-arch_src_api_dtos.SigninDTO:
     properties:
       email:
+        example: zaph@fapi.com
         type: string
       password:
+        example: menosfapi33
         type: string
     required:
     - email
@@ -87,14 +101,18 @@ definitions:
   github_com_ZaphCode_clean-arch_src_api_dtos.SignupDTO:
     properties:
       age:
+        example: 18
         minimum: 15
         type: integer
       email:
+        example: john@gmain.com
         type: string
       password:
+        example: password
         minLength: 8
         type: string
       username:
+        example: John doe
         maxLength: 15
         minLength: 4
         type: string
@@ -104,34 +122,142 @@ definitions:
     - password
     - username
     type: object
-  github_com_ZaphCode_clean-arch_src_domain.User:
+  github_com_ZaphCode_clean-arch_src_api_dtos.TokenRespOKDTO:
+    properties:
+      data:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        type: string
+      message:
+        example: Data retrived!
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.URLRespOKDTO:
+    properties:
+      data:
+        example: https://google.com/oauth/pulse
+        type: string
+      message:
+        example: Data retrived!
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.UpdateUserDTO:
     properties:
       age:
+        example: 20
+        minimum: 15
         type: integer
-      created_at:
-        type: integer
-      customer_id:
-        type: string
-      email:
-        type: string
-      id:
-        type: string
       image_url:
+        example: https://nwdistrict.ifas.ufl.edu/nat/files/2021/01/Groundhog.jpg
         type: string
       role:
+        enum:
+        - user
+        - moderator
+        example: user
         type: string
-      updated_at:
-        type: integer
       username:
+        example: John Doe
+        maxLength: 15
+        minLength: 4
         type: string
       verified_email:
         type: boolean
     type: object
-  github_com_ZaphCode_clean-arch_src_services_validation.FieldError:
+  github_com_ZaphCode_clean-arch_src_api_dtos.UserDTO:
     properties:
-      field:
+      age:
+        example: 20
+        minimum: 15
+        type: integer
+      created_at:
+        example: 1674405183
+        type: integer
+      customer_id:
         type: string
+      email:
+        example: john@gmail.com
+        type: string
+      id:
+        example: 8ded83fe-93c8-11ed-ab0f-d8bbc1a27048
+        type: string
+      image_url:
+        example: https://nwdistrict.ifas.ufl.edu/nat/files/2021/01/Groundhog.jpg
+        type: string
+      password:
+        example: password123
+        minLength: 8
+        type: string
+      role:
+        enum:
+        - user
+        - moderator
+        example: user
+        type: string
+      updated_at:
+        example: 1674405181
+        type: integer
+      username:
+        example: John Doe
+        maxLength: 15
+        minLength: 4
+        type: string
+      verified_email:
+        example: false
+        type: boolean
+    required:
+    - age
+    - email
+    - password
+    - username
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserDTO'
       message:
+        example: Data retrived!
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.UsersRespOKDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserDTO'
+        type: array
+      message:
+        example: Data retrived!
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO:
+    properties:
+      errors:
+        items:
+          properties:
+            field:
+              example: Email
+              type: string
+            message:
+              example: invalid email
+              type: string
+          type: object
+        type: array
+      message:
+        example: one or more field are invalid
+        type: string
+      status:
+        example: failure
         type: string
     type: object
 host: localhost:9000
@@ -154,6 +280,10 @@ paths:
         required: true
         type: string
       - description: OAuth provider
+        enum:
+        - google
+        - discord
+        - github
         in: path
         name: provider
         required: true
@@ -164,19 +294,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_api_dtos_SignInResp'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.SignInRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
       summary: Sign in OAuth
       tags:
       - auth
@@ -187,6 +317,10 @@ paths:
       description: Get OAuth url from provider (google/github/discord)
       parameters:
       - description: OAuth provider
+        enum:
+        - google
+        - discord
+        - github
         in: path
         name: provider
         required: true
@@ -197,11 +331,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-string'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.URLRespOKDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
       summary: Get OAuth url
       tags:
       - auth
@@ -216,11 +350,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_domain_User'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+      security:
+      - BearerAuth: []
       summary: Get auth user
       tags:
       - auth
@@ -228,7 +364,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Refresh access jwtoken
+      description: Refresh access token
       parameters:
       - description: Send refresh token method
         in: query
@@ -240,19 +376,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-string'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.TokenRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
       summary: Refresh token
       tags:
       - auth
@@ -274,27 +410,27 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_api_dtos_SignInResp'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.SignInRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespValErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
       summary: Sign in
       tags:
       - auth
@@ -307,7 +443,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_api_dtos_None'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO'
       summary: Sign out
       tags:
       - auth
@@ -329,20 +465,200 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_domain_User'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespValErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr'
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
       summary: Sign up
       tags:
       - auth
+  /user/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UsersRespOKDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Get users
+      tags:
+      - user
+  /user/create:
+    post:
+      consumes:
+      - application/json
+      description: Create new user
+      parameters:
+      - description: user data
+        in: body
+        name: user_data
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Create user
+      tags:
+      - user
+  /user/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user by ID
+      parameters:
+      - description: user uuid
+        example: 3afc3021-9395-11ed-a8b6-d8bbc1a27045
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Delete user
+      tags:
+      - user
+  /user/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user by ID
+      parameters:
+      - description: user uuid
+        example: 3afc3021-9395-11ed-a8b6-d8bbc1a27045
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Get user
+      tags:
+      - user
+  /user/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Upadate existing user
+      parameters:
+      - description: user uuid
+        example: 3afc3021-9395-11ed-a8b6-d8bbc1a27045
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: user data
+        in: body
+        name: user_data
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UpdateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Update user
+      tags:
+      - user
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: X-Access-Token
+    type: apiKey
 swagger: "2.0"

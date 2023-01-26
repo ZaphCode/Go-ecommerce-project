@@ -2,16 +2,22 @@ package handlers
 
 import (
 	"github.com/ZaphCode/clean-arch/src/api/dtos"
+	"github.com/ZaphCode/clean-arch/src/api/shared"
 	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/services/validation"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
+//* Handler
+
 type UserHandler struct {
+	shared.Responder
 	usrSvc domain.UserService
 	vldSvc validation.ValidationService
 }
+
+//* Constructor
 
 func NewUserHandler(
 	usrSvc domain.UserService,
@@ -23,162 +29,159 @@ func NewUserHandler(
 	}
 }
 
+// * Get user handler
+// @Summary      Get user
+// @Description  Get user by ID
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path string true "user uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
+// @Success      302  {object}  dtos.UserRespOKDTO
+// @Failure      500  {object}  dtos.DetailRespErrDTO
+// @Failure      406  {object}  dtos.RespErrDTO
+// @Failure      404  {object}  dtos.RespErrDTO
+// @Failure      401  {object}  dtos.DetailRespErrDTO
+// @Router       /user/get/{id} [get]
 func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	uid, err := uuid.Parse(id)
 
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
-			Status:  dtos.StatusErr,
-			Message: "Invalid user id",
-		})
+		return h.RespErr(c, 406, "invalid user id")
 	}
 
 	user, err := h.usrSvc.GetByID(uid)
 
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespDetailErr{
-			Status:  dtos.StatusErr,
-			Message: "Error getting user",
-			Detail:  err.Error(),
-		})
+		return h.RespErr(c, 500, "error getting user", err.Error())
 	}
 
 	if user == nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespErr{
-			Status:  dtos.StatusErr,
-			Message: "User not found",
-		})
+		return h.RespErr(c, 404, "user not found")
 	}
 
-	return c.Status(fiber.StatusFound).JSON(dtos.RespOK[*domain.User]{
-		Status:  dtos.StatusOK,
-		Message: "User found",
-		Data:    user,
-	})
+	return h.RespOK(c, 302, "user found", user)
 }
 
+// * Get Users handler
+// @Summary      Get users
+// @Description  Get all users
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200  {object}  dtos.UsersRespOKDTO
+// @Failure      500  {object}  dtos.DetailRespErrDTO
+// @Router       /user/all [get]
 func (h *UserHandler) GetUsers(c *fiber.Ctx) error {
 	users, err := h.usrSvc.GetAll()
 
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespDetailErr{
-			Status:  dtos.StatusErr,
-			Message: "Error getting users",
-			Detail:  err.Error(),
-		})
+		return h.RespErr(c, 500, "error getting users", err.Error())
 	}
 
-	return c.Status(fiber.StatusFound).JSON(dtos.RespOK[[]domain.User]{
-		Status:  dtos.StatusOK,
-		Message: "All users",
-		Data:    users,
-	})
+	return h.RespOK(c, 200, "all users", users)
 }
 
+// * Create User handler
+// @Summary      Create user
+// @Description  Create new user
+// @Tags         user
+// @Accept       json
+// @Security     BearerAuth
+// @Param        user_data  body dtos.NewUserDTO true "user data"
+// @Produce      json
+// @Success      201  {object}  dtos.UserRespOKDTO
+// @Failure      500  {object}  dtos.DetailRespErrDTO
+// @Failure      422  {object}  dtos.DetailRespErrDTO
+// @Failure      400  {object}  dtos.ValidationRespErrDTO
+// @Router       /user/create [post]
 func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	body := dtos.NewUserDTO{}
 
 	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespDetailErr{
-			Status:  dtos.StatusErr,
-			Message: "Error parsing the request body",
-			Detail:  err.Error(),
-		})
+		return h.RespErr(c, 422, "error parsing the request body", err.Error())
 	}
 
 	if err := h.vldSvc.Validate(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespDetailErr{
-			Status:  dtos.StatusErr,
-			Message: "One or more fields are invalid",
-			Detail:  err.Error(),
-		})
+		return h.RespValErr(c, 400, "one or more fields are invalid", err)
 	}
 
 	user := body.AdaptToUser()
 
 	if err := h.usrSvc.Create(&user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespDetailErr{
-			Status:  dtos.StatusErr,
-			Message: "Create user error",
-			Detail:  err.Error(),
-		})
+		return h.RespErr(c, 500, "create user error", err.Error())
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dtos.RespOK[*domain.User]{
-		Status:  dtos.StatusOK,
-		Message: "User created!",
-		Data:    &user,
-	})
+	return h.RespOK(c, 201, "user created!", user)
 }
 
+// * Update User handler
+// @Summary      Update user
+// @Description  Upadate existing user
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path string true "user uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
+// @Param        user_data  body dtos.UpdateUserDTO true "user data"
+// @Success      200  {object}  dtos.UserRespOKDTO
+// @Failure      500  {object}  dtos.DetailRespErrDTO
+// @Failure      422  {object}  dtos.DetailRespErrDTO
+// @Failure      406  {object}  dtos.RespErrDTO
+// @Failure      400  {object}  dtos.ValidationRespErrDTO
+// @Router       /user/update/{id} [put]
 func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 	body := dtos.UpdateUserDTO{}
 	id := c.Params("id")
 	uid, err := uuid.Parse(id)
 
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
-			Status:  dtos.StatusErr,
-			Message: "Invalid user id",
-		})
+		return h.RespErr(c, 406, "invalid user id")
 	}
 
 	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespDetailErr{
-			Status:  dtos.StatusErr,
-			Message: "Error parsing the request body",
-			Detail:  err.Error(),
-		})
+		return h.RespErr(c, 422, "error parsing the request body", err.Error())
 	}
 
 	if err := h.vldSvc.Validate(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespDetailErr{
-			Status:  dtos.StatusErr,
-			Message: "One or more fields are invalid",
-			Detail:  err.Error(),
-		})
+		return h.RespValErr(c, 400, "one or more fields are invalid", err)
 	}
 
 	user := body.AdaptToUser()
 
 	if err := h.usrSvc.Update(uid, &user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespDetailErr{
-			Status:  dtos.StatusErr,
-			Message: "Create user error",
-			Detail:  err.Error(),
-		})
+		return h.RespErr(c, 500, "create user error", err.Error())
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dtos.RespOK[*domain.User]{
-		Status:  dtos.StatusOK,
-		Message: "User updated!",
-		Data:    &user,
-	})
+	return h.RespOK(c, 200, "user updated!", user)
 }
 
+// * Delete user handler
+// @Summary      Delete user
+// @Description  Delete user by ID
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path string true "user uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
+// @Success      200  {object}  dtos.UserRespOKDTO
+// @Failure      500  {object}  dtos.DetailRespErrDTO
+// @Failure      406  {object}  dtos.RespErrDTO
+// @Router       /user/delete/{id} [delete]
 func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 	uid, err := uuid.Parse(id)
 
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dtos.RespErr{
-			Status:  dtos.StatusErr,
-			Message: "Invalid user id",
-		})
+		return h.RespErr(c, 406, "invalid user id")
 	}
 
 	if err := h.usrSvc.Delete(uid); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(dtos.RespDetailErr{
-			Status:  dtos.StatusErr,
-			Message: "Error deleting user",
-			Detail:  err.Error(),
-		})
+		return h.RespErr(c, 500, "error deliting user", err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dtos.RespOK[*bool]{
-		Status:  dtos.StatusOK,
-		Message: "User deleted",
-	})
+	return h.RespOK(c, 200, "user deleted")
 }

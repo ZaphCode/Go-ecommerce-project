@@ -32,6 +32,10 @@ func init() {
 //// @license.name  Apache 2.0
 //// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name X-Access-Token
+
 // @host      localhost:9000
 // @BasePath  /api
 func main() {

@@ -19,6 +19,11 @@ const docTemplate = `{
     "paths": {
         "/auth/me": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get the current authenticated user",
                 "consumes": [
                     "application/json"
@@ -34,13 +39,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_domain_User"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
                         }
                     }
                 }
@@ -48,7 +53,7 @@ const docTemplate = `{
         },
         "/auth/refresh": {
             "get": {
-                "description": "Refresh access jwtoken",
+                "description": "Refresh access token",
                 "consumes": [
                     "application/json"
                 ],
@@ -71,25 +76,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-string"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.TokenRespOKDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
                         }
                     }
                 }
@@ -123,37 +128,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_api_dtos_SignInResp"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.SignInRespOKDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespValErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
                         }
                     }
                 }
@@ -173,7 +178,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_api_dtos_None"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO"
                         }
                     }
                 }
@@ -207,25 +212,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_domain_User"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespValErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
                         }
                     }
                 }
@@ -253,6 +258,11 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "enum": [
+                            "google",
+                            "discord",
+                            "github"
+                        ],
                         "type": "string",
                         "description": "OAuth provider",
                         "name": "provider",
@@ -264,25 +274,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_api_dtos_SignInResp"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.SignInRespOKDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
                         }
                     },
                     "406": {
                         "description": "Not Acceptable",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
                         }
                     }
                 }
@@ -303,6 +313,11 @@ const docTemplate = `{
                 "summary": "Get OAuth url",
                 "parameters": [
                     {
+                        "enum": [
+                            "google",
+                            "discord",
+                            "github"
+                        ],
                         "type": "string",
                         "description": "OAuth provider",
                         "name": "provider",
@@ -314,13 +329,287 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-string"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.URLRespOKDTO"
                         }
                     },
                     "406": {
                         "description": "Not Acceptable",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr"
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get all users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UsersRespOKDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/create": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create user",
+                "parameters": [
+                    {
+                        "description": "user data",
+                        "name": "user_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewUserDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete user by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Delete user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "3afc3021-9395-11ed-a8b6-d8bbc1a27045",
+                        "description": "user uuid",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/get/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get user by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "3afc3021-9395-11ed-a8b6-d8bbc1a27045",
+                        "description": "user uuid",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/update/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Upadate existing user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "3afc3021-9395-11ed-a8b6-d8bbc1a27045",
+                        "description": "user uuid",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "user data",
+                        "name": "user_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UpdateUserDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
                         }
                     }
                 }
@@ -328,118 +617,122 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_ZaphCode_clean-arch_src_api_dtos.None": {
-            "type": "object"
-        },
-        "github_com_ZaphCode_clean-arch_src_api_dtos.RespDetailErr": {
+        "github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO": {
             "type": "object",
             "properties": {
                 "detail": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "error querying the database"
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "something went wrong"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "failure"
                 }
             }
         },
-        "github_com_ZaphCode_clean-arch_src_api_dtos.RespErr": {
+        "github_com_ZaphCode_clean-arch_src_api_dtos.NewUserDTO": {
+            "type": "object",
+            "required": [
+                "age",
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer",
+                    "minimum": 15,
+                    "example": 20
+                },
+                "email": {
+                    "type": "string",
+                    "example": "john@gmail.com"
+                },
+                "image_url": {
+                    "type": "string",
+                    "example": "https://nwdistrict.ifas.ufl.edu/nat/files/2021/01/Groundhog.jpg"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "password123"
+                },
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "user",
+                        "moderator"
+                    ],
+                    "example": "user"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 15,
+                    "minLength": 4,
+                    "example": "John Doe"
+                },
+                "verified_email": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO": {
             "type": "object",
             "properties": {
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "something went wrong"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "failure"
                 }
             }
         },
-        "github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_api_dtos_None": {
+        "github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.SignInRespOKDTO": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.None"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_api_dtos_SignInResp": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.SignInResp"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-github_com_ZaphCode_clean-arch_src_domain_User": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_domain.User"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_ZaphCode_clean-arch_src_api_dtos.RespOK-string": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_ZaphCode_clean-arch_src_api_dtos.RespValErr": {
-            "type": "object",
-            "properties": {
-                "errors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_services_validation.FieldError"
+                    "type": "object",
+                    "properties": {
+                        "access_token": {
+                            "type": "string",
+                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                        },
+                        "refresh_token": {
+                            "type": "string",
+                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNDE0NTYzNiIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.Bl1Rpmk-BrbqtgJA6F9pTAuiOlaPLpdDQ7MJvZ7URSU"
+                        },
+                        "user": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserDTO"
+                        }
                     }
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Data retrived!"
                 },
                 "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_ZaphCode_clean-arch_src_api_dtos.SignInResp": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_domain.User"
+                    "type": "string",
+                    "example": "success"
                 }
             }
         },
@@ -451,10 +744,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "zaph@fapi.com"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "menosfapi33"
                 }
             }
         },
@@ -469,67 +764,223 @@ const docTemplate = `{
             "properties": {
                 "age": {
                     "type": "integer",
-                    "minimum": 15
+                    "minimum": 15,
+                    "example": 18
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "john@gmain.com"
                 },
                 "password": {
                     "type": "string",
-                    "minLength": 8
+                    "minLength": 8,
+                    "example": "password"
                 },
                 "username": {
                     "type": "string",
                     "maxLength": 15,
-                    "minLength": 4
+                    "minLength": 4,
+                    "example": "John doe"
                 }
             }
         },
-        "github_com_ZaphCode_clean-arch_src_domain.User": {
+        "github_com_ZaphCode_clean-arch_src_api_dtos.TokenRespOKDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.URLRespOKDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string",
+                    "example": "https://google.com/oauth/pulse"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.UpdateUserDTO": {
             "type": "object",
             "properties": {
                 "age": {
-                    "type": "integer"
-                },
-                "created_at": {
-                    "type": "integer"
-                },
-                "customer_id": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
+                    "type": "integer",
+                    "minimum": 15,
+                    "example": 20
                 },
                 "image_url": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "https://nwdistrict.ifas.ufl.edu/nat/files/2021/01/Groundhog.jpg"
                 },
                 "role": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "integer"
+                    "type": "string",
+                    "enum": [
+                        "user",
+                        "moderator"
+                    ],
+                    "example": "user"
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 15,
+                    "minLength": 4,
+                    "example": "John Doe"
                 },
                 "verified_email": {
                     "type": "boolean"
                 }
             }
         },
-        "github_com_ZaphCode_clean-arch_src_services_validation.FieldError": {
+        "github_com_ZaphCode_clean-arch_src_api_dtos.UserDTO": {
             "type": "object",
+            "required": [
+                "age",
+                "email",
+                "password",
+                "username"
+            ],
             "properties": {
-                "field": {
+                "age": {
+                    "type": "integer",
+                    "minimum": 15,
+                    "example": 20
+                },
+                "created_at": {
+                    "type": "integer",
+                    "example": 1674405183
+                },
+                "customer_id": {
                     "type": "string"
                 },
-                "message": {
-                    "type": "string"
+                "email": {
+                    "type": "string",
+                    "example": "john@gmail.com"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"
+                },
+                "image_url": {
+                    "type": "string",
+                    "example": "https://nwdistrict.ifas.ufl.edu/nat/files/2021/01/Groundhog.jpg"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "password123"
+                },
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "user",
+                        "moderator"
+                    ],
+                    "example": "user"
+                },
+                "updated_at": {
+                    "type": "integer",
+                    "example": 1674405181
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 15,
+                    "minLength": 4,
+                    "example": "John Doe"
+                },
+                "verified_email": {
+                    "type": "boolean",
+                    "example": false
                 }
             }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserDTO"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.UsersRespOKDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserDTO"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "field": {
+                                "type": "string",
+                                "example": "Email"
+                            },
+                            "message": {
+                                "type": "string",
+                                "example": "invalid email"
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "one or more field are invalid"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "failure"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "X-Access-Token",
+            "in": "header"
         }
     }
 }`
