@@ -150,13 +150,20 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 		return h.RespValErr(c, 400, "one or more fields are invalid", err)
 	}
 
-	user := body.AdaptToUser()
+	u := body.AdaptToUser()
 
-	if err := h.usrSvc.Update(uid, &user); err != nil {
+	if err := h.usrSvc.Update(uid, &u); err != nil {
 		return h.RespErr(c, 500, "create user error", err.Error())
 	}
 
-	return h.RespOK(c, 200, "user updated!", user)
+	upUsr, err := h.usrSvc.GetByID(uid)
+
+	if err != nil {
+		return h.RespErr(c, 500, "retriving updated user error", err.Error())
+
+	}
+
+	return h.RespOK(c, 200, "user updated!", upUsr)
 }
 
 // * Delete user handler

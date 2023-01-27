@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/ZaphCode/clean-arch/src/domain"
-	"github.com/ZaphCode/clean-arch/src/utils"
+	dshared "github.com/ZaphCode/clean-arch/src/domain/shared"
 	"github.com/google/uuid"
 )
 
@@ -25,7 +25,7 @@ func NewMemoryUserRepository() domain.UserRepository {
 		mu: sync.RWMutex{},
 		store: map[uuid.UUID]domain.User{
 			uuid.MustParse("8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"): {
-				DBModel: utils.DBModel{
+				DomainModel: dshared.DomainModel{
 					ID:        uuid.MustParse("8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"),
 					CreatedAt: time.Now().Unix(),
 					UpdatedAt: time.Now().Unix(),
@@ -40,7 +40,7 @@ func NewMemoryUserRepository() domain.UserRepository {
 				Age:           15,
 			},
 			uuid.MustParse("3afc3021-9395-11ed-a8b6-d8bbc1a27048"): {
-				DBModel: utils.DBModel{
+				DomainModel: dshared.DomainModel{
 					ID:        uuid.MustParse("3afc3021-9395-11ed-a8b6-d8bbc1a27048"),
 					CreatedAt: time.Now().Unix(),
 					UpdatedAt: time.Now().Unix(),

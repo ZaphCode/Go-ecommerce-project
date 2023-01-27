@@ -5,5 +5,5 @@ import "time"
 const (
 	StatusOK       = "success"
 	StatusErr      = "failure"
-	AccessTokenExp = time.Minute * 1
+	AccessTokenExp = time.Minute * 5
 )

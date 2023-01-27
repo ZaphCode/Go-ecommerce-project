@@ -28,7 +28,7 @@ func (dto NewUserDTO) AdaptToUser() (user domain.User) {
 
 // ----------------------------------------------------------
 
-type UserDTO struct {
+type UserDTO struct { //? For documentation
 	NewUserDTO
 	CustomerID string    `json:"customer_id"`
 	ID         uuid.UUID `json:"id" example:"8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"`

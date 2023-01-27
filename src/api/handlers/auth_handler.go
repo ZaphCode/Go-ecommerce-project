@@ -393,8 +393,6 @@ func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error {
 		rt = c.Cookies(cfg.Api.RefreshTokenCookie)
 	case "header":
 		rt = c.Get(cfg.Api.RefreshTokenHeader)
-	case "sexo":
-		fmt.Println("fr--ignore lib/")
 	default:
 		rt = c.Cookies(cfg.Api.RefreshTokenCookie)
 	}

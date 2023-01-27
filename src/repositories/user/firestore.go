@@ -3,19 +3,18 @@ package user
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"time"
 
 	"cloud.google.com/go/firestore"
 	"github.com/ZaphCode/clean-arch/src/domain"
+	"github.com/ZaphCode/clean-arch/src/repositories/shared"
 	"github.com/google/uuid"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 //* Implementation
 
 type firestoreUserRepositoryImpl struct {
+	shared.FirestoreCrudRepo[domain.User]
 	client   *firestore.Client
 	collName string
 }
@@ -27,6 +26,10 @@ func NewFirestoreUserRepository(
 	collName string,
 ) domain.UserRepository {
 	return &firestoreUserRepositoryImpl{
+		FirestoreCrudRepo: shared.FirestoreCrudRepo[domain.User]{
+			Client:   client,
+			CollName: collName,
+		},
 		client:   client,
 		collName: collName,
 	}
@@ -34,68 +37,68 @@ func NewFirestoreUserRepository(
 
 //* Methods
 
-func (r *firestoreUserRepositoryImpl) Save(user *domain.User) error {
-	docRef := r.client.Collection(r.collName).Doc(user.ID.String())
+// func (r *firestoreUserRepositoryImpl) Save(user *domain.User) error {
+// 	docRef := r.client.Collection(r.collName).Doc(user.ID.String())
 
-	_, err := docRef.Create(context.TODO(), user)
+// 	_, err := docRef.Create(context.TODO(), user)
 
-	if err != nil {
-		return fmt.Errorf("creating user error: %w", err)
-	}
+// 	if err != nil {
+// 		return fmt.Errorf("creating user error: %w", err)
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func (r *firestoreUserRepositoryImpl) Find() ([]domain.User, error) {
-	ctx, cancel := context.WithCancel(context.Background())
+// func (r *firestoreUserRepositoryImpl) Find() ([]domain.User, error) {
+// 	ctx, cancel := context.WithCancel(context.Background())
 
-	defer cancel()
+// 	defer cancel()
 
-	snapshots, err := r.client.Collection(r.collName).Documents(ctx).GetAll()
+// 	snapshots, err := r.client.Collection(r.collName).Documents(ctx).GetAll()
 
-	if err != nil {
-		return nil, fmt.Errorf("documents.GetAll(): %w", err)
-	}
+// 	if err != nil {
+// 		return nil, fmt.Errorf("documents.GetAll(): %w", err)
+// 	}
 
-	users := make([]domain.User, len(snapshots))
+// 	users := make([]domain.User, len(snapshots))
 
-	for i, snapshot := range snapshots {
-		var user domain.User
+// 	for i, snapshot := range snapshots {
+// 		var user domain.User
 
-		if err := snapshot.DataTo(&user); err != nil {
-			return nil, fmt.Errorf("snapshot.DataTo(): %w", err)
-		}
+// 		if err := snapshot.DataTo(&user); err != nil {
+// 			return nil, fmt.Errorf("snapshot.DataTo(): %w", err)
+// 		}
 
-		users[i] = user
-	}
+// 		users[i] = user
+// 	}
 
-	return users, nil
-}
+// 	return users, nil
+// }
 
-func (r *firestoreUserRepositoryImpl) FindByID(ID uuid.UUID) (*domain.User, error) {
-	ctx, cancel := context.WithCancel(context.Background())
+// func (r *firestoreUserRepositoryImpl) FindByID(ID uuid.UUID) (*domain.User, error) {
+// 	ctx, cancel := context.WithCancel(context.Background())
 
-	defer cancel()
+// 	defer cancel()
 
-	docRef := r.client.Collection(r.collName).Doc(ID.String())
+// 	docRef := r.client.Collection(r.collName).Doc(ID.String())
 
-	snapshot, err := docRef.Get(ctx)
+// 	snapshot, err := docRef.Get(ctx)
 
-	if err != nil {
-		if status.Code(err) == codes.NotFound {
-			return nil, nil
-		}
-		return nil, fmt.Errorf("docRef.Get(): %s", err.Error())
-	}
+// 	if err != nil {
+// 		if status.Code(err) == codes.NotFound {
+// 			return nil, nil
+// 		}
+// 		return nil, fmt.Errorf("docRef.Get(): %s", err.Error())
+// 	}
 
-	var user domain.User
+// 	var user domain.User
 
-	if err := snapshot.DataTo(&user); err != nil {
-		return nil, fmt.Errorf("snapshot.DataTo(): %s", err.Error())
-	}
+// 	if err := snapshot.DataTo(&user); err != nil {
+// 		return nil, fmt.Errorf("snapshot.DataTo(): %s", err.Error())
+// 	}
 
-	return &user, nil
-}
+// 	return &user, nil
+// }
 
 func (r *firestoreUserRepositoryImpl) FindByField(field string, data any) (*domain.User, error) {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -130,50 +133,50 @@ func (r *firestoreUserRepositoryImpl) FindByField(field string, data any) (*doma
 	return &user, nil
 }
 
-func (r *firestoreUserRepositoryImpl) Remove(ID uuid.UUID) error {
-	ctx, cancel := context.WithCancel(context.Background())
+// func (r *firestoreUserRepositoryImpl) Remove(ID uuid.UUID) error {
+// 	ctx, cancel := context.WithCancel(context.Background())
 
-	defer cancel()
+// 	defer cancel()
 
-	docRef := r.client.Collection(r.collName).Doc(ID.String())
+// 	docRef := r.client.Collection(r.collName).Doc(ID.String())
 
-	_, err := docRef.Delete(ctx)
+// 	_, err := docRef.Delete(ctx)
 
-	if err != nil {
-		return fmt.Errorf("docRef.Get(): %s", err.Error())
-	}
+// 	if err != nil {
+// 		return fmt.Errorf("docRef.Get(): %s", err.Error())
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func (r *firestoreUserRepositoryImpl) Update(ID uuid.UUID, user *domain.User) error {
-	docRef := r.client.Collection(r.collName).Doc(ID.String())
+// func (r *firestoreUserRepositoryImpl) Update(ID uuid.UUID, user *domain.User) error {
+// 	docRef := r.client.Collection(r.collName).Doc(ID.String())
 
-	updates := []firestore.Update{
-		{Path: "UpdatedAt", Value: time.Now().Unix()},
-	}
+// 	updates := []firestore.Update{
+// 		{Path: "UpdatedAt", Value: time.Now().Unix()},
+// 	}
 
-	v := reflect.ValueOf(user).Elem()
+// 	v := reflect.ValueOf(user).Elem()
 
-	for i := 0; i < v.NumField(); i++ {
-		fieldName := v.Type().Field(i).Name
-		fieldValue := v.Field(i).Interface()
+// 	for i := 0; i < v.NumField(); i++ {
+// 		fieldName := v.Type().Field(i).Name
+// 		fieldValue := v.Field(i).Interface()
 
-		if !v.Field(i).IsZero() {
-			updates = append(updates, firestore.Update{
-				Path: fieldName, Value: fieldValue,
-			})
-		}
-	}
+// 		if !v.Field(i).IsZero() {
+// 			updates = append(updates, firestore.Update{
+// 				Path: fieldName, Value: fieldValue,
+// 			})
+// 		}
+// 	}
 
-	_, err := docRef.Update(context.Background(), updates)
+// 	_, err := docRef.Update(context.Background(), updates)
 
-	if err != nil {
-		return err
-	}
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func (r *firestoreUserRepositoryImpl) UpdateField(ID uuid.UUID, field string, data any) error {
 	ctx, cancel := context.WithCancel(context.Background())

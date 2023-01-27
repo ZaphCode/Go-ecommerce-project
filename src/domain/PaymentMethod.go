@@ -1,21 +1,21 @@
 package domain
 
-import "github.com/ZaphCode/clean-arch/src/utils"
+import "github.com/ZaphCode/clean-arch/src/domain/shared"
 
 //* Model
 
 type PaymentMethod struct {
-	utils.DBModel
+	shared.DomainModel
 }
 
 //* Service
 
 type PaymentMethodService interface {
-	utils.ServiceCrudOperations[PaymentMethod]
+	shared.ServiceCrudOperations[PaymentMethod]
 }
 
 //* Repository
 
 type PaymentMethodRepository interface {
-	utils.RepositoryCrudOperations[PaymentMethod]
+	shared.RepositoryCrudOperations[PaymentMethod]
 }

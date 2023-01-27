@@ -1,21 +1,21 @@
 package domain
 
-import "github.com/ZaphCode/clean-arch/src/utils"
+import "github.com/ZaphCode/clean-arch/src/domain/shared"
 
 //* Model
 
 type Category struct {
-	utils.DBModel
+	shared.DomainModel
 }
 
 //* Service
 
 type CategoryService interface {
-	utils.ServiceCrudOperations[Category]
+	shared.ServiceCrudOperations[Category]
 }
 
 //* Repository
 
 type CategoryRepository interface {
-	utils.RepositoryCrudOperations[Category]
+	shared.RepositoryCrudOperations[Category]
 }
