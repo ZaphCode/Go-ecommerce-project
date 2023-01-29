@@ -1,21 +1,37 @@
 package domain
 
-import "github.com/ZaphCode/clean-arch/src/domain/shared"
+import (
+	"github.com/ZaphCode/clean-arch/src/domain/shared"
+	"github.com/google/uuid"
+)
 
 //* Model
 
 type Order struct {
 	shared.DomainModel
+	UserID    uuid.UUID `json:"user_id"`
+	PaymentID string    `json:"payment_id"`
+	Amount    int64     `json:"amount"`
+	Products  []OrderProducts
+}
+
+type OrderProducts struct {
+	ID       uuid.UUID `json:"product_id"`
+	Quantity int       `json:"quantitu"`
 }
 
 //* Service
 
 type OrderService interface {
-	shared.ServiceCrudOperations[Order]
+	Create(ord *Order) error
+	GetAll() ([]Order, error)
+	GetAllByUserID(ursID uuid.UUID) ([]Order, error)
 }
 
 //* Repository
 
 type OrderRepository interface {
-	shared.RepositoryCrudOperations[Order]
+	Save(ord *Order) error
+	Find() ([]Order, error)
+	FindWhere(field, cond string, val any) ([]Order, error)
 }

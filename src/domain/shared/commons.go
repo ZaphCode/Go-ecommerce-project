@@ -18,6 +18,10 @@ type RepositoryCrudOperations[T IDomainModel] interface {
 	Remove(ID uuid.UUID) error
 }
 
+type IDomainModel interface {
+	GetStringID() string
+}
+
 type DomainModel struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt int64     `json:"created_at"`
@@ -26,8 +30,4 @@ type DomainModel struct {
 
 func (m DomainModel) GetStringID() string {
 	return m.ID.String()
-}
-
-type IDomainModel interface {
-	GetStringID() string
 }

@@ -1,21 +1,30 @@
 package domain
 
-import "github.com/ZaphCode/clean-arch/src/domain/shared"
+import (
+	"github.com/ZaphCode/clean-arch/src/domain/shared"
+	"github.com/google/uuid"
+)
 
 //* Model
 
 type Category struct {
 	shared.DomainModel
+	Name string `json:"name"`
 }
 
 //* Service
 
 type CategoryService interface {
-	shared.ServiceCrudOperations[Category]
+	Create(c *Category) error
+	GetByName(n string) (*Category, error)
+	GetAll() ([]Category, error)
+	Delete(ID uuid.UUID) error
 }
 
 //* Repository
 
 type CategoryRepository interface {
-	shared.RepositoryCrudOperations[Category]
+	Save(c *Category) error
+	FindByField(f string, v any) (*Category, error)
+	Remove(ID uuid.UUID) error
 }

@@ -78,7 +78,6 @@ func (s *Server) SetGlobalMiddlewares() {
 	})
 
 	s.app.Get("/docs/*", swagger.HandlerDefault)
-
 }
 
 func (s *Server) TryRoute(req *http.Request) (*http.Response, error) {

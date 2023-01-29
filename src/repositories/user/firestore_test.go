@@ -7,6 +7,7 @@ import (
 
 	"github.com/ZaphCode/clean-arch/config"
 	"github.com/ZaphCode/clean-arch/src/domain"
+	"github.com/ZaphCode/clean-arch/src/repositories/shared"
 	"github.com/ZaphCode/clean-arch/src/utils"
 )
 
@@ -16,15 +17,17 @@ func Test_firestoreUserRepositoryImpl_Find(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		r       *firestoreUserRepositoryImpl
+		r       *firestoreUserRepo
 		want    []domain.User
 		wantErr bool
 	}{
 		{
 			name: "Normal work",
-			r: &firestoreUserRepositoryImpl{
-				client:   utils.GetFirestoreClient(config.GetFirebaseApp()),
-				collName: "users",
+			r: &firestoreUserRepo{
+				FirestoreCrudRepo: shared.FirestoreCrudRepo[domain.User]{
+					Client:   utils.GetFirestoreClient(config.GetFirebaseApp()),
+					CollName: "users",
+				},
 			},
 			wantErr: false,
 		},
