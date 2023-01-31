@@ -1,6 +1,8 @@
 package dtos
 
-//? All this things are for documentation porpurses
+//? ---------------------------------------------
+//? All this dtos are for documentation porpurses
+//? ---------------------------------------------
 
 //* ------- BASE OK ----------
 
