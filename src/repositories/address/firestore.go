@@ -1,4 +1,4 @@
-package user
+package address
 
 import (
 	"cloud.google.com/go/firestore"
@@ -8,21 +8,21 @@ import (
 
 //* Implementation
 
-type firestoreUserRepo struct {
-	shared.FirestoreCrudRepo[domain.User]
+type firestoreAddressRepo struct {
+	shared.FirestoreCrudRepo[domain.Address]
 }
 
 //* Constructor
 
-func NewFirestoreUserRepository(
+func NewFirestoreAddressRepository(
 	client *firestore.Client,
 	collName string,
-) domain.UserRepository {
-	return &firestoreUserRepo{
-		FirestoreCrudRepo: shared.FirestoreCrudRepo[domain.User]{
+) domain.AddressRepository {
+	return &firestoreAddressRepo{
+		shared.FirestoreCrudRepo[domain.Address]{
 			Client:    client,
 			CollName:  collName,
-			ModelName: "user",
+			ModelName: "address",
 		},
 	}
 }

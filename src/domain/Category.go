@@ -24,7 +24,9 @@ type CategoryService interface {
 //* Repository
 
 type CategoryRepository interface {
-	Save(c *Category) error
+	Find() ([]Category, error)
+	FindByID(ID uuid.UUID) (*Category, error)
 	FindByField(f string, v any) (*Category, error)
+	Save(c *Category) error
 	Remove(ID uuid.UUID) error
 }

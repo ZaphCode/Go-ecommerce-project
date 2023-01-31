@@ -90,9 +90,9 @@ func (h *UserHandler) GetUsers(c *fiber.Ctx) error {
 // @Description  Create new user
 // @Tags         user
 // @Accept       json
+// @Produce      json
 // @Security     BearerAuth
 // @Param        user_data  body dtos.NewUserDTO true "user data"
-// @Produce      json
 // @Success      201  {object}  dtos.UserRespOKDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
 // @Failure      422  {object}  dtos.DetailRespErrDTO

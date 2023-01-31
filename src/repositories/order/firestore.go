@@ -1,4 +1,4 @@
-package user
+package order
 
 import (
 	"cloud.google.com/go/firestore"
@@ -8,21 +8,21 @@ import (
 
 //* Implementation
 
-type firestoreUserRepo struct {
-	shared.FirestoreCrudRepo[domain.User]
+type firestoreOrderRepo struct {
+	shared.FirestoreCrudRepo[domain.Order]
 }
 
 //* Constructor
 
-func NewFirestoreUserRepository(
+func NewFirestoreOrderRepository(
 	client *firestore.Client,
 	collName string,
-) domain.UserRepository {
-	return &firestoreUserRepo{
-		FirestoreCrudRepo: shared.FirestoreCrudRepo[domain.User]{
+) domain.OrderRepository {
+	return &firestoreOrderRepo{
+		shared.FirestoreCrudRepo[domain.Order]{
 			Client:    client,
 			CollName:  collName,
-			ModelName: "user",
+			ModelName: "order",
 		},
 	}
 }

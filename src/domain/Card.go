@@ -28,6 +28,6 @@ type CardService interface {
 
 //* Repository
 
-type PaymentMethodRepository interface {
+type CardRepository interface {
 	shared.RepositoryCrudOperations[Card]
 }

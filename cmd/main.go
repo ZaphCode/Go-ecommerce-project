@@ -8,6 +8,8 @@ import (
 	"github.com/ZaphCode/clean-arch/src/api"
 	"github.com/ZaphCode/clean-arch/src/api/handlers"
 	"github.com/ZaphCode/clean-arch/src/api/middlewares"
+	"github.com/ZaphCode/clean-arch/src/repositories/category"
+	"github.com/ZaphCode/clean-arch/src/repositories/product"
 	"github.com/ZaphCode/clean-arch/src/repositories/user"
 	"github.com/ZaphCode/clean-arch/src/services/auth"
 	"github.com/ZaphCode/clean-arch/src/services/core"
@@ -44,9 +46,13 @@ func main() {
 
 	//* Repos
 	userRepo := user.NewFirestoreUserRepository(client, utils.UserColl)
+	prodRepo := product.NewFirestoreProductRepository(client, utils.ProdColl)
+	catRepo := category.NewFirestoreCategoryRepository(client, utils.CategColl)
 
 	//* Services
 	userSvc := core.NewUserService(userRepo)
+	prodSvc := core.NewProductService(prodRepo)
+	catSvc := core.NewCategoryService(catRepo)
 	emailSvc := email.NewSmtpEmailService()
 	vldSvc := validation.NewValidationService()
 	jwtSvc := auth.NewJWTService()
@@ -57,6 +63,7 @@ func main() {
 	//* Handlers
 	usrHdlr := handlers.NewUserHandler(userSvc, vldSvc)
 	authHdlr := handlers.NewAuthHandler(userSvc, emailSvc, jwtSvc, vldSvc)
+	prodHdlr := handlers.NewProdutHandler(prodSvc, catSvc, vldSvc)
 
 	//* Server
 	server := api.New()
@@ -65,6 +72,7 @@ func main() {
 
 	server.CreateAuthRoutes(authHdlr, authMdlw)
 	server.CreateUserRoutes(usrHdlr, authMdlw)
+	server.CreateProductRoutes(prodHdlr, authMdlw)
 
 	go server.InitBackgroundTaks()
 

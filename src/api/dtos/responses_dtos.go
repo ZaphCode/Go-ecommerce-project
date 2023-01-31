@@ -1,11 +1,15 @@
 package dtos
 
-//* Success responses
+//? All this things are for documentation porpurses
+
+//* ------- BASE OK ----------
 
 type RespOKDTO struct {
 	Status  string `json:"status" example:"success"`
 	Message string `json:"message" example:"Data retrived!"`
 }
+
+//* -------- USERS ------------
 
 type UserRespOKDTO struct {
 	RespOKDTO
@@ -17,14 +21,28 @@ type UsersRespOKDTO struct {
 	Data []UserDTO `json:"data"`
 }
 
-type TokenRespOKDTO struct {
+//* -------- PRODUCTS ----------
+
+type ProductRespOKDTO struct {
 	RespOKDTO
-	Data string `json:"data" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"`
+	Data ProductDTO `json:"data"`
 }
+
+type ProductsRespOKDTO struct {
+	RespOKDTO
+	Data []ProductDTO `json:"data"`
+}
+
+//* --------- AUTH -------------
 
 type URLRespOKDTO struct {
 	RespOKDTO
 	Data string `json:"data" example:"https://google.com/oauth/pulse"`
+}
+
+type TokenRespOKDTO struct {
+	RespOKDTO
+	Data string `json:"data" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"`
 }
 
 type SignInRespOKDTO struct {
@@ -36,7 +54,7 @@ type SignInRespOKDTO struct {
 	} `json:"data"`
 }
 
-//! Error responses
+//! --------- ERROR ------------
 
 // RespErr represents a simple error response
 type RespErrDTO struct {

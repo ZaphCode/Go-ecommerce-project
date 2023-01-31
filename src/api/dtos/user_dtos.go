@@ -34,7 +34,6 @@ type UserDTO struct { //? For documentation
 	ID         uuid.UUID `json:"id" example:"8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"`
 	CreatedAt  int64     `json:"created_at" example:"1674405183"`
 	UpdatedAt  int64     `json:"updated_at" example:"1674405181"`
-	Password   string    `json:"-"`
 }
 
 // ----------------------------------------------------------

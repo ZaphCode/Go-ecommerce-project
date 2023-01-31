@@ -1,4 +1,4 @@
-package user
+package card
 
 import (
 	"cloud.google.com/go/firestore"
@@ -8,21 +8,21 @@ import (
 
 //* Implementation
 
-type firestoreUserRepo struct {
-	shared.FirestoreCrudRepo[domain.User]
+type firestoreCardRepo struct {
+	shared.FirestoreCrudRepo[domain.Card]
 }
 
 //* Constructor
 
-func NewFirestoreUserRepository(
+func NewFirestoreCardRepository(
 	client *firestore.Client,
 	collName string,
-) domain.UserRepository {
-	return &firestoreUserRepo{
-		FirestoreCrudRepo: shared.FirestoreCrudRepo[domain.User]{
+) domain.CardRepository {
+	return &firestoreCardRepo{
+		shared.FirestoreCrudRepo[domain.Card]{
 			Client:    client,
 			CollName:  collName,
-			ModelName: "user",
+			ModelName: "card",
 		},
 	}
 }

@@ -341,6 +341,103 @@ const docTemplate = `{
                 }
             }
         },
+        "/product/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get all products",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "Get products",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductsRespOKDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/create": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "Create new product",
+                "parameters": [
+                    {
+                        "description": "product data",
+                        "name": "product_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewProductDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductRespOKDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
         "/user/all": {
             "get": {
                 "security": [
@@ -634,6 +731,70 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.NewProductDTO": {
+            "type": "object",
+            "required": [
+                "description",
+                "discount_rate",
+                "images_url",
+                "name",
+                "price",
+                "tags"
+            ],
+            "properties": {
+                "avalible": {
+                    "type": "boolean"
+                },
+                "category": {
+                    "type": "string",
+                    "example": "clothes"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 4,
+                    "example": "The best T-shirt in the world."
+                },
+                "discount_rate": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0,
+                    "example": 23.4
+                },
+                "images_url": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "https://example.com/image1.png",
+                        "https://example.com/image2.png"
+                    ]
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 4,
+                    "example": "Black T-Shirt Addidas"
+                },
+                "price": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 2599
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "t-shirts",
+                        "clothes",
+                        "addidas"
+                    ]
+                }
+            }
+        },
         "github_com_ZaphCode_clean-arch_src_api_dtos.NewUserDTO": {
             "type": "object",
             "required": [
@@ -678,6 +839,117 @@ const docTemplate = `{
                 "verified_email": {
                     "type": "boolean",
                     "example": false
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.ProductDTO": {
+            "type": "object",
+            "required": [
+                "description",
+                "discount_rate",
+                "images_url",
+                "name",
+                "price",
+                "tags"
+            ],
+            "properties": {
+                "avalible": {
+                    "type": "boolean"
+                },
+                "category": {
+                    "type": "string",
+                    "example": "clothes"
+                },
+                "created_at": {
+                    "type": "integer",
+                    "example": 1674405183
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 4,
+                    "example": "The best T-shirt in the world."
+                },
+                "discount_rate": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0,
+                    "example": 23.4
+                },
+                "id": {
+                    "type": "string",
+                    "example": "8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"
+                },
+                "images_url": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "https://example.com/image1.png",
+                        "https://example.com/image2.png"
+                    ]
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 4,
+                    "example": "Black T-Shirt Addidas"
+                },
+                "price": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 2599
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "t-shirts",
+                        "clothes",
+                        "addidas"
+                    ]
+                },
+                "updated_at": {
+                    "type": "integer",
+                    "example": 1674405181
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.ProductRespOKDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductDTO"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.ProductsRespOKDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductDTO"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
                 }
             }
         },

@@ -31,3 +31,12 @@ func (s *Server) CreateUserRoutes(
 	r.Put("/update/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), usrHdlr.UpdateUser)
 	r.Delete("/delete/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), usrHdlr.DeleteUser)
 }
+
+func (s *Server) CreateProductRoutes(
+	prodHdlr *handlers.ProductHandler,
+	authMdlw *middlewares.AuthMiddleware,
+) {
+	r := s.app.Group("/api/product")
+	r.Get("/all", prodHdlr.GetProducts)
+	r.Post("/create", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.CreateProducts)
+}
