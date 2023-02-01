@@ -352,6 +352,8 @@ func (h *AuthHandler) GetOAuthUrl(c *fiber.Ctx) error {
 // @Produce      json
 // @Security BearerAuth
 // @Success      200  {object}  dtos.UserRespOKDTO
+// @Failure      401  {object}  dtos.AuthRespErrDTO
+// @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.RespErrDTO
 // @Router       /auth/me [get]
 func (h *AuthHandler) GetAuthUser(c *fiber.Ctx) error {

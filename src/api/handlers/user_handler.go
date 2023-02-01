@@ -94,6 +94,7 @@ func (h *UserHandler) GetUsers(c *fiber.Ctx) error {
 // @Security     BearerAuth
 // @Param        user_data  body dtos.NewUserDTO true "user data"
 // @Success      201  {object}  dtos.UserRespOKDTO
+// @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
 // @Failure      422  {object}  dtos.DetailRespErrDTO
 // @Failure      400  {object}  dtos.ValidationRespErrDTO
@@ -128,6 +129,7 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 // @Param        id   path string true "user uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
 // @Param        user_data  body dtos.UpdateUserDTO true "user data"
 // @Success      200  {object}  dtos.UserRespOKDTO
+// @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
 // @Failure      422  {object}  dtos.DetailRespErrDTO
 // @Failure      406  {object}  dtos.RespErrDTO
@@ -175,6 +177,7 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 // @Security     BearerAuth
 // @Param        id   path string true "user uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
 // @Success      200  {object}  dtos.UserRespOKDTO
+// @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
 // @Failure      406  {object}  dtos.RespErrDTO
 // @Router       /user/delete/{id} [delete]

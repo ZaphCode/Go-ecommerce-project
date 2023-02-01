@@ -55,6 +55,7 @@ func (h *ProductHandler) GetProducts(c *fiber.Ctx) error {
 // @Security     BearerAuth
 // @Param        product_data  body dtos.NewProductDTO true "product data"
 // @Success      201  {object}  dtos.ProductRespOKDTO
+// @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
 // @Failure      422  {object}  dtos.DetailRespErrDTO
 // @Failure      406  {object}  dtos.RespErrDTO

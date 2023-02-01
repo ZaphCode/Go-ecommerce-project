@@ -92,3 +92,9 @@ type ValidationRespErrDTO struct {
 		Message string `json:"message" example:"invalid email"`
 	} `json:"errors"`
 }
+
+type AuthRespErrDTO struct {
+	Status  string `json:"status" example:"failure"`
+	Message string `json:"message" example:"invalid access token"`
+	Detail  string `json:"detail,omitempty" example:"the token is expired"`
+}

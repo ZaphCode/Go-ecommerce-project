@@ -55,6 +55,7 @@ func (h *CategoryHandler) GetCategories(c *fiber.Ctx) error {
 // @Security     BearerAuth
 // @Param        category_data  body dtos.NewCategoryDTO true "category data"
 // @Success      201  {object}  dtos.CategoryRespOKDTO
+// @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
 // @Failure      422  {object}  dtos.DetailRespErrDTO
 // @Failure      406  {object}  dtos.RespErrDTO
