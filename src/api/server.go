@@ -36,12 +36,16 @@ func (s *Server) Start(addr string) error {
 
 func (s *Server) InitBackgroundTaks() {
 	ticker := time.NewTicker(3 * time.Hour)
+	docsTicker := time.NewTicker(1000 * time.Millisecond)
 	for {
 		select {
 		case task := <-s.tasksCh:
 			task()
 		case <-ticker.C:
 			fmt.Println("Tick")
+		case <-docsTicker.C:
+			fmt.Println("check docs on: http://localhost:9000/docs/index.html")
+			docsTicker.Stop()
 		}
 	}
 }

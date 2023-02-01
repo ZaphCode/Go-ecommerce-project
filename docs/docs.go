@@ -341,6 +341,103 @@ const docTemplate = `{
                 }
             }
         },
+        "/category/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get all categories",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Get categories",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CategoriesRespOKDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/category/create": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create category",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Create new category",
+                "parameters": [
+                    {
+                        "description": "category data",
+                        "name": "category_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewCategoryDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CategoryRespOKDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
         "/product/all": {
             "get": {
                 "security": [
@@ -714,6 +811,66 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_ZaphCode_clean-arch_src_api_dtos.CategoriesRespOKDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CategoryDTO"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.CategoryDTO": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "integer",
+                    "example": 1674405183
+                },
+                "id": {
+                    "type": "string",
+                    "example": "8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 15,
+                    "example": "clothes"
+                },
+                "updated_at": {
+                    "type": "integer",
+                    "example": 1674405181
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.CategoryRespOKDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CategoryDTO"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
         "github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO": {
             "type": "object",
             "properties": {
@@ -728,6 +885,19 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "example": "failure"
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.NewCategoryDTO": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "maxLength": 15,
+                    "example": "clothes"
                 }
             }
         },
@@ -763,6 +933,8 @@ const docTemplate = `{
                 },
                 "images_url": {
                     "type": "array",
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     },
@@ -784,6 +956,7 @@ const docTemplate = `{
                 },
                 "tags": {
                     "type": "array",
+                    "maxItems": 6,
                     "items": {
                         "type": "string"
                     },
@@ -882,6 +1055,8 @@ const docTemplate = `{
                 },
                 "images_url": {
                     "type": "array",
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     },
@@ -903,6 +1078,7 @@ const docTemplate = `{
                 },
                 "tags": {
                     "type": "array",
+                    "maxItems": 6,
                     "items": {
                         "type": "string"
                     },

@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/google/uuid"
@@ -25,6 +26,16 @@ func (s *categoryService) Create(c *domain.Category) error {
 	if cat != nil {
 		return fmt.Errorf("that category already exists")
 	}
+
+	ID, err := uuid.NewUUID()
+
+	if err != nil {
+		return fmt.Errorf("error generating uuid: %s", err)
+	}
+
+	c.ID = ID
+	c.CreatedAt = time.Now().Unix()
+	c.UpdatedAt = time.Now().Unix()
 
 	return s.repo.Save(c)
 }

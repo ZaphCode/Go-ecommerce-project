@@ -64,6 +64,7 @@ func main() {
 	usrHdlr := handlers.NewUserHandler(userSvc, vldSvc)
 	authHdlr := handlers.NewAuthHandler(userSvc, emailSvc, jwtSvc, vldSvc)
 	prodHdlr := handlers.NewProdutHandler(prodSvc, catSvc, vldSvc)
+	catHdlr := handlers.NewCategoryHandler(prodSvc, catSvc, vldSvc)
 
 	//* Server
 	server := api.New()
@@ -73,6 +74,7 @@ func main() {
 	server.CreateAuthRoutes(authHdlr, authMdlw)
 	server.CreateUserRoutes(usrHdlr, authMdlw)
 	server.CreateProductRoutes(prodHdlr, authMdlw)
+	server.CreateCategoryRoutes(catHdlr, authMdlw)
 
 	go server.InitBackgroundTaks()
 

@@ -40,3 +40,12 @@ func (s *Server) CreateProductRoutes(
 	r.Get("/all", prodHdlr.GetProducts)
 	r.Post("/create", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.CreateProducts)
 }
+
+func (s *Server) CreateCategoryRoutes(
+	catHdlr *handlers.CategoryHandler,
+	authMdlw *middlewares.AuthMiddleware,
+) {
+	r := s.app.Group("/api/category")
+	r.Get("/all", catHdlr.GetCategories)
+	r.Post("/create", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.ModeratorRole), catHdlr.CreateCategory)
+}
