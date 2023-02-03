@@ -6,6 +6,7 @@ import (
 	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/services/validation"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type CategoryHandler struct {
@@ -89,4 +90,53 @@ func (h *CategoryHandler) CreateCategory(c *fiber.Ctx) error {
 	}
 
 	return h.RespOK(c, 201, "category created", cat)
+}
+
+// * Delete category handler
+// @Summary      Delete category
+// @Description  Delete category
+// @Tags         category
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path string true "category uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
+// @Success      201  {object}  dtos.RespOKDTO
+// @Failure      401  {object}  dtos.AuthRespErrDTO
+// @Failure      400  {object}  dtos.RespErrDTO
+// @Failure      500  {object}  dtos.DetailRespErrDTO
+// @Failure      406  {object}  dtos.DetailRespErrDTO
+// @Router       /category/delete/{id} [delete]
+func (h *CategoryHandler) DeleteCategory(c *fiber.Ctx) error {
+	id := c.Params("id")
+	uid, err := uuid.Parse(id)
+
+	if err != nil {
+		return h.RespErr(c, 406, "invalid category id")
+	}
+
+	cat, err := h.catSvc.GetByID(uid)
+
+	if err != nil {
+		return h.RespErr(c, 500, "error looking for that category", err.Error())
+	}
+
+	if cat == nil {
+		return h.RespErr(c, 400, "that category does'nt exist")
+	}
+
+	ps, err := h.prodSvc.GetByCategory(cat.Name)
+
+	if err != nil {
+		return h.RespErr(c, 500, "error checking for products of that category", err.Error())
+	}
+
+	if len(ps) > 0 {
+		return h.RespErr(c, 400, "that category has products")
+	}
+
+	if err := h.catSvc.Delete(uid); err != nil {
+		return h.RespErr(c, 500, "error creating category", err.Error())
+	}
+
+	return h.RespOK(c, 201, "category deleted")
 }

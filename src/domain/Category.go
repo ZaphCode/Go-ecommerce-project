@@ -16,6 +16,7 @@ type Category struct {
 
 type CategoryService interface {
 	Create(c *Category) error
+	GetByID(ID uuid.UUID) (*Category, error)
 	GetByName(n string) (*Category, error)
 	GetAll() ([]Category, error)
 	Delete(ID uuid.UUID) error

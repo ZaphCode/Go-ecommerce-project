@@ -1,5 +1,17 @@
 basePath: /api
 definitions:
+  github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO:
+    properties:
+      detail:
+        example: the token is expired
+        type: string
+      message:
+        example: invalid access token
+        type: string
+      status:
+        example: failure
+        type: string
+    type: object
   github_com_ZaphCode_clean-arch_src_api_dtos.CategoriesRespOKDTO:
     properties:
       data:
@@ -539,6 +551,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
@@ -685,8 +701,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
-      security:
-      - BearerAuth: []
       summary: Get categories
       tags:
       - category
@@ -713,6 +727,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
@@ -728,6 +746,46 @@ paths:
       security:
       - BearerAuth: []
       summary: Create new category
+      tags:
+      - category
+  /category/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete category
+      parameters:
+      - description: category uuid
+        example: 3afc3021-9395-11ed-a8b6-d8bbc1a27045
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Delete category
       tags:
       - category
   /product/all:
@@ -746,11 +804,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
-      security:
-      - BearerAuth: []
       summary: Get products
       tags:
-      - products
+      - product
   /product/create:
     post:
       consumes:
@@ -774,6 +830,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
@@ -790,7 +850,43 @@ paths:
       - BearerAuth: []
       summary: Create new product
       tags:
-      - products
+      - product
+  /product/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete product
+      parameters:
+      - description: product   uuid
+        example: 3afc3021-9395-11ed-a8b6-d8bbc1a27045
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Delete product
+      tags:
+      - product
   /user/all:
     get:
       consumes:
@@ -835,6 +931,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
@@ -867,6 +967,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
@@ -949,6 +1053,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:

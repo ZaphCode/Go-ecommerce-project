@@ -44,6 +44,10 @@ func (s *categoryService) GetAll() ([]domain.Category, error) {
 	return s.repo.Find()
 }
 
+func (s *categoryService) GetByID(ID uuid.UUID) (*domain.Category, error) {
+	return s.repo.FindByID(ID)
+}
+
 func (s *categoryService) GetByName(n string) (*domain.Category, error) {
 	cat, err := s.repo.FindByField("Name", n)
 

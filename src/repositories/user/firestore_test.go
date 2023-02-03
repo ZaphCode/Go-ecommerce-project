@@ -1,64 +1,90 @@
 package user
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
+	"cloud.google.com/go/firestore"
 	"github.com/ZaphCode/clean-arch/config"
 	"github.com/ZaphCode/clean-arch/src/domain"
-	"github.com/ZaphCode/clean-arch/src/repositories/shared"
+	"github.com/ZaphCode/clean-arch/src/domain/shared"
 	"github.com/ZaphCode/clean-arch/src/utils"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/suite"
 )
 
-func Test_firestoreUserRepositoryImpl_Find(t *testing.T) {
+var repo domain.UserRepository
+
+type FSUserRepoSuite struct {
+	suite.Suite
+	client *firestore.Client
+}
+
+// * Main test
+func TestFirestoreUserRepoSuite(t *testing.T) {
+	suite.Run(t, new(FSUserRepoSuite))
+}
+
+// Set up
+
+func (s *FSUserRepoSuite) SetupSuite() {
+	s.T().Log("Init setup!")
+
 	config.MustLoadConfig("./../../../config")
 	config.MustLoadFirebaseConfig("./../../../config")
 
-	tests := []struct {
-		name    string
-		r       *firestoreUserRepo
-		want    []domain.User
-		wantErr bool
-	}{
-		{
-			name: "Normal work",
-			r: &firestoreUserRepo{
-				FirestoreCrudRepo: shared.FirestoreCrudRepo[domain.User]{
-					Client:   utils.GetFirestoreClient(config.GetFirebaseApp()),
-					CollName: "users",
-				},
-			},
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			start := time.Now()
-			got, err := tt.r.Find()
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("firestoreUserRepositoryImpl.Find() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			utils.PrettyPrint(got)
-			fmt.Println("Took:", time.Since(start).Milliseconds(), "ms")
-		})
+	s.client = utils.GetFirestoreClient(config.GetFirebaseApp())
+
+	repo = NewFirestoreUserRepository(s.client, "user_test")
+}
+
+// Shot down
+
+func (s *FSUserRepoSuite) TearDownSuite() {
+	s.T().Log("Clean up suite!")
+
+	if err := utils.DeleteFirestoreCollection(
+		s.client,
+		"user_test",
+		10,
+	); err != nil {
+		s.FailNowf("Something went wrong: %s", err.Error())
 	}
 }
 
-// func Beanchmark_firestoreUserRepositoryImpl_Find(t *testing.B) {
-// 	config.LoadConfig("./../../../config")
-// 	config.LoadFirebaseConfig("./../../../config")
+func (s *FSUserRepoSuite) TestSaveUser() {
 
-// 	repo := &firestoreUserRepositoryImpl{
-// 		client:   utils.GetFirestoreClient(config.GetFirebaseApp()),
-// 		collName: "users",
-// 	}
-// 	for i := 0; i < t.N; i++ {
-// 		users, err := repo.Find()
-// 		if err != nil {
-// 			t.Errorf("firestoreUserRepositoryImpl.Find() error = %v, wantErr %v", err, tt.wantErr)
-// 			return
-// 		}
-// 		utils.PrettyPrint(users)
-// 	}
-// }
+	u := &domain.User{
+		DomainModel: shared.DomainModel{
+			ID:        uuid.New(),
+			CreatedAt: time.Now().Unix(),
+			UpdatedAt: time.Now().Unix(),
+		},
+		CustomerID:    "",
+		Username:      "paul",
+		Email:         "paul@test.com",
+		Role:          utils.UserRole,
+		Password:      "dafdfkdjsafdas",
+		VerifiedEmail: false,
+		ImageUrl:      "test",
+		Age:           19,
+	}
+
+	s.Require().NoError(repo.Save(u), "Error saving user")
+
+}
+
+func (s *FSUserRepoSuite) TestFind() {
+	_, err := repo.Find()
+
+	s.Require().NoErrorf(err, "Should not be error: %s", err.Error())
+
+}
+
+func (s *FSUserRepoSuite) TestFindByID() {
+	u, err := repo.FindByID(uuid.New())
+
+	s.Require().NoErrorf(err, "Sould not be error %s", err)
+
+	s.Require().Nil(u, "Sould be error: that user dont exists ")
+}

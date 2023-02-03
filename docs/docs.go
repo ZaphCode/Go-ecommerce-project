@@ -42,6 +42,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -343,11 +349,6 @@ const docTemplate = `{
         },
         "/category/all": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Get all categories",
                 "consumes": [
                     "application/json"
@@ -417,6 +418,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
                     "406": {
                         "description": "Not Acceptable",
                         "schema": {
@@ -438,13 +445,70 @@ const docTemplate = `{
                 }
             }
         },
-        "/product/all": {
-            "get": {
+        "/category/delete/{id}": {
+            "delete": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
+                "description": "Delete category",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Delete category",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "3afc3021-9395-11ed-a8b6-d8bbc1a27045",
+                        "description": "category uuid",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/all": {
+            "get": {
                 "description": "Get all products",
                 "consumes": [
                     "application/json"
@@ -453,7 +517,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "products"
+                    "product"
                 ],
                 "summary": "Get products",
                 "responses": {
@@ -487,7 +551,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "products"
+                    "product"
                 ],
                 "summary": "Create new product",
                 "parameters": [
@@ -514,6 +578,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
                     "406": {
                         "description": "Not Acceptable",
                         "schema": {
@@ -522,6 +592,62 @@ const docTemplate = `{
                     },
                     "422": {
                         "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Delete product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "3afc3021-9395-11ed-a8b6-d8bbc1a27045",
+                        "description": "product   uuid",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
                         "schema": {
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
                         }
@@ -611,6 +737,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
@@ -659,6 +791,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
                         }
                     },
                     "406": {
@@ -788,6 +926,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
                     "406": {
                         "description": "Not Acceptable",
                         "schema": {
@@ -811,6 +955,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO": {
+            "type": "object",
+            "properties": {
+                "detail": {
+                    "type": "string",
+                    "example": "the token is expired"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "invalid access token"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "failure"
+                }
+            }
+        },
         "github_com_ZaphCode_clean-arch_src_api_dtos.CategoriesRespOKDTO": {
             "type": "object",
             "properties": {

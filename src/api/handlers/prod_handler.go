@@ -6,6 +6,7 @@ import (
 	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/services/validation"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type ProductHandler struct {
@@ -30,7 +31,7 @@ func NewProdutHandler(
 // * Get products handler
 // @Summary      Get products
 // @Description  Get all products
-// @Tags         products
+// @Tags         product
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  dtos.ProductsRespOKDTO
@@ -49,7 +50,7 @@ func (h *ProductHandler) GetProducts(c *fiber.Ctx) error {
 // * Create product handler
 // @Summary      Create new product
 // @Description  Create product
-// @Tags         products
+// @Tags         product
 // @Accept       json
 // @Produce      json
 // @Security     BearerAuth
@@ -89,4 +90,32 @@ func (h *ProductHandler) CreateProducts(c *fiber.Ctx) error {
 	}
 
 	return h.RespOK(c, 201, "product created", prod)
+}
+
+// * Delete product handler
+// @Summary      Delete product
+// @Description  Delete product
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path string true "product   uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
+// @Success      201  {object}  dtos.RespOKDTO
+// @Failure      401  {object}  dtos.AuthRespErrDTO
+// @Failure      500  {object}  dtos.DetailRespErrDTO
+// @Failure      406  {object}  dtos.DetailRespErrDTO
+// @Router       /product/delete/{id} [delete]
+func (h *ProductHandler) DeleteProduct(c *fiber.Ctx) error {
+	id := c.Params("id")
+	uid, err := uuid.Parse(id)
+
+	if err != nil {
+		return h.RespErr(c, 406, "invalid category id")
+	}
+
+	if err := h.prodSvc.Delete(uid); err != nil {
+		return h.RespErr(c, 500, "error deleting product", err.Error())
+	}
+
+	return h.RespOK(c, 201, "product deleted")
 }

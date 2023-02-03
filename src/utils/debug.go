@@ -3,8 +3,8 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
+	"testing"
 )
 
 func PrettyPrint(data any) {
@@ -15,10 +15,18 @@ func PrettyPrint(data any) {
 	fmt.Printf(">>>>> %T: %s <<<<<\n", data, string(dataJSON))
 }
 
+func PrettyPrintTesting(t *testing.T, data any) {
+	dataJSON, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		t.Logf("--- error formating %T ---", data)
+	}
+	t.Logf(">>>>> %T: %s <<<<<\n", data, string(dataJSON))
+}
+
 func PrintWD() {
 	dir, err := os.Getwd()
 	if err != nil {
-		log.Println(">>> error reading the path")
+		fmt.Println(">>> error reading the path")
 	}
-	log.Println(">>>", dir)
+	fmt.Println(">>>", dir)
 }

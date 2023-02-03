@@ -39,6 +39,7 @@ func (s *Server) CreateProductRoutes(
 	r := s.app.Group("/api/product")
 	r.Get("/all", prodHdlr.GetProducts)
 	r.Post("/create", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.CreateProducts)
+	r.Delete("/delete/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.DeleteProduct)
 }
 
 func (s *Server) CreateCategoryRoutes(
@@ -48,4 +49,5 @@ func (s *Server) CreateCategoryRoutes(
 	r := s.app.Group("/api/category")
 	r.Get("/all", catHdlr.GetCategories)
 	r.Post("/create", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.ModeratorRole), catHdlr.CreateCategory)
+	r.Delete("/delete/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.ModeratorRole), catHdlr.DeleteCategory)
 }

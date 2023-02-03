@@ -8,10 +8,13 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/ZaphCode/clean-arch/src/domain/shared"
+	"github.com/ZaphCode/clean-arch/src/utils"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+//* Firestore generic repo
 
 type FirestoreCrudRepo[T shared.IDomainModel] struct {
 	Client    *firestore.Client
@@ -19,7 +22,25 @@ type FirestoreCrudRepo[T shared.IDomainModel] struct {
 	ModelName string
 }
 
+//* Constructor
+
+func NewFirestoreRepo[T shared.IDomainModel](
+	client *firestore.Client,
+	collName string,
+	modelName string,
+) *FirestoreCrudRepo[T] {
+	return &FirestoreCrudRepo[T]{
+		Client:    client,
+		CollName:  collName,
+		ModelName: modelName,
+	}
+}
+
 func (r *FirestoreCrudRepo[T]) Save(m *T) error {
+	if m == nil {
+		return fmt.Errorf("cannot accept nil value")
+	}
+
 	docRef := r.Client.Collection(r.CollName).Doc(r.getModelID(*m))
 
 	_, err := docRef.Create(context.TODO(), m)
@@ -35,7 +56,11 @@ func (r *FirestoreCrudRepo[T]) Find() ([]T, error) {
 	ss, err := r.Client.Collection(r.CollName).Documents(context.TODO()).GetAll()
 
 	if err != nil {
-		return nil, fmt.Errorf("documents.GetAll(): %w", err)
+		return nil, fmt.Errorf("error fetching %s: %w", r.CollName, err)
+	}
+
+	if len(ss) == 0 {
+		return []T{}, nil
 	}
 
 	ms := make([]T, len(ss))
@@ -44,7 +69,7 @@ func (r *FirestoreCrudRepo[T]) Find() ([]T, error) {
 		var m T
 
 		if err := s.DataTo(&m); err != nil {
-			return nil, fmt.Errorf("snapshot.DataTo(): %w", err)
+			return nil, fmt.Errorf("error parsing a %s: %w", r.ModelName, err)
 		}
 
 		ms[i] = m
@@ -53,6 +78,7 @@ func (r *FirestoreCrudRepo[T]) Find() ([]T, error) {
 	return ms, nil
 }
 
+// It returns the model or nil if not exists
 func (r *FirestoreCrudRepo[T]) FindByID(ID uuid.UUID) (*T, error) {
 	ref := r.Client.Collection(r.CollName).Doc(ID.String())
 
@@ -75,6 +101,10 @@ func (r *FirestoreCrudRepo[T]) FindByID(ID uuid.UUID) (*T, error) {
 }
 
 func (r *FirestoreCrudRepo[T]) FindWhere(fld, cond string, val any) ([]T, error) {
+	if _, err := utils.GetStructAttr(new(T), fld); err != nil {
+		return nil, err
+	}
+
 	ss, err := r.Client.
 		Collection(r.CollName).
 		Where(fld, cond, val).
@@ -101,6 +131,16 @@ func (r *FirestoreCrudRepo[T]) FindWhere(fld, cond string, val any) ([]T, error)
 }
 
 func (r *FirestoreCrudRepo[T]) FindByField(fld string, val any) (*T, error) {
+	f, err := utils.GetStructAttr(new(T), fld)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if reflect.TypeOf(val) != f.Type() {
+		return nil, fmt.Errorf("invalid type. the %s field only acepts %s values", fld, f.Type())
+	}
+
 	ss, err := r.Client.
 		Collection(r.CollName).
 		Where(fld, "==", val).
@@ -130,6 +170,10 @@ func (r *FirestoreCrudRepo[T]) FindByField(fld string, val any) (*T, error) {
 }
 
 func (r *FirestoreCrudRepo[T]) Update(ID uuid.UUID, m *T) error {
+	if m == nil {
+		return fmt.Errorf("cannot accept nil value")
+	}
+
 	ref := r.Client.Collection(r.CollName).Doc(ID.String())
 
 	updates := []firestore.Update{
@@ -159,9 +203,19 @@ func (r *FirestoreCrudRepo[T]) Update(ID uuid.UUID, m *T) error {
 }
 
 func (r *FirestoreCrudRepo[T]) UpdateField(ID uuid.UUID, fld string, val any) error {
+	f, err := utils.GetStructAttr(new(T), fld)
+
+	if err != nil {
+		return err
+	}
+
+	if reflect.TypeOf(val) != f.Type() {
+		return fmt.Errorf("invalid type. the %s field only acepts %s values", fld, f.Type())
+	}
+
 	ref := r.Client.Collection(r.CollName).Doc(ID.String())
 
-	_, err := ref.Update(context.TODO(), []firestore.Update{
+	_, err = ref.Update(context.TODO(), []firestore.Update{
 		{Path: fld, Value: val},
 		{Path: "UpdatedAt", Value: time.Now().Unix()},
 	})
