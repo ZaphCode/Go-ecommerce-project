@@ -1,14 +1,13 @@
 package domain
 
 import (
-	"github.com/ZaphCode/clean-arch/src/domain/shared"
 	"github.com/google/uuid"
 )
 
 //* Model
 
 type Product struct {
-	shared.DomainModel
+	Model
 	Category     string   `json:"category"`
 	Name         string   `json:"name"`
 	Description  string   `json:"description"`
@@ -22,7 +21,7 @@ type Product struct {
 //* Service
 
 type ProductService interface {
-	shared.ServiceCrudOperations[Product]
+	ServiceCrudOperations[Product]
 	GetLatestProds(lim int) ([]Product, error)
 	GetByTags(tags ...string) ([]Product, error)
 	GetByCategory(c string) ([]Product, error)
@@ -32,7 +31,7 @@ type ProductService interface {
 //* Repository
 
 type ProductRepository interface {
-	shared.RepositoryCrudOperations[Product]
+	RepositoryCrudOperations[Product]
 	FindOrderBy(field string, ord string) ([]Product, error)
 	FindWhere(field string, cond string, val any) ([]Product, error)
 	UpdateField(ID uuid.UUID, field string, val any) error

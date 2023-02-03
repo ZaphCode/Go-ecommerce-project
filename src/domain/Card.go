@@ -1,14 +1,13 @@
 package domain
 
 import (
-	"github.com/ZaphCode/clean-arch/src/domain/shared"
 	"github.com/google/uuid"
 )
 
 //* Model
 
 type Card struct {
-	shared.DomainModel
+	Model
 	UserID    uuid.UUID `json:"user_id"`
 	Country   string    `json:"country"`
 	Name      string    `json:"name"`
@@ -22,12 +21,12 @@ type Card struct {
 //* Service
 
 type CardService interface {
-	shared.ServiceCrudOperations[Card]
+	ServiceCrudOperations[Card]
 	GetAllByUserID(ID uuid.UUID) ([]Card, error)
 }
 
 //* Repository
 
 type CardRepository interface {
-	shared.RepositoryCrudOperations[Card]
+	RepositoryCrudOperations[Card]
 }

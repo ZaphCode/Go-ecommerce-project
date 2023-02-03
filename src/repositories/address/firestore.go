@@ -9,7 +9,7 @@ import (
 //* Implementation
 
 type firestoreAddressRepo struct {
-	shared.FirestoreCrudRepo[domain.Address]
+	shared.FirestoreRepo[domain.Address]
 }
 
 //* Constructor
@@ -19,7 +19,7 @@ func NewFirestoreAddressRepository(
 	collName string,
 ) domain.AddressRepository {
 	return &firestoreAddressRepo{
-		shared.FirestoreCrudRepo[domain.Address]{
+		shared.FirestoreRepo[domain.Address]{
 			Client:    client,
 			CollName:  collName,
 			ModelName: "address",

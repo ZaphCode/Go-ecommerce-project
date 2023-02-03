@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/firestore"
-	"github.com/ZaphCode/clean-arch/src/domain/shared"
+	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/utils"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -16,7 +16,7 @@ import (
 
 //* Firestore generic repo
 
-type FirestoreCrudRepo[T shared.IDomainModel] struct {
+type FirestoreRepo[T domain.DomainModel] struct {
 	Client    *firestore.Client
 	CollName  string
 	ModelName string
@@ -24,19 +24,19 @@ type FirestoreCrudRepo[T shared.IDomainModel] struct {
 
 //* Constructor
 
-func NewFirestoreRepo[T shared.IDomainModel](
+func NewFirestoreRepo[T domain.DomainModel](
 	client *firestore.Client,
 	collName string,
 	modelName string,
-) *FirestoreCrudRepo[T] {
-	return &FirestoreCrudRepo[T]{
+) *FirestoreRepo[T] {
+	return &FirestoreRepo[T]{
 		Client:    client,
 		CollName:  collName,
 		ModelName: modelName,
 	}
 }
 
-func (r *FirestoreCrudRepo[T]) Save(m *T) error {
+func (r *FirestoreRepo[T]) Save(m *T) error {
 	if m == nil {
 		return fmt.Errorf("cannot accept nil value")
 	}
@@ -52,7 +52,7 @@ func (r *FirestoreCrudRepo[T]) Save(m *T) error {
 	return nil
 }
 
-func (r *FirestoreCrudRepo[T]) Find() ([]T, error) {
+func (r *FirestoreRepo[T]) Find() ([]T, error) {
 	ss, err := r.Client.Collection(r.CollName).Documents(context.TODO()).GetAll()
 
 	if err != nil {
@@ -78,8 +78,7 @@ func (r *FirestoreCrudRepo[T]) Find() ([]T, error) {
 	return ms, nil
 }
 
-// It returns the model or nil if not exists
-func (r *FirestoreCrudRepo[T]) FindByID(ID uuid.UUID) (*T, error) {
+func (r *FirestoreRepo[T]) FindByID(ID uuid.UUID) (*T, error) {
 	ref := r.Client.Collection(r.CollName).Doc(ID.String())
 
 	s, err := ref.Get(context.TODO())
@@ -100,37 +99,7 @@ func (r *FirestoreCrudRepo[T]) FindByID(ID uuid.UUID) (*T, error) {
 	return &m, nil
 }
 
-func (r *FirestoreCrudRepo[T]) FindWhere(fld, cond string, val any) ([]T, error) {
-	if _, err := utils.GetStructAttr(new(T), fld); err != nil {
-		return nil, err
-	}
-
-	ss, err := r.Client.
-		Collection(r.CollName).
-		Where(fld, cond, val).
-		Documents(context.TODO()).
-		GetAll()
-
-	if err != nil {
-		return nil, fmt.Errorf("documents.GetAll(): %w", err)
-	}
-
-	ms := make([]T, len(ss))
-
-	for i, s := range ss {
-		var m T
-
-		if err := s.DataTo(&m); err != nil {
-			return nil, fmt.Errorf("snapshot.DataTo(): %w", err)
-		}
-
-		ms[i] = m
-	}
-
-	return ms, nil
-}
-
-func (r *FirestoreCrudRepo[T]) FindByField(fld string, val any) (*T, error) {
+func (r *FirestoreRepo[T]) FindByField(fld string, val any) (*T, error) {
 	f, err := utils.GetStructAttr(new(T), fld)
 
 	if err != nil {
@@ -169,7 +138,37 @@ func (r *FirestoreCrudRepo[T]) FindByField(fld string, val any) (*T, error) {
 	return &m, nil
 }
 
-func (r *FirestoreCrudRepo[T]) Update(ID uuid.UUID, m *T) error {
+func (r *FirestoreRepo[T]) FindWhere(fld, cond string, val any) ([]T, error) {
+	if _, err := utils.GetStructAttr(new(T), fld); err != nil {
+		return nil, err
+	}
+
+	ss, err := r.Client.
+		Collection(r.CollName).
+		Where(fld, cond, val).
+		Documents(context.TODO()).
+		GetAll()
+
+	if err != nil {
+		return nil, fmt.Errorf("documents.GetAll(): %w", err)
+	}
+
+	ms := make([]T, len(ss))
+
+	for i, s := range ss {
+		var m T
+
+		if err := s.DataTo(&m); err != nil {
+			return nil, fmt.Errorf("snapshot.DataTo(): %w", err)
+		}
+
+		ms[i] = m
+	}
+
+	return ms, nil
+}
+
+func (r *FirestoreRepo[T]) Update(ID uuid.UUID, m *T) error {
 	if m == nil {
 		return fmt.Errorf("cannot accept nil value")
 	}
@@ -202,7 +201,7 @@ func (r *FirestoreCrudRepo[T]) Update(ID uuid.UUID, m *T) error {
 	return nil
 }
 
-func (r *FirestoreCrudRepo[T]) UpdateField(ID uuid.UUID, fld string, val any) error {
+func (r *FirestoreRepo[T]) UpdateField(ID uuid.UUID, fld string, val any) error {
 	f, err := utils.GetStructAttr(new(T), fld)
 
 	if err != nil {
@@ -227,7 +226,7 @@ func (r *FirestoreCrudRepo[T]) UpdateField(ID uuid.UUID, fld string, val any) er
 	return nil
 }
 
-func (r *FirestoreCrudRepo[T]) Remove(ID uuid.UUID) error {
+func (r *FirestoreRepo[T]) Remove(ID uuid.UUID) error {
 	m, err := r.FindByID(ID)
 
 	if err != nil {
@@ -251,6 +250,6 @@ func (r *FirestoreCrudRepo[T]) Remove(ID uuid.UUID) error {
 
 // Helper
 
-func (r *FirestoreCrudRepo[T]) getModelID(m T) string {
+func (r *FirestoreRepo[T]) getModelID(m T) string {
 	return m.GetStringID()
 }

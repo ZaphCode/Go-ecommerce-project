@@ -9,7 +9,7 @@ import (
 //* Implementation
 
 type firestoreCategoryRepo struct {
-	shared.FirestoreCrudRepo[domain.Category]
+	shared.FirestoreRepo[domain.Category]
 }
 
 //* Constructor
@@ -19,7 +19,7 @@ func NewFirestoreCategoryRepository(
 	collName string,
 ) domain.CategoryRepository {
 	return &firestoreCategoryRepo{
-		FirestoreCrudRepo: shared.FirestoreCrudRepo[domain.Category]{
+		shared.FirestoreRepo[domain.Category]{
 			Client:    client,
 			CollName:  collName,
 			ModelName: "category",

@@ -9,7 +9,7 @@ import (
 //* Implementation
 
 type firestoreCardRepo struct {
-	shared.FirestoreCrudRepo[domain.Card]
+	shared.FirestoreRepo[domain.Card]
 }
 
 //* Constructor
@@ -19,7 +19,7 @@ func NewFirestoreCardRepository(
 	collName string,
 ) domain.CardRepository {
 	return &firestoreCardRepo{
-		shared.FirestoreCrudRepo[domain.Card]{
+		shared.FirestoreRepo[domain.Card]{
 			Client:    client,
 			CollName:  collName,
 			ModelName: "card",

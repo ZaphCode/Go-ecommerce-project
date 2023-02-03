@@ -7,8 +7,6 @@
         "contact": {},
         "version": "1.6.9"
     },
-    "host": "localhost:9000",
-    "basePath": "/api",
     "paths": {
         "/auth/me": {
             "get": {

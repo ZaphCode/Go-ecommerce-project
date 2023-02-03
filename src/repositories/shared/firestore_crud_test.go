@@ -6,71 +6,26 @@ import (
 	"time"
 
 	"github.com/ZaphCode/clean-arch/config"
-	"github.com/ZaphCode/clean-arch/src/domain/shared"
+	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/utils"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
 )
 
-type ExampleModel struct {
-	shared.DomainModel
-	Name  string   `json:"name"`
-	Tags  []string `json:"tags"`
-	Check bool     `json:"check"`
-	Num   int      `json:"num"`
-	Float float64  `json:"float"`
-}
-
-var m1 = &ExampleModel{
-	DomainModel: shared.DomainModel{
-		ID:        uuid.MustParse("1551f9f0-825a-438c-9307-90cbc0bd5d63"),
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
-	},
-	Name:  "model 1",
-	Tags:  []string{"A", "B", "C"},
-	Check: true,
-	Num:   143,
-	Float: 42.5,
-}
-
-var m2 = &ExampleModel{
-	DomainModel: shared.DomainModel{
-		ID:        uuid.MustParse("9f44a912-40f6-4ca6-b672-4911e3453443"),
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
-	},
-	Name:  "model 2",
-	Check: true,
-	Num:   143,
-	Float: 42.5,
-}
-
-var m3 = &ExampleModel{
-	DomainModel: shared.DomainModel{
-		ID:        uuid.MustParse("aa1a624e-555a-4b08-8bb4-3ed5aca074d7"),
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
-	},
-	Name:  "model 3",
-	Num:   69,
-	Float: 33.33,
-}
-
-type FSGenRepoSuite struct {
+type FirestoreRepoSuite struct {
 	suite.Suite
-	repo *FirestoreCrudRepo[ExampleModel]
+	repo *FirestoreRepo[ExampleModel]
 }
 
 //* Main
 
-func TestFSGenRepoSuite(t *testing.T) {
-	suite.Run(t, new(FSGenRepoSuite))
+func TestFirestoreRepoSuite(t *testing.T) {
+	suite.Run(t, new(FirestoreRepoSuite))
 }
 
 //* ------- Life Cycle ------------------
 
-func (s *FSGenRepoSuite) SetupSuite() {
+func (s *FirestoreRepoSuite) SetupSuite() {
 	s.T().Log("----------- Init setup! -----------")
 
 	config.MustLoadConfig("./../../../config")
@@ -81,7 +36,7 @@ func (s *FSGenRepoSuite) SetupSuite() {
 	s.repo = NewFirestoreRepo[ExampleModel](client, "example", "model")
 }
 
-func (s *FSGenRepoSuite) TearDownSuite() {
+func (s *FirestoreRepoSuite) TearDownSuite() {
 	s.T().Log("----------- Clean up suite! -----------")
 
 	if err := utils.DeleteFirestoreCollection(
@@ -93,12 +48,12 @@ func (s *FSGenRepoSuite) TearDownSuite() {
 	}
 }
 
-func (s *FSGenRepoSuite) SetupTest() {
+func (s *FirestoreRepoSuite) SetupTest() {
 	s.Require().NoError(s.repo.Save(m1), "saving model 1 error")
 	s.Require().NoError(s.repo.Save(m2), "saving model 2 error")
 }
 
-func (s *FSGenRepoSuite) TearDownTest() {
+func (s *FirestoreRepoSuite) TearDownTest() {
 	s.NoError(utils.DeleteFirestoreCollection(
 		s.repo.Client,
 		"example",
@@ -106,7 +61,7 @@ func (s *FSGenRepoSuite) TearDownTest() {
 	), "error deleting all this")
 }
 
-func (s *FSGenRepoSuite) BeforeTest(suiteName, testName string) {
+func (s *FirestoreRepoSuite) BeforeTest(suiteName, testName string) {
 	if testName == "TestRemove" {
 		s.Require().NoError(s.repo.Save(m3), "error creating model 3")
 	}
@@ -131,7 +86,7 @@ func (s *FSGenRepoSuite) BeforeTest(suiteName, testName string) {
 
 //* -------------- Actual Test ---------------------
 
-func (s *FSGenRepoSuite) TestSave() {
+func (s *FirestoreRepoSuite) TestSave() {
 	testCases := []struct {
 		desc      string
 		expectErr bool
@@ -141,7 +96,7 @@ func (s *FSGenRepoSuite) TestSave() {
 			desc:      "normal saving",
 			expectErr: false,
 			input: &ExampleModel{
-				DomainModel: shared.DomainModel{
+				Model: domain.Model{
 					ID:        uuid.New(),
 					CreatedAt: time.Now().Unix(),
 					UpdatedAt: time.Now().Unix(),
@@ -175,7 +130,7 @@ func (s *FSGenRepoSuite) TestSave() {
 	}
 }
 
-func (s *FSGenRepoSuite) TestFind() {
+func (s *FirestoreRepoSuite) TestFind() {
 	d, err := s.repo.Find()
 
 	s.NoError(err, "should not be error")
@@ -183,7 +138,7 @@ func (s *FSGenRepoSuite) TestFind() {
 	utils.PrettyPrintTesting(s.T(), d)
 }
 
-func (s *FSGenRepoSuite) TestFindByID() {
+func (s *FirestoreRepoSuite) TestFindByID() {
 	testCases := []struct {
 		desc     string
 		id       uuid.UUID
@@ -223,88 +178,7 @@ func (s *FSGenRepoSuite) TestFindByID() {
 	}
 }
 
-func (s *FSGenRepoSuite) TestUpdate() {
-	testCases := []struct {
-		desc      string
-		id        uuid.UUID
-		expectErr bool
-		input     *ExampleModel
-	}{
-		{
-			desc:      "model that doest't exist",
-			id:        uuid.New(),
-			expectErr: true,
-			input:     &ExampleModel{Name: "model updated"},
-		},
-		{
-			desc:      "nil model",
-			id:        m1.ID,
-			expectErr: true,
-			input:     nil,
-		},
-	}
-	for i, tC := range testCases {
-		tC = testCases[i]
-		s.Run(tC.desc, func() {
-			err := s.repo.Update(tC.id, tC.input)
-
-			s.Require().Equal((err != nil), tC.expectErr, "expect error fail")
-		})
-	}
-}
-
-func (s *FSGenRepoSuite) TestUpdateField() {
-	testCases := []struct {
-		desc      string
-		id        uuid.UUID
-		expectErr bool
-		field     string
-		val       any
-	}{
-		{
-			desc:      "proper work",
-			id:        m1.ID,
-			expectErr: false,
-			field:     "Name",
-			val:       "tomas",
-		},
-		{
-			desc:      "model that doest't exist",
-			id:        uuid.New(),
-			expectErr: true,
-			field:     "Name",
-			val:       "tomas",
-		},
-		{
-			desc:      "field that does'nt exist",
-			id:        m2.ID,
-			expectErr: true,
-			field:     "Email",
-			val:       "tomas@gmail.com",
-		},
-		{
-			desc:      "invalid val type",
-			id:        m1.ID,
-			expectErr: true,
-			field:     "Num",
-			val:       "random mesage",
-		},
-	}
-	for i, tC := range testCases {
-		tC = testCases[i]
-		s.Run(tC.desc, func() {
-			err := s.repo.UpdateField(tC.id, tC.field, tC.val)
-
-			if err != nil {
-				s.T().Log(err.Error())
-			}
-
-			s.Require().Equal((err != nil), tC.expectErr, "expect error fail")
-		})
-	}
-}
-
-func (s *FSGenRepoSuite) TestFindByField() {
+func (s *FirestoreRepoSuite) TestFindByField() {
 	testCases := []struct {
 		desc      string
 		wantErr   bool
@@ -362,7 +236,7 @@ func (s *FSGenRepoSuite) TestFindByField() {
 	}
 }
 
-func (s *FSGenRepoSuite) TestFindWhere() {
+func (s *FirestoreRepoSuite) TestFindWhere() {
 	testCases := []struct {
 		desc       string
 		field      string
@@ -428,7 +302,88 @@ func (s *FSGenRepoSuite) TestFindWhere() {
 	}
 }
 
-func (s *FSGenRepoSuite) TestRemove() {
+func (s *FirestoreRepoSuite) TestUpdate() {
+	testCases := []struct {
+		desc      string
+		id        uuid.UUID
+		expectErr bool
+		input     *ExampleModel
+	}{
+		{
+			desc:      "model that doest't exist",
+			id:        uuid.New(),
+			expectErr: true,
+			input:     &ExampleModel{Name: "model updated"},
+		},
+		{
+			desc:      "nil model",
+			id:        m1.ID,
+			expectErr: true,
+			input:     nil,
+		},
+	}
+	for i, tC := range testCases {
+		tC = testCases[i]
+		s.Run(tC.desc, func() {
+			err := s.repo.Update(tC.id, tC.input)
+
+			s.Require().Equal((err != nil), tC.expectErr, "expect error fail")
+		})
+	}
+}
+
+func (s *FirestoreRepoSuite) TestUpdateField() {
+	testCases := []struct {
+		desc      string
+		id        uuid.UUID
+		expectErr bool
+		field     string
+		val       any
+	}{
+		{
+			desc:      "proper work",
+			id:        m1.ID,
+			expectErr: false,
+			field:     "Name",
+			val:       "tomas",
+		},
+		{
+			desc:      "model that doest't exist",
+			id:        uuid.New(),
+			expectErr: true,
+			field:     "Name",
+			val:       "tomas",
+		},
+		{
+			desc:      "field that does'nt exist",
+			id:        m2.ID,
+			expectErr: true,
+			field:     "Email",
+			val:       "tomas@gmail.com",
+		},
+		{
+			desc:      "invalid val type",
+			id:        m1.ID,
+			expectErr: true,
+			field:     "Num",
+			val:       "random mesage",
+		},
+	}
+	for i, tC := range testCases {
+		tC = testCases[i]
+		s.Run(tC.desc, func() {
+			err := s.repo.UpdateField(tC.id, tC.field, tC.val)
+
+			if err != nil {
+				s.T().Log(err.Error())
+			}
+
+			s.Require().Equal((err != nil), tC.expectErr, "expect error fail")
+		})
+	}
+}
+
+func (s *FirestoreRepoSuite) TestRemove() {
 	testCases := []struct {
 		desc    string
 		id      uuid.UUID

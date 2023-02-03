@@ -74,7 +74,7 @@ func (s *Server) SetGlobalMiddlewares() {
 	s.app.Use(recover.New())
 	s.app.Use(logger.New())
 
-	s.app.Get("/health", func(c *fiber.Ctx) error {
+	s.app.Get("/api/health", func(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
 			"healthy": true,
 			"message": "Hello world!",

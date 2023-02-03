@@ -27,17 +27,9 @@ func init() {
 // @version         1.6.9
 // @description     This is a sample server celler server.
 // @termsOfService  http://swagger.io/terms/
-//// @contact.name   API Support
-//// @contact.url    http://www.swagger.io/support
-//// @contact.email  support@swagger.io
-
-//// @license.name  Apache 2.0
-//// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
-
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name X-Access-Token
-
 // @host      localhost:9000
 // @BasePath  /api
 func main() {
@@ -69,8 +61,10 @@ func main() {
 	//* Server
 	server := api.New()
 
+	//* Setup
 	server.SetGlobalMiddlewares()
 
+	//* Routes
 	server.CreateAuthRoutes(authHdlr, authMdlw)
 	server.CreateUserRoutes(usrHdlr, authMdlw)
 	server.CreateProductRoutes(prodHdlr, authMdlw)

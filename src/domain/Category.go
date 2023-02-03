@@ -1,14 +1,13 @@
 package domain
 
 import (
-	"github.com/ZaphCode/clean-arch/src/domain/shared"
 	"github.com/google/uuid"
 )
 
 //* Model
 
 type Category struct {
-	shared.DomainModel
+	Model
 	Name string `json:"name"`
 }
 

@@ -1,14 +1,13 @@
 package domain
 
 import (
-	"github.com/ZaphCode/clean-arch/src/domain/shared"
 	"github.com/google/uuid"
 )
 
 //* Model
 
 type Order struct {
-	shared.DomainModel
+	Model
 	UserID    uuid.UUID `json:"user_id"`
 	PaymentID string    `json:"payment_id"`
 	Amount    int64     `json:"amount"`

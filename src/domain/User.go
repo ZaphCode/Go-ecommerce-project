@@ -1,14 +1,13 @@
 package domain
 
 import (
-	"github.com/ZaphCode/clean-arch/src/domain/shared"
 	"github.com/google/uuid"
 )
 
 // * Model
 
 type User struct {
-	shared.DomainModel
+	Model
 	CustomerID    string `json:"customer_id"`
 	Username      string `json:"username"`
 	Email         string `json:"email"`
@@ -22,7 +21,7 @@ type User struct {
 //* Service
 
 type UserService interface {
-	shared.ServiceCrudOperations[User]
+	ServiceCrudOperations[User]
 	GetByEmail(email string) (*User, error)
 	VerifyEmail(ID uuid.UUID) error
 	UpdatePassword(ID uuid.UUID, pass string) error
@@ -31,7 +30,7 @@ type UserService interface {
 //* Repository
 
 type UserRepository interface {
-	shared.RepositoryCrudOperations[User]
+	RepositoryCrudOperations[User]
 	FindByField(field string, val any) (*User, error)
 	UpdateField(ID uuid.UUID, field string, val any) error
 }

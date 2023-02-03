@@ -1,14 +1,13 @@
 package domain
 
 import (
-	"github.com/ZaphCode/clean-arch/src/domain/shared"
 	"github.com/google/uuid"
 )
 
 //* Model
 
 type Address struct {
-	shared.DomainModel
+	Model
 	UserID     uuid.UUID `json:"user_id"`
 	Name       string    `json:"name"`
 	City       string    `json:"city"`
@@ -22,12 +21,12 @@ type Address struct {
 //* Service
 
 type AddressService interface {
-	shared.ServiceCrudOperations[Address]
+	ServiceCrudOperations[Address]
 	GetAllByUserID(ID uuid.UUID) ([]Address, error)
 }
 
 //* Repository
 
 type AddressRepository interface {
-	shared.RepositoryCrudOperations[Address]
+	RepositoryCrudOperations[Address]
 }

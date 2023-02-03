@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"sync"
-	"time"
 
 	"github.com/ZaphCode/clean-arch/src/domain"
-	dshared "github.com/ZaphCode/clean-arch/src/domain/shared"
 	"github.com/google/uuid"
 )
 
@@ -25,11 +23,11 @@ func NewMemoryUserRepository() domain.UserRepository {
 		mu: sync.RWMutex{},
 		store: map[uuid.UUID]domain.User{
 			uuid.MustParse("8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"): {
-				DomainModel: dshared.DomainModel{
-					ID:        uuid.MustParse("8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"),
-					CreatedAt: time.Now().Unix(),
-					UpdatedAt: time.Now().Unix(),
-				},
+				// DomainModel: dshared.DomainModel{
+				// 	ID:        uuid.MustParse("8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"),
+				// 	CreatedAt: time.Now().Unix(),
+				// 	UpdatedAt: time.Now().Unix(),
+				// },
 				CustomerID:    "",
 				Username:      "John Doe",
 				Email:         "john@gmail.com",
@@ -40,11 +38,11 @@ func NewMemoryUserRepository() domain.UserRepository {
 				Age:           15,
 			},
 			uuid.MustParse("3afc3021-9395-11ed-a8b6-d8bbc1a27048"): {
-				DomainModel: dshared.DomainModel{
-					ID:        uuid.MustParse("3afc3021-9395-11ed-a8b6-d8bbc1a27048"),
-					CreatedAt: time.Now().Unix(),
-					UpdatedAt: time.Now().Unix(),
-				},
+				// DomainModel: dshared.DomainModel{
+				// 	ID:        uuid.MustParse("3afc3021-9395-11ed-a8b6-d8bbc1a27048"),
+				// 	CreatedAt: time.Now().Unix(),
+				// 	UpdatedAt: time.Now().Unix(),
+				// },
 				CustomerID:    "",
 				Username:      "Foo Bar",
 				Email:         "foo@gmail.com",
