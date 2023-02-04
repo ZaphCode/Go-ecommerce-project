@@ -1,12 +1,21 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a sample server celler server.",
-        "title": "Swagger Example API",
+        "description": "This is a sample swagger for Fiber",
+        "title": "Fiber Example API",
         "termsOfService": "http://swagger.io/terms/",
-        "contact": {},
-        "version": "1.6.9"
+        "contact": {
+            "name": "API Support",
+            "email": "fiber@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
     },
+    "host": "localhost:9000",
+    "basePath": "/api",
     "paths": {
         "/auth/me": {
             "get": {

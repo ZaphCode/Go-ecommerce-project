@@ -1,3 +1,4 @@
+basePath: /api
 definitions:
   github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO:
     properties:
@@ -459,12 +460,18 @@ definitions:
         example: failure
         type: string
     type: object
+host: localhost:9000
 info:
-  contact: {}
-  description: This is a sample server celler server.
+  contact:
+    email: fiber@swagger.io
+    name: API Support
+  description: This is a sample swagger for Fiber
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Swagger Example API
-  version: 1.6.9
+  title: Fiber Example API
+  version: "1.0"
 paths:
   /auth/{provider}/callback:
     get:

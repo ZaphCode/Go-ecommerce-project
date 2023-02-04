@@ -20,7 +20,7 @@ func PrettyPrintTesting(t *testing.T, data any) {
 	if err != nil {
 		t.Logf("--- error formating %T ---", data)
 	}
-	t.Logf(">>>>> %T: %s <<<<<\n", data, string(dataJSON))
+	t.Logf("\n\n>>>>> %T: %s <<<<<\n\n", data, string(dataJSON))
 }
 
 func PrintWD() {

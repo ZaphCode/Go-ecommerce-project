@@ -60,6 +60,17 @@ func TestItemInSlice(t *testing.T) {
 }
 
 func TestGetStructFields(t *testing.T) {
+	type veicle struct {
+		speed int
+		Name  string
+	}
+
+	type moto struct {
+		veicle
+		Wheels int
+		brand  string
+	}
+
 	type args struct {
 		s interface{}
 	}
@@ -70,6 +81,12 @@ func TestGetStructFields(t *testing.T) {
 		want    []string
 		wantErr bool
 	}{
+		{
+			name:    "Get the composited field",
+			args:    args{s: new(moto)},
+			want:    []string{"veicle", "Wheels", "brand"},
+			wantErr: false,
+		},
 		{
 			name:    "Empty struct",
 			args:    args{s: struct{}{}},
@@ -137,9 +154,9 @@ func TestGetStructFields(t *testing.T) {
 
 			got, err := GetStructFields(tt.args.s)
 
-			r.Equal((err != nil), tt.wantErr, "expect err fail")
+			r.Equal(tt.wantErr, (err != nil), "expect err fail")
 
-			r.Equalf(got, tt.want, "GetStructFields() = %v, want %v", got, tt.want)
+			r.Equalf(tt.want, got, "GetStructFields() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -248,6 +265,55 @@ func TestGetStructAttr(t *testing.T) {
 				t.Log(got.Interface())
 				t.Log(got.Type())
 			}
+		})
+	}
+}
+
+func TestIsZeroValue(t *testing.T) {
+	testCases := []struct {
+		desc   string
+		value  interface{}
+		expect bool
+	}{
+		{
+			desc:   "no zero string",
+			value:  "hello",
+			expect: false,
+		},
+		{
+			desc:   "zero string",
+			value:  "",
+			expect: true,
+		},
+		{
+			desc:   "no zero int",
+			value:  10,
+			expect: false,
+		},
+		{
+			desc:   "zero int",
+			value:  0,
+			expect: true,
+		},
+		{
+			desc:   "no zero float",
+			value:  float32(154),
+			expect: false,
+		},
+		{
+			desc:   "no zero struct",
+			value:  struct{ A int }{1},
+			expect: false,
+		},
+		{
+			desc:   "zero struct",
+			value:  struct{ A string }{},
+			expect: true,
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			require.Equal(t, tC.expect, isZeroValue(tC.value), "wrong result")
 		})
 	}
 }

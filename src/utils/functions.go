@@ -79,3 +79,7 @@ func GetStructAttr(strc interface{}, fieldName string) (reflect.Value, error) {
 
 	return fld, nil
 }
+
+func isZeroValue(value interface{}) bool {
+	return reflect.DeepEqual(value, reflect.Zero(reflect.TypeOf(value)).Interface())
+}

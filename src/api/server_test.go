@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -17,6 +18,7 @@ import (
 	"github.com/ZaphCode/clean-arch/src/services/email"
 	"github.com/ZaphCode/clean-arch/src/services/validation"
 	"github.com/ZaphCode/clean-arch/src/utils"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -26,9 +28,13 @@ type ServerSuite struct {
 	cfg    *config.Config
 }
 
+//* Main
+
 func TestServerSuite(t *testing.T) {
 	suite.Run(t, new(ServerSuite))
 }
+
+//* Life cycle
 
 func (s *ServerSuite) SetupSuite() {
 	s.T().Logf("\n----------- SETUP ------------")
@@ -77,105 +83,136 @@ func (s *ServerSuite) SetupSuite() {
 	s.server = server
 }
 
+//* Tests
+
 type jsonMap map[string]interface{}
 
 type tryRouteTestCase struct {
 	desc          string
 	reqMaker      func() *http.Request
 	bodyValidator func(jsm jsonMap)
-	checkReqBody  bool
 	wantStatus    int
+	showResp      bool
 }
 
-func (s *ServerSuite) TestTableRandomRoutes() {
+func (s *ServerSuite) TestRandomRoutes() {
 	testCases := []tryRouteTestCase{
 		{
 			desc: "Not found",
 			reqMaker: func() *http.Request {
 				req, err := http.NewRequest(http.MethodGet, "/api/sexogratis", nil)
-				s.NoError(err, "req error")
+				s.Require().NoError(err, "req error")
 				return req
 			},
-			//wantErr:      false,
-			checkReqBody: true,
-			wantStatus:   http.StatusNotFound,
+			showResp:   true,
+			wantStatus: http.StatusNotFound,
 		},
 		{
 			desc: "Healty check",
 			reqMaker: func() *http.Request {
 				req, err := http.NewRequest(http.MethodGet, "/api/health", nil)
-				s.NoError(err, "req error")
+				s.Require().NoError(err, "req error")
 				return req
 			},
-			checkReqBody: true,
-			//wantErr:      false,
+			showResp:   true,
 			wantStatus: http.StatusOK,
 		},
 	}
-	for _, tC := range testCases {
-		s.Run(tC.desc, func() {
-			res, err := s.server.TryRoute(tC.reqMaker())
 
-			s.Require().NoError(err, "response error")
-
-			s.Require().Equal(res.StatusCode, tC.wantStatus, "wrong status code")
-
-			resBody, err := io.ReadAll(res.Body)
-
-			s.Require().NoError(err, "response error")
-
-			defer res.Body.Close()
-
-			s.T().Logf("\n\n XXX Response: %s \n\n", string(resBody))
-		})
-	}
+	s.runRequests(testCases)
 }
 
-func (s *ServerSuite) TestTableProductRoutes() {
-	r := s.Require()
-
+func (s *ServerSuite) TestProductRoutes() {
 	testCases := []tryRouteTestCase{
 		{
-			desc: "Get all products",
+			desc: "get all products",
 			reqMaker: func() *http.Request {
 				req, err := http.NewRequest(http.MethodGet, "/api/product/all", nil)
-				r.NoError(err, "req error")
+				s.Require().NoError(err, "req error")
 				return req
 			},
 			bodyValidator: func(jsm jsonMap) {
 				status, ok := jsm["status"]
-
-				r.True(ok, "should contain status")
-
-				r.Equal(status, "success", "status sould be success")
+				s.True(ok, "should contain status")
+				s.Equal(status, "success", "status sould be success")
 			},
-			checkReqBody: true,
-			wantStatus:   http.StatusOK,
+			wantStatus: http.StatusOK,
+		},
+		{
+			desc: "get product: invalid id",
+			reqMaker: func() *http.Request {
+				randStr := utils.RandomString(20)
+				req, err := http.NewRequest(http.MethodGet, "/api/product/get/"+randStr, nil)
+				s.Require().NoError(err, "req error")
+				return req
+			},
+			showResp:   true,
+			wantStatus: http.StatusNotAcceptable,
+		},
+		{
+			desc: "get product: valid id but not found",
+			reqMaker: func() *http.Request {
+				idStr := uuid.New().String()
+				req, err := http.NewRequest(http.MethodGet, "/api/product/get/"+idStr, nil)
+				s.Require().NoError(err, "req error")
+				return req
+			},
+			bodyValidator: func(jsm jsonMap) {
+				status, ok := jsm["status"]
+				s.True(ok, "should contain status")
+				_, ok = jsm["message"]
+				s.True(ok, "should contain message")
+				s.Equal(status, "failure", "status sould be success")
+			},
+			wantStatus: http.StatusNotFound,
 		},
 	}
-	for _, tC := range testCases {
+
+	s.runRequests(testCases)
+}
+
+func (s *ServerSuite) runRequests(testCases []tryRouteTestCase) {
+	for i, tC := range testCases {
+		tC = testCases[i]
 		s.Run(tC.desc, func() {
 			res, err := s.server.TryRoute(tC.reqMaker())
 
-			r.NoError(err, "response error")
+			s.NoError(err, "request error!")
 
-			r.Equal(res.StatusCode, tC.wantStatus, "wrong status code")
-
-			resBody, err := io.ReadAll(res.Body)
-
-			r.NoError(err, "response error")
+			s.Equal(tC.wantStatus, res.StatusCode, "wrong status code!")
 
 			defer res.Body.Close()
 
-			s.T().Logf("\n\n XXX Response: %s \n\n", string(resBody))
+			resBody, err := io.ReadAll(res.Body)
 
-			if tC.checkReqBody {
+			s.Require().NoError(err, "readig response error!")
+
+			if tC.showResp {
+				s.showResponse(res.Request.URL.Path, resBody)
+			}
+
+			if tC.bodyValidator != nil {
+
+				s.Equal("application/json", res.Header.Get("Content-Type"), "response should be json!")
+
 				jsm := make(jsonMap)
 
-				r.NoError(json.Unmarshal(resBody, &jsm), "Unmarshall err")
+				s.NoError(json.Unmarshal(resBody, &jsm), "unmarshall err")
 
 				tC.bodyValidator(jsm)
+
 			}
 		})
 	}
+}
+
+func (s *ServerSuite) showResponse(path string, resp []byte) {
+	result := string(resp)
+	buff := new(bytes.Buffer)
+
+	if err := json.Indent(buff, resp, "", "    "); err == nil {
+		result = "(JSON) " + buff.String()
+	}
+
+	s.T().Logf("\n\n >>> %s : %s \n\n", path, result)
 }

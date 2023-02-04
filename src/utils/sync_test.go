@@ -53,10 +53,7 @@ func (s *SyncMapSuite) SetupTest() {
 }
 
 func (s *SyncMapSuite) TearDownTest() {
-	s.T().Log("\n--------- Down ----------")
-
 	s.syancMap.Clear()
-
 	s.Equal(s.syancMap.Count(), 0, "should be 0 because it was cleared")
 }
 

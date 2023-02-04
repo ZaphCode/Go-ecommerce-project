@@ -47,6 +47,39 @@ func (h *ProductHandler) GetProducts(c *fiber.Ctx) error {
 	return h.RespOK(c, 200, "all products", ps)
 }
 
+// * Get product by ID handler
+// @Summary      Get product
+// @Description  Get product by id
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        id   path string true "product   uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
+// @Success      201  {object}  dtos.RespOKDTO
+// @Failure      500  {object}  dtos.DetailRespErrDTO
+// @Failure      406  {object}  dtos.DetailRespErrDTO
+// @Failure      404  {object}  dtos.RespErrDTO
+// @Router       /product/get/{id} [get]
+func (h *ProductHandler) GetProduct(c *fiber.Ctx) error {
+	id := c.Params("id")
+	uid, err := uuid.Parse(id)
+
+	if err != nil {
+		return h.RespErr(c, 406, "invalid product id")
+	}
+
+	prod, err := h.prodSvc.GetByID(uid)
+
+	if err != nil {
+		return h.RespErr(c, 500, "error getting product", err.Error())
+	}
+
+	if prod == nil {
+		return h.RespErr(c, 404, "product not found")
+	}
+
+	return h.RespOK(c, 201, "product found", prod)
+}
+
 // * Create product handler
 // @Summary      Create new product
 // @Description  Create product
@@ -110,7 +143,7 @@ func (h *ProductHandler) DeleteProduct(c *fiber.Ctx) error {
 	uid, err := uuid.Parse(id)
 
 	if err != nil {
-		return h.RespErr(c, 406, "invalid category id")
+		return h.RespErr(c, 406, "invalid product id")
 	}
 
 	if err := h.prodSvc.Delete(uid); err != nil {

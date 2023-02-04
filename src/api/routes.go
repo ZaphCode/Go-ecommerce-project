@@ -38,6 +38,7 @@ func (s *Server) CreateProductRoutes(
 ) {
 	r := s.app.Group("/api/product")
 	r.Get("/all", prodHdlr.GetProducts)
+	r.Get("/get/:id", prodHdlr.GetProduct)
 	r.Post("/create", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.CreateProducts)
 	r.Delete("/delete/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.DeleteProduct)
 }
