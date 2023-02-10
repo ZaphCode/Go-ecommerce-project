@@ -93,17 +93,15 @@ func (s *userService) UpdatePassword(ID uuid.UUID, password string) error {
 	return s.repo.UpdateField(ID, "Password", string(hash))
 }
 
-func (s *userService) Update(ID uuid.UUID, user *domain.User) error {
-	if user.Role != "" && !utils.ItemInSlice(user.Role, utils.GetUserRoles()) {
-		return fmt.Errorf("invalid role")
-	}
-	return s.repo.Update(ID, &domain.User{
+func (s *userService) Update(ID uuid.UUID, uf domain.UpdateFields) error {
+	/*&domain.User{
 		Username:   user.Username,
 		CustomerID: user.CustomerID,
 		ImageUrl:   user.ImageUrl,
 		Age:        user.Age,
 		Role:       user.Role,
-	})
+	}*/
+	return s.repo.Update(ID, uf)
 }
 
 func (s *userService) Delete(ID uuid.UUID) error {

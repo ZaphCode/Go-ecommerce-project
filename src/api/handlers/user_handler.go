@@ -136,7 +136,6 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 // @Failure      400  {object}  dtos.ValidationRespErrDTO
 // @Router       /user/update/{id} [put]
 func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
-	body := dtos.UpdateUserDTO{}
 	id := c.Params("id")
 	uid, err := uuid.Parse(id)
 
@@ -144,17 +143,23 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 		return h.RespErr(c, 406, "invalid user id")
 	}
 
+	body := dtos.UpdateUserDTO{}
+
 	if err := c.BodyParser(&body); err != nil {
 		return h.RespErr(c, 422, "error parsing the request body", err.Error())
 	}
+
+	uflds := make(domain.UpdateFields)
 
 	if err := h.vldSvc.Validate(&body); err != nil {
 		return h.RespValErr(c, 400, "one or more fields are invalid", err)
 	}
 
-	u := body.AdaptToUser()
+	if err := c.BodyParser(&uflds); err != nil {
+		return h.RespErr(c, 422, "error parsing the request body", err.Error())
+	}
 
-	if err := h.usrSvc.Update(uid, &u); err != nil {
+	if err := h.usrSvc.Update(uid, uflds); err != nil {
 		return h.RespErr(c, 500, "create user error", err.Error())
 	}
 

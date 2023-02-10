@@ -157,9 +157,9 @@ func (s *SyncMapSuite) TestCount() {
 }
 
 func (s *SyncMapSuite) TestExists() {
-	s.False(s.syancMap.exists(uuid.New()), "it should not exists")
+	s.False(s.syancMap.Exists(uuid.New()), "it should not exists")
 
-	s.True(s.syancMap.exists(m1.ID), "should exists")
+	s.True(s.syancMap.Exists(m1.ID), "should exists")
 }
 
 func (s *SyncMapSuite) TestGetAll() {

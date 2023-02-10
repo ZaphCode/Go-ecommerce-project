@@ -54,13 +54,7 @@ func GetStructFields(s interface{}) ([]string, error) {
 	return fields, nil
 }
 
-func GetStructAttr(strc interface{}, fieldName string) (reflect.Value, error) {
-	zero := reflect.Value{}
-
-	if strc == nil {
-		return zero, fmt.Errorf("only accepts not nil *structs")
-	}
-
+func GetStructField(strc interface{}, fldName string) (interface{}, error) {
 	v := reflect.ValueOf(strc)
 
 	if v.Kind() == reflect.Ptr {
@@ -68,18 +62,92 @@ func GetStructAttr(strc interface{}, fieldName string) (reflect.Value, error) {
 	}
 
 	if v.Kind() != reflect.Struct {
-		return zero, fmt.Errorf("only accepts structs")
+		return nil, fmt.Errorf("input must be a struct or a pointer to a struct")
 	}
 
-	fld := v.FieldByName(fieldName)
+	field := v.FieldByName(fldName)
 
-	if !fld.IsValid() {
-		return zero, fmt.Errorf("field does'nt exist")
+	if !field.IsValid() {
+		return nil, fmt.Errorf("field %q not found in struct", fldName)
 	}
 
-	return fld, nil
+	if !field.CanInterface() {
+		return nil, fmt.Errorf("field %q is unexported and cannot be accessed", fldName)
+	}
+
+	return field.Interface(), nil
 }
 
-func isZeroValue(value interface{}) bool {
-	return reflect.DeepEqual(value, reflect.Zero(reflect.TypeOf(value)).Interface())
+func SetStructField(strc interface{}, fldName string, val interface{}) error {
+	v := reflect.ValueOf(strc)
+
+	if v.Kind() != reflect.Ptr {
+		return fmt.Errorf("input must be a pointer to a struct")
+	}
+
+	v = v.Elem()
+
+	if v.Kind() != reflect.Struct {
+		return fmt.Errorf("input must be a pointer to a struct")
+	}
+
+	fld := v.FieldByName(fldName)
+
+	if !fld.IsValid() {
+		return fmt.Errorf("field %q not found in struct", fldName)
+	}
+
+	if !fld.CanSet() {
+		return fmt.Errorf("field %q is unexported or cannot be set", fldName)
+	}
+
+	if !fld.Type().AssignableTo(reflect.TypeOf(val)) {
+		return fmt.Errorf("value of type %T cannot be assigned to field %q of type %v", val, fldName, fld.Type())
+	}
+
+	fld.Set(reflect.ValueOf(val))
+
+	return nil
+}
+
+func IsSameType(a, b interface{}) bool {
+	return reflect.TypeOf(a) == reflect.TypeOf(b)
+}
+
+func UpdateStructFields(strc interface{}, uf map[string]interface{}) error {
+	v := reflect.ValueOf(strc)
+
+	if v.Kind() != reflect.Ptr {
+		return fmt.Errorf("input must be a pointer to a struct")
+	}
+
+	v = v.Elem()
+
+	if v.Kind() != reflect.Struct {
+		return fmt.Errorf("input must be a pointer to a struct")
+	}
+
+	for fldName, val := range uf {
+		fv, err := GetStructField(strc, fldName)
+
+		if err != nil {
+			return err
+		}
+
+		if !IsSameType(fv, val) {
+			return fmt.Errorf("value of type %T cannot be assigned to field %q of type %T", val, fldName, fv)
+		}
+	}
+
+	for fldName, val := range uf {
+		if err := SetStructField(strc, fldName, val); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func IsZeroValue(v interface{}) bool {
+	return reflect.DeepEqual(v, reflect.Zero(reflect.TypeOf(v)).Interface())
 }

@@ -1,6 +1,9 @@
 package shared
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/utils"
 	"github.com/google/uuid"
@@ -21,42 +24,147 @@ func NewMemoryRepo[T domain.DomainModel](
 }
 
 func (r *MemoryRepo[T]) Save(m *T) error {
-	return nil
+	if m == nil {
+		return fmt.Errorf("you cant instert nil value")
+	}
+
+	id, err := uuid.Parse((*m).GetStringID())
+
+	if err != nil {
+		return err
+	}
+
+	return r.Store.Set(id, *m)
 }
 
 func (r *MemoryRepo[T]) Find() ([]T, error) {
-	return nil, nil
+	return r.Store.GetAll()
 }
 
 func (r *MemoryRepo[T]) FindByID(ID uuid.UUID) (*T, error) {
-	return new(T), nil
+	m, err := r.Store.Get(ID)
+
+	if err != nil {
+
+		if errors.Is(err, utils.ErrNotFound) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return &m, nil
 }
 
 func (r *MemoryRepo[T]) FindByField(fld string, val any) (*T, error) {
+	mdls, err := r.Store.GetAll()
 
-	return new(T), nil
+	if err != nil {
+		return nil, err
+	}
+
+	var model *T
+
+	for _, mdl := range mdls {
+		fv, err := utils.GetStructField(mdl, fld)
+
+		if err != nil {
+			return nil, err
+		}
+
+		if !utils.IsSameType(fv, val) {
+			return nil, fmt.Errorf("the value of the field %q is %T and you send a %T", fld, fv, val)
+		}
+
+		if fv == val {
+			model = &mdl
+			break
+		}
+	}
+
+	return model, nil
 }
 
 func (r *MemoryRepo[T]) FindWhere(fld, cond string, val any) ([]T, error) {
+	mdls, err := r.Store.GetAll()
 
-	return nil, nil
+	if err != nil {
+		return nil, err
+	}
+
+	ms := []T{}
+
+	for _, mdl := range mdls {
+		fv, err := utils.GetStructField(mdl, fld)
+
+		if err != nil {
+			return nil, err
+		}
+
+		var statement bool
+
+		switch cond {
+		case "==":
+			statement = (fv == val)
+		case "!=":
+			statement = (fv != val)
+		default:
+			return nil, fmt.Errorf("invalid condition")
+		}
+
+		if statement {
+			ms = append(ms, mdl)
+		}
+	}
+
+	return ms, nil
 }
 
-func (r *MemoryRepo[T]) Update(ID uuid.UUID, m *T) error {
+func (r *MemoryRepo[T]) Update(ID uuid.UUID, uf domain.UpdateFields) error {
+	if uf == nil {
+		return fmt.Errorf("you cant insert nil")
+	}
 
-	return nil
+	m, err := r.FindByID(ID)
+
+	if err != nil {
+		return err
+	}
+
+	if m == nil {
+		return fmt.Errorf("data not found")
+	}
+
+	if err := utils.UpdateStructFields(m, uf); err != nil {
+		return err
+	}
+
+	return r.Store.Update(ID, *m)
 }
 
 func (r *MemoryRepo[T]) UpdateField(ID uuid.UUID, fld string, val any) error {
-	return nil
+	m, err := r.FindByID(ID)
+
+	if err != nil {
+		return err
+	}
+
+	if m == nil {
+		return fmt.Errorf("data not found")
+	}
+
+	if err := utils.SetStructField(m, fld, val); err != nil {
+		return err
+	}
+
+	return r.Store.Update(ID, *m)
 }
 
 func (r *MemoryRepo[T]) Remove(ID uuid.UUID) error {
-	return nil
+	return r.Store.Remove(ID)
 }
 
-// Helper
-
-func (r *MemoryRepo[T]) getModelID(m T) string {
-	return m.GetStringID()
+func (r *MemoryRepo[T]) clear() error {
+	r.Store.Clear()
+	return nil
 }

@@ -1,5 +1,7 @@
 package utils
 
+import "errors"
+
 //* OAuth providers
 
 const (
@@ -27,10 +29,16 @@ func GetUserRoles() []string {
 //* Firestore collection names
 
 const (
-	UserColl   = "users"
-	ProdColl   = "products"
-	AddrColl   = "addresses"
-	OrderColl  = "orders"
-	PayMetColl = "payment_methods"
-	CategColl  = "categories"
+	UserColl  = "users"
+	ProdColl  = "products"
+	AddrColl  = "addresses"
+	OrderColl = "orders"
+	CardColl  = "cards"
+	CategColl = "categories"
+)
+
+//* Errors
+
+var (
+	ErrNotFound = errors.New("resourse not found")
 )

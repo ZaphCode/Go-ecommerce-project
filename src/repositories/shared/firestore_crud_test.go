@@ -14,7 +14,7 @@ import (
 
 type FirestoreRepoSuite struct {
 	suite.Suite
-	repo *FirestoreRepo[ExampleModel]
+	repo *FirestoreRepo[domain.ExampleModel]
 }
 
 //* Main
@@ -33,19 +33,13 @@ func (s *FirestoreRepoSuite) SetupSuite() {
 
 	client := utils.GetFirestoreClient(config.GetFirebaseApp())
 
-	s.repo = NewFirestoreRepo[ExampleModel](client, "example", "model")
+	s.repo = NewFirestoreRepo[domain.ExampleModel](client, "example", "model")
 }
 
 func (s *FirestoreRepoSuite) TearDownSuite() {
 	s.T().Log("----------- Clean up suite! -----------")
 
-	if err := utils.DeleteFirestoreCollection(
-		s.repo.Client,
-		"example",
-		10,
-	); err != nil {
-		s.FailNowf("Something went wrong: %s", err.Error())
-	}
+	s.NoError(s.repo.clear(), "error deleting all this")
 }
 
 func (s *FirestoreRepoSuite) SetupTest() {
@@ -54,22 +48,17 @@ func (s *FirestoreRepoSuite) SetupTest() {
 }
 
 func (s *FirestoreRepoSuite) TearDownTest() {
-	s.NoError(utils.DeleteFirestoreCollection(
-		s.repo.Client,
-		"example",
-		4,
-	), "error deleting all this")
+	s.NoError(s.repo.clear(), "error deleting all this")
 }
 
 func (s *FirestoreRepoSuite) BeforeTest(suiteName, testName string) {
-	if testName == "TestRemove" {
+	if testName == "TestFirestoreRepo_Remove" {
 		s.Require().NoError(s.repo.Save(m3), "error creating model 3")
 	}
 
-	if testName == "TestFindByID" {
+	// Inserting invalid model to firestore to corrupt model
 
-		s.T().Log("------ Before -----", testName)
-
+	if testName == "TestFirestoreRepo_FindByID" {
 		ref := s.repo.Client.Collection(s.repo.CollName).Doc(m3.ID.String())
 
 		_, err := ref.Create(context.TODO(), struct {
@@ -84,18 +73,18 @@ func (s *FirestoreRepoSuite) BeforeTest(suiteName, testName string) {
 	}
 }
 
-//* -------------- Actual Test ---------------------
+//* --------- Actual Test ---------------------
 
-func (s *FirestoreRepoSuite) TestSave() {
+func (s *FirestoreRepoSuite) TestFirestoreRepo_Save() {
 	testCases := []struct {
 		desc      string
 		expectErr bool
-		input     *ExampleModel
+		input     *domain.ExampleModel
 	}{
 		{
 			desc:      "normal saving",
 			expectErr: false,
-			input: &ExampleModel{
+			input: &domain.ExampleModel{
 				Model: domain.Model{
 					ID:        uuid.New(),
 					CreatedAt: time.Now().Unix(),
@@ -130,7 +119,7 @@ func (s *FirestoreRepoSuite) TestSave() {
 	}
 }
 
-func (s *FirestoreRepoSuite) TestFind() {
+func (s *FirestoreRepoSuite) TestFirestoreRepo_Find() {
 	d, err := s.repo.Find()
 
 	s.NoError(err, "should not be error")
@@ -138,7 +127,7 @@ func (s *FirestoreRepoSuite) TestFind() {
 	utils.PrettyPrintTesting(s.T(), d)
 }
 
-func (s *FirestoreRepoSuite) TestFindByID() {
+func (s *FirestoreRepoSuite) TestFirestoreRepo_FindByID() {
 	testCases := []struct {
 		desc     string
 		id       uuid.UUID
@@ -178,7 +167,7 @@ func (s *FirestoreRepoSuite) TestFindByID() {
 	}
 }
 
-func (s *FirestoreRepoSuite) TestFindByField() {
+func (s *FirestoreRepoSuite) TestFirestoreRepo_FindByField() {
 	testCases := []struct {
 		desc      string
 		wantErr   bool
@@ -236,7 +225,7 @@ func (s *FirestoreRepoSuite) TestFindByField() {
 	}
 }
 
-func (s *FirestoreRepoSuite) TestFindWhere() {
+func (s *FirestoreRepoSuite) TestFirestoreRepo_FindWhere() {
 	testCases := []struct {
 		desc       string
 		field      string
@@ -302,18 +291,18 @@ func (s *FirestoreRepoSuite) TestFindWhere() {
 	}
 }
 
-func (s *FirestoreRepoSuite) TestUpdate() {
+func (s *FirestoreRepoSuite) TestFirestoreRepo_Update() {
 	testCases := []struct {
 		desc      string
 		id        uuid.UUID
 		expectErr bool
-		input     *ExampleModel
+		input     domain.UpdateFields
 	}{
 		{
 			desc:      "model that doest't exist",
 			id:        uuid.New(),
 			expectErr: true,
-			input:     &ExampleModel{Name: "model updated"},
+			input:     domain.UpdateFields{"Name": "model updated"},
 		},
 		{
 			desc:      "nil model",
@@ -332,7 +321,7 @@ func (s *FirestoreRepoSuite) TestUpdate() {
 	}
 }
 
-func (s *FirestoreRepoSuite) TestUpdateField() {
+func (s *FirestoreRepoSuite) TestFirestoreRepo_UpdateField() {
 	testCases := []struct {
 		desc      string
 		id        uuid.UUID
@@ -383,7 +372,7 @@ func (s *FirestoreRepoSuite) TestUpdateField() {
 	}
 }
 
-func (s *FirestoreRepoSuite) TestRemove() {
+func (s *FirestoreRepoSuite) TestFirestoreRepo_Remove() {
 	testCases := []struct {
 		desc    string
 		id      uuid.UUID

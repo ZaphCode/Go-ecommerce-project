@@ -3,7 +3,6 @@ package shared
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -41,7 +40,7 @@ func (r *FirestoreRepo[T]) Save(m *T) error {
 		return fmt.Errorf("cannot accept nil value")
 	}
 
-	docRef := r.Client.Collection(r.CollName).Doc(r.getModelID(*m))
+	docRef := r.Client.Collection(r.CollName).Doc((*m).GetStringID())
 
 	_, err := docRef.Create(context.TODO(), m)
 
@@ -100,14 +99,14 @@ func (r *FirestoreRepo[T]) FindByID(ID uuid.UUID) (*T, error) {
 }
 
 func (r *FirestoreRepo[T]) FindByField(fld string, val any) (*T, error) {
-	f, err := utils.GetStructAttr(new(T), fld)
+	fv, err := utils.GetStructField(new(T), fld)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if reflect.TypeOf(val) != f.Type() {
-		return nil, fmt.Errorf("invalid type. the %s field only acepts %s values", fld, f.Type())
+	if !utils.IsSameType(fv, val) {
+		return nil, fmt.Errorf("invalid type. the %s field only acepts %T values", fld, fv)
 	}
 
 	ss, err := r.Client.
@@ -139,7 +138,7 @@ func (r *FirestoreRepo[T]) FindByField(fld string, val any) (*T, error) {
 }
 
 func (r *FirestoreRepo[T]) FindWhere(fld, cond string, val any) ([]T, error) {
-	if _, err := utils.GetStructAttr(new(T), fld); err != nil {
+	if _, err := utils.GetStructField(new(T), fld); err != nil {
 		return nil, err
 	}
 
@@ -168,8 +167,8 @@ func (r *FirestoreRepo[T]) FindWhere(fld, cond string, val any) ([]T, error) {
 	return ms, nil
 }
 
-func (r *FirestoreRepo[T]) Update(ID uuid.UUID, m *T) error {
-	if m == nil {
+func (r *FirestoreRepo[T]) Update(ID uuid.UUID, uf domain.UpdateFields) error {
+	if uf == nil {
 		return fmt.Errorf("cannot accept nil value")
 	}
 
@@ -179,17 +178,10 @@ func (r *FirestoreRepo[T]) Update(ID uuid.UUID, m *T) error {
 		{Path: "UpdatedAt", Value: time.Now().Unix()},
 	}
 
-	v := reflect.ValueOf(m).Elem()
-
-	for i := 0; i < v.NumField(); i++ {
-		fieldName := v.Type().Field(i).Name
-		fieldValue := v.Field(i).Interface()
-
-		if !v.Field(i).IsZero() {
-			updates = append(updates, firestore.Update{
-				Path: fieldName, Value: fieldValue,
-			})
-		}
+	for fldName, fldVal := range uf {
+		updates = append(updates, firestore.Update{
+			Path: fldName, Value: fldVal,
+		})
 	}
 
 	_, err := ref.Update(context.Background(), updates)
@@ -202,14 +194,14 @@ func (r *FirestoreRepo[T]) Update(ID uuid.UUID, m *T) error {
 }
 
 func (r *FirestoreRepo[T]) UpdateField(ID uuid.UUID, fld string, val any) error {
-	f, err := utils.GetStructAttr(new(T), fld)
+	fv, err := utils.GetStructField(new(T), fld)
 
 	if err != nil {
 		return err
 	}
 
-	if reflect.TypeOf(val) != f.Type() {
-		return fmt.Errorf("invalid type. the %s field only acepts %s values", fld, f.Type())
+	if !utils.IsSameType(fv, val) {
+		return fmt.Errorf("invalid type. the %s field only acepts %T values", fld, fv)
 	}
 
 	ref := r.Client.Collection(r.CollName).Doc(ID.String())
@@ -248,8 +240,6 @@ func (r *FirestoreRepo[T]) Remove(ID uuid.UUID) error {
 	return nil
 }
 
-// Helper
-
-func (r *FirestoreRepo[T]) getModelID(m T) string {
-	return m.GetStringID()
+func (r *FirestoreRepo[T]) clear() error {
+	return utils.DeleteFirestoreCollection(r.Client, r.CollName, 5)
 }

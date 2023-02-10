@@ -191,11 +191,12 @@ func TestRandomString(t *testing.T) {
 	}
 }
 
-func TestGetStructAttr(t *testing.T) {
+func TestGetStructField(t *testing.T) {
 	type args struct {
 		strc      interface{}
 		fieldName string
 	}
+
 	tests := []struct {
 		name    string
 		args    args
@@ -254,7 +255,7 @@ func TestGetStructAttr(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got, err := GetStructAttr(tt.args.strc, tt.args.fieldName)
+			got, err := GetStructField(tt.args.strc, tt.args.fieldName)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetStructAttr() error = %v, wantErr %v", err, tt.wantErr)
@@ -262,8 +263,8 @@ func TestGetStructAttr(t *testing.T) {
 			}
 
 			if err == nil {
-				t.Log(got.Interface())
-				t.Log(got.Type())
+				t.Log(got)
+				t.Logf("%T", got)
 			}
 		})
 	}
@@ -313,7 +314,7 @@ func TestIsZeroValue(t *testing.T) {
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			require.Equal(t, tC.expect, isZeroValue(tC.value), "wrong result")
+			require.Equal(t, tC.expect, IsZeroValue(tC.value), "wrong result")
 		})
 	}
 }

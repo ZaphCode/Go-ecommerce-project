@@ -52,21 +52,23 @@ func (s *prodService) GetByCategory(c string) ([]domain.Product, error) {
 	return s.repo.FindWhere("Category", "==", c)
 }
 
-func (s *prodService) Update(ID uuid.UUID, prod *domain.Product) error {
+func (s *prodService) Update(ID uuid.UUID, uf domain.UpdateFields) error {
 	p, err := s.repo.FindByID(ID)
 
 	if err != nil || p == nil {
 		return fmt.Errorf("error getting product")
 	}
 
-	return s.repo.Update(ID, &domain.Product{
+	/*&domain.Product{
 		Price:       prod.Price,
 		Category:    prod.Category,
 		Description: prod.Description,
 		Name:        prod.Name,
 		Tags:        prod.Tags,
 		ImagesUrl:   prod.ImagesUrl,
-	})
+	}*/
+
+	return s.repo.Update(ID, uf)
 }
 
 func (s *prodService) SetAvalible(ID uuid.UUID, avl bool) error {

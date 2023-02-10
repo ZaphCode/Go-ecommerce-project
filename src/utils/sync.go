@@ -31,7 +31,7 @@ func (m *SyncMap[K, V]) Set(key K, val V) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	if m.exists(key) {
+	if m.Exists(key) {
 		return fmt.Errorf("data already exists")
 	}
 
@@ -46,8 +46,8 @@ func (m *SyncMap[K, V]) Get(key K) (V, error) {
 
 	var zero V
 
-	if !m.exists(key) {
-		return zero, fmt.Errorf("data does'nt exist")
+	if !m.Exists(key) {
+		return zero, ErrNotFound
 	}
 
 	return m.smap[key], nil
@@ -70,7 +70,7 @@ func (m *SyncMap[K, V]) Remove(key K) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	if !m.exists(key) {
+	if !m.Exists(key) {
 		return fmt.Errorf("data does'nt exist")
 	}
 
@@ -83,7 +83,7 @@ func (m *SyncMap[K, V]) Update(key K, newval V) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	if !m.exists(key) {
+	if !m.Exists(key) {
 		return fmt.Errorf("data does'nt exists")
 	}
 
@@ -104,7 +104,7 @@ func (m *SyncMap[K, V]) Clear() {
 	}
 }
 
-func (m *SyncMap[K, V]) exists(key K) bool {
+func (m *SyncMap[K, V]) Exists(key K) bool {
 	_, ok := m.smap[key]
 	return ok
 }
