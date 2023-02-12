@@ -11,8 +11,8 @@ type Product struct {
 	Category     string   `json:"category"`
 	Name         string   `json:"name"`
 	Description  string   `json:"description"`
-	Price        int64    `json:"price"`
-	DiscountRate float32  `json:"discount_rate"`
+	Price        int      `json:"price"`
+	DiscountRate int      `json:"discount_rate"`
 	ImagesUrl    []string `json:"images_url"`
 	Tags         []string `json:"tags"`
 	Avalible     bool     `json:"avalible"`
@@ -22,7 +22,8 @@ type Product struct {
 
 type ProductService interface {
 	ServiceCrudOperations[Product]
-	GetLatestProds(lim int) ([]Product, error)
+	CalculateTotalPrice(ops []OrderProduct) (int64, error)
+	GetLatestProds(lim ...int) ([]Product, error)
 	GetByTags(tags ...string) ([]Product, error)
 	GetByCategory(c string) ([]Product, error)
 	SetAvalible(ID uuid.UUID, avl bool) error

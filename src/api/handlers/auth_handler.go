@@ -115,7 +115,7 @@ func (h *AuthHandler) SignUp(c *fiber.Ctx) error {
 // @Failure      400  {object}  dtos.ValidationRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
 // @Failure      404  {object}  dtos.RespErrDTO
-// @Failure      403  {object}  dtos.RespErrDTO
+// @Failure      401  {object}  dtos.RespErrDTO
 // @Router       /auth/signin [post]
 func (h *AuthHandler) SignIn(c *fiber.Ctx) error {
 	body := dtos.SigninDTO{}
@@ -140,7 +140,7 @@ func (h *AuthHandler) SignIn(c *fiber.Ctx) error {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
-		return h.RespErr(c, 403, "invalid password")
+		return h.RespErr(c, 401, "invalid password")
 	}
 
 	accessToken, atErr := h.jwtSvc.CreateToken(
@@ -320,14 +320,14 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 // @Produce      json
 // @Param 		 provider path string true "OAuth provider" Enums(google, discord, github)
 // @Success      200  {object}  dtos.URLRespOKDTO
-// @Failure      406  {object}  dtos.DetailRespErrDTO
+// @Failure      400  {object}  dtos.DetailRespErrDTO
 // @Router       /auth/{provider}/url [get]
 func (h *AuthHandler) GetOAuthUrl(c *fiber.Ctx) error {
 	provider := c.Params("provider")
 	providers := utils.GetOAuthProviders()
 
 	if !utils.ItemInSlice(provider, providers) {
-		return h.RespErr(c, 406, "invalid oauth provider", fmt.Sprintf("The avalible proveders are: %s", strings.Join(providers, ", ")))
+		return h.RespErr(c, 400, "invalid oauth provider", fmt.Sprintf("The avalible proveders are: %s", strings.Join(providers, ", ")))
 	}
 
 	var oauthSvc auth.OAuthService

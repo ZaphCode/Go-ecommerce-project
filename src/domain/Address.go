@@ -29,4 +29,5 @@ type AddressService interface {
 
 type AddressRepository interface {
 	RepositoryCrudOperations[Address]
+	FindWhere(fld, cond string, val interface{}) ([]Address, error)
 }

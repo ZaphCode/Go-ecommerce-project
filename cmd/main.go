@@ -48,8 +48,8 @@ func main() {
 
 	//* Services
 	userSvc := core.NewUserService(userRepo)
-	prodSvc := core.NewProductService(prodRepo)
-	catSvc := core.NewCategoryService(catRepo)
+	prodSvc := core.NewProductService(prodRepo, catRepo)
+	catSvc := core.NewCategoryService(catRepo, prodRepo)
 	emailSvc := email.NewSmtpEmailService()
 	vldSvc := validation.NewValidationService()
 	jwtSvc := auth.NewJWTService()

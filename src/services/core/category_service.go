@@ -9,11 +9,18 @@ import (
 )
 
 type categoryService struct {
-	repo domain.CategoryRepository
+	catRepo  domain.CategoryRepository
+	prodRepo domain.ProductRepository
 }
 
-func NewCategoryService(repo domain.CategoryRepository) domain.CategoryService {
-	return &categoryService{repo: repo}
+func NewCategoryService(
+	catRepo domain.CategoryRepository,
+	prodRepo domain.ProductRepository,
+) domain.CategoryService {
+	return &categoryService{
+		catRepo:  catRepo,
+		prodRepo: prodRepo,
+	}
 }
 
 func (s *categoryService) Create(c *domain.Category) error {
@@ -37,19 +44,19 @@ func (s *categoryService) Create(c *domain.Category) error {
 	c.CreatedAt = time.Now().Unix()
 	c.UpdatedAt = time.Now().Unix()
 
-	return s.repo.Save(c)
+	return s.catRepo.Save(c)
 }
 
 func (s *categoryService) GetAll() ([]domain.Category, error) {
-	return s.repo.Find()
+	return s.catRepo.Find()
 }
 
 func (s *categoryService) GetByID(ID uuid.UUID) (*domain.Category, error) {
-	return s.repo.FindByID(ID)
+	return s.catRepo.FindByID(ID)
 }
 
 func (s *categoryService) GetByName(n string) (*domain.Category, error) {
-	cat, err := s.repo.FindByField("Name", n)
+	cat, err := s.catRepo.FindByField("Name", n)
 
 	if err != nil {
 		return nil, err
@@ -59,7 +66,7 @@ func (s *categoryService) GetByName(n string) (*domain.Category, error) {
 }
 
 func (s *categoryService) Delete(ID uuid.UUID) error {
-	c, err := s.repo.FindByID(ID)
+	c, err := s.catRepo.FindByID(ID)
 
 	if err != nil {
 		return err
@@ -69,5 +76,15 @@ func (s *categoryService) Delete(ID uuid.UUID) error {
 		return fmt.Errorf("category not found")
 	}
 
-	return s.repo.Remove(ID)
+	ps, err := s.prodRepo.FindWhere("Category", "==", c.Name)
+
+	if err != nil {
+		return err
+	}
+
+	if len(ps) > 0 {
+		return fmt.Errorf("cannot remove %q category because it has products related", c.Name)
+	}
+
+	return s.catRepo.Remove(ID)
 }

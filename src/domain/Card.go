@@ -29,4 +29,5 @@ type CardService interface {
 
 type CardRepository interface {
 	RepositoryCrudOperations[Card]
+	FindWhere(fld, cond string, val interface{}) ([]Card, error)
 }

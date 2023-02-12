@@ -8,13 +8,14 @@ import (
 
 type Order struct {
 	Model
-	UserID    uuid.UUID `json:"user_id"`
-	PaymentID string    `json:"payment_id"`
-	Amount    int64     `json:"amount"`
-	Products  []OrderProducts
+	UserID    uuid.UUID      `json:"user_id"`
+	PaymentID string         `json:"payment_id"`
+	Amount    int64          `json:"amount"`
+	Products  []OrderProduct `json:"products"`
+	Address   *Address       `json:"address"`
 }
 
-type OrderProducts struct {
+type OrderProduct struct {
 	ID       uuid.UUID `json:"product_id"`
 	Quantity int       `json:"quantitu"`
 }

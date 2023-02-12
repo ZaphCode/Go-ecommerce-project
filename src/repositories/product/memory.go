@@ -30,7 +30,7 @@ func NewMemoryProductRepository(im ...domain.Product) domain.ProductRepository {
 
 	return &memoryProductRepo{
 		shared.MemoryRepo[domain.Product]{
-			Store: utils.NewSyncMap[uuid.UUID, domain.Product](),
+			Store: store,
 		},
 	}
 }
@@ -45,11 +45,11 @@ func (r *memoryProductRepo) FindOrderBy(field string, ord string) ([]domain.Prod
 	switch ord {
 	case "ASC":
 		sort.Slice(ps, func(i, j int) bool {
-			return ps[i].CreatedAt > ps[j].CreatedAt
+			return ps[i].CreatedAt < ps[j].CreatedAt
 		})
 	case "DESC":
 		sort.Slice(ps, func(i, j int) bool {
-			return ps[i].CreatedAt < ps[j].CreatedAt
+			return ps[i].CreatedAt > ps[j].CreatedAt
 		})
 	default:
 		return nil, fmt.Errorf("invalid order method. use 'ASC' or 'DESC'")

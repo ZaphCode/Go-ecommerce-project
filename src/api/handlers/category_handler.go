@@ -44,7 +44,7 @@ func (h *CategoryHandler) GetCategories(c *fiber.Ctx) error {
 		return h.RespErr(c, 500, "error getting categories", err.Error())
 	}
 
-	return h.RespOK(c, 200, "all products", cs)
+	return h.RespOK(c, 200, "all categories", cs)
 }
 
 // * Create category handler
@@ -71,16 +71,6 @@ func (h *CategoryHandler) CreateCategory(c *fiber.Ctx) error {
 
 	if err := h.vldSvc.Validate(&body); err != nil {
 		return h.RespValErr(c, 400, "one or more fields are invalid", err)
-	}
-
-	ec, err := h.catSvc.GetByName(body.Name)
-
-	if err != nil {
-		return h.RespErr(c, 500, "error getting category", err.Error())
-	}
-
-	if ec != nil {
-		return h.RespErr(c, 406, "That category already exists")
 	}
 
 	cat := body.AdaptToCategory()
@@ -114,29 +104,9 @@ func (h *CategoryHandler) DeleteCategory(c *fiber.Ctx) error {
 		return h.RespErr(c, 406, "invalid category id")
 	}
 
-	cat, err := h.catSvc.GetByID(uid)
-
-	if err != nil {
-		return h.RespErr(c, 500, "error looking for that category", err.Error())
-	}
-
-	if cat == nil {
-		return h.RespErr(c, 400, "that category does'nt exist")
-	}
-
-	ps, err := h.prodSvc.GetByCategory(cat.Name)
-
-	if err != nil {
-		return h.RespErr(c, 500, "error checking for products of that category", err.Error())
-	}
-
-	if len(ps) > 0 {
-		return h.RespErr(c, 400, "that category has products")
-	}
-
 	if err := h.catSvc.Delete(uid); err != nil {
 		return h.RespErr(c, 500, "error creating category", err.Error())
 	}
 
-	return h.RespOK(c, 201, "category deleted")
+	return h.RespOK(c, 200, "category deleted")
 }

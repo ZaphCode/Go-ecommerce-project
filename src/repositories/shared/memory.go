@@ -3,6 +3,7 @@ package shared
 import (
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/utils"
@@ -105,9 +106,9 @@ func (r *MemoryRepo[T]) FindWhere(fld, cond string, val any) ([]T, error) {
 
 		switch cond {
 		case "==":
-			statement = (fv == val)
+			statement = reflect.DeepEqual(fv, val)
 		case "!=":
-			statement = (fv != val)
+			statement = !reflect.DeepEqual(fv, val)
 		default:
 			return nil, fmt.Errorf("invalid condition")
 		}

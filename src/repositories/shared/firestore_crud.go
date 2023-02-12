@@ -98,7 +98,7 @@ func (r *FirestoreRepo[T]) FindByID(ID uuid.UUID) (*T, error) {
 	return &m, nil
 }
 
-func (r *FirestoreRepo[T]) FindByField(fld string, val any) (*T, error) {
+func (r *FirestoreRepo[T]) FindByField(fld string, val interface{}) (*T, error) {
 	fv, err := utils.GetStructField(new(T), fld)
 
 	if err != nil {
@@ -137,7 +137,7 @@ func (r *FirestoreRepo[T]) FindByField(fld string, val any) (*T, error) {
 	return &m, nil
 }
 
-func (r *FirestoreRepo[T]) FindWhere(fld, cond string, val any) ([]T, error) {
+func (r *FirestoreRepo[T]) FindWhere(fld, cond string, val interface{}) ([]T, error) {
 	if _, err := utils.GetStructField(new(T), fld); err != nil {
 		return nil, err
 	}

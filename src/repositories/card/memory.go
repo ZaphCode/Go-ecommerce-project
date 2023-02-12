@@ -1,4 +1,4 @@
-package category
+package card
 
 import (
 	"log"
@@ -11,14 +11,14 @@ import (
 
 //* Implementation
 
-type memoryCategoryRepo struct {
-	shared.MemoryRepo[domain.Category]
+type memoryCardRepo struct {
+	shared.MemoryRepo[domain.Card]
 }
 
 //* Constructor
 
-func NewMemoryCategoryRepository(im ...domain.Category) domain.CategoryRepository {
-	store := utils.NewSyncMap[uuid.UUID, domain.Category]()
+func NewMemoryCardRepository(im ...domain.Card) domain.CardRepository {
+	store := utils.NewSyncMap[uuid.UUID, domain.Card]()
 
 	for _, m := range im {
 		if err := store.Set(m.ID, m); err != nil {
@@ -26,8 +26,8 @@ func NewMemoryCategoryRepository(im ...domain.Category) domain.CategoryRepositor
 		}
 	}
 
-	return &memoryCategoryRepo{
-		shared.MemoryRepo[domain.Category]{
+	return &memoryCardRepo{
+		shared.MemoryRepo[domain.Card]{
 			Store: store,
 		},
 	}

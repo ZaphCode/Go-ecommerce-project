@@ -57,7 +57,7 @@ func (m *SyncMap[K, V]) GetAll() ([]V, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	var vs []V
+	vs := []V{}
 
 	for _, v := range m.smap {
 		vs = append(vs, v)

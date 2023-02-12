@@ -3,7 +3,7 @@ package config
 import (
 	"context"
 	"encoding/json"
-	"log"
+	"fmt"
 	"os"
 
 	firebase "firebase.google.com/go/v4"
@@ -44,16 +44,22 @@ type smtp struct {
 	Password string `json:"password"`
 }
 
+type stripe struct {
+	PublicKey string `json:"public_key"`
+	SecretKey string `json:"secret_key"`
+}
+
 type Config struct {
 	Api     api           `json:"api"`
 	OAuth   oauthServices `json:"oauth"`
 	Smtp    smtp          `json:"smtp"`
 	Storage storage       `json:"storage"`
+	Stripe  stripe        `json:"stripe"`
 }
 
 var (
 	config      Config
-	firebaseApp *firebase.App
+	firebaseApp *firebase.App = nil
 )
 
 func MustLoadConfig(path string) {
@@ -67,34 +73,40 @@ func MustLoadConfig(path string) {
 	}
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	if err = json.Unmarshal(file, &config); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	if config.Api.Port == "" || config.Api.ServerHost == "" {
-		log.Fatal("json config not readed")
+		panic("json config not readed")
 	}
 }
 
 func MustLoadFirebaseConfig(path string) {
+	_, err := os.Stat(path)
+
+	if os.IsNotExist(err) {
+		panic("cannot find firebase configuration file")
+	}
+
 	ctx := context.Background()
 
 	opt := option.WithCredentialsFile(path + "/firebase_config.json")
 
 	app, err := firebase.NewApp(ctx, nil, opt)
 
-	if err != nil || app == nil {
-		log.Fatal("firebase connection fail:", err)
+	if err != nil {
+		panic(fmt.Errorf("error connecting to firebase: %s", err))
 	}
 
 	firebaseApp = app
 }
 
-func Get() *Config {
-	return &config
+func Get() Config {
+	return config
 }
 
 func GetFirebaseApp() *firebase.App {

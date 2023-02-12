@@ -9,11 +9,18 @@ import (
 )
 
 type prodService struct {
-	repo domain.ProductRepository
+	prodRepo domain.ProductRepository
+	catRepo  domain.CategoryRepository
 }
 
-func NewProductService(repo domain.ProductRepository) domain.ProductService {
-	return &prodService{repo: repo}
+func NewProductService(
+	prodRepo domain.ProductRepository,
+	catRepo domain.CategoryRepository,
+) domain.ProductService {
+	return &prodService{
+		prodRepo: prodRepo,
+		catRepo:  catRepo,
+	}
 }
 
 func (s *prodService) Create(prod *domain.Product) error {
@@ -23,56 +30,77 @@ func (s *prodService) Create(prod *domain.Product) error {
 		return fmt.Errorf("error generating uuid: %s", err)
 	}
 
+	c, err := s.catRepo.FindByField("Name", prod.Category)
+
+	if err != nil {
+		return err
+	}
+
+	if c == nil {
+		return fmt.Errorf("category %q does not exist", prod.Category)
+	}
+
 	prod.ID = ID
 	prod.CreatedAt = time.Now().Unix()
 	prod.UpdatedAt = time.Now().Unix()
 
-	s.repo.Save(prod)
+	s.prodRepo.Save(prod)
 
 	return nil
 }
 
 func (s *prodService) GetAll() ([]domain.Product, error) {
-	return s.repo.Find()
+	return s.prodRepo.Find()
 }
 
 func (s *prodService) GetByID(ID uuid.UUID) (*domain.Product, error) {
-	return s.repo.FindByID(ID)
+	return s.prodRepo.FindByID(ID)
 }
 
-func (s *prodService) GetLatestProds(lim int) ([]domain.Product, error) {
-	return s.repo.FindOrderBy("CreatedAt", "ASC")
+func (s *prodService) GetLatestProds(lim ...int) ([]domain.Product, error) {
+	prods, err := s.prodRepo.FindOrderBy("CreatedAt", "DESC")
+	if err != nil {
+		return nil, err
+	}
+
+	if len(lim) <= 0 {
+		return prods, nil
+	}
+	return prods[:lim[0]], nil
 }
 
 func (s *prodService) GetByTags(tags ...string) ([]domain.Product, error) {
-	return s.repo.FindWhere("Tags", "array-contains-any", tags)
+	return s.prodRepo.FindWhere("Tags", "array-contains-any", tags)
 }
 
 func (s *prodService) GetByCategory(c string) ([]domain.Product, error) {
-	return s.repo.FindWhere("Category", "==", c)
+	return s.prodRepo.FindWhere("Category", "==", c)
 }
 
 func (s *prodService) Update(ID uuid.UUID, uf domain.UpdateFields) error {
-	p, err := s.repo.FindByID(ID)
+	p, err := s.prodRepo.FindByID(ID)
 
 	if err != nil || p == nil {
 		return fmt.Errorf("error getting product")
 	}
 
-	/*&domain.Product{
-		Price:       prod.Price,
-		Category:    prod.Category,
-		Description: prod.Description,
-		Name:        prod.Name,
-		Tags:        prod.Tags,
-		ImagesUrl:   prod.ImagesUrl,
-	}*/
+	if v, ok := uf["Category"]; ok {
+		c, err := s.catRepo.FindByField("Name", v)
 
-	return s.repo.Update(ID, uf)
+		if err != nil {
+			return err
+		}
+
+		if c == nil {
+			return fmt.Errorf("invalid category field. that category does not exist")
+		}
+	}
+
+	return s.prodRepo.Update(ID, uf)
 }
 
 func (s *prodService) SetAvalible(ID uuid.UUID, avl bool) error {
-	p, err := s.repo.FindByID(ID)
+	p, err := s.prodRepo.FindByID(ID)
 
 	if err != nil {
 		return err
@@ -82,11 +110,11 @@ func (s *prodService) SetAvalible(ID uuid.UUID, avl bool) error {
 		return fmt.Errorf("product not found")
 	}
 
-	return s.repo.UpdateField(ID, "Avalible", avl)
+	return s.prodRepo.UpdateField(ID, "Avalible", avl)
 }
 
 func (s *prodService) Delete(ID uuid.UUID) error {
-	p, err := s.repo.FindByID(ID)
+	p, err := s.prodRepo.FindByID(ID)
 
 	if err != nil {
 		return err
@@ -96,5 +124,27 @@ func (s *prodService) Delete(ID uuid.UUID) error {
 		return fmt.Errorf("product not found")
 	}
 
-	return s.repo.Remove(ID)
+	return s.prodRepo.Remove(ID)
+}
+
+func (s *prodService) CalculateTotalPrice(ops []domain.OrderProduct) (int64, error) {
+	var total float32 = 0
+
+	for _, op := range ops {
+		p, err := s.prodRepo.FindByID(op.ID)
+
+		if err != nil {
+			return 0, err
+		}
+
+		if p == nil {
+			return 0, fmt.Errorf("product %s not found", op.ID.String())
+		}
+
+		var price float32 = float32(p.Price) * ((float32(100) - float32(p.DiscountRate)) / 100) * float32(op.Quantity)
+
+		total += price
+	}
+
+	return int64(total), nil
 }

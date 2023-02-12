@@ -54,7 +54,7 @@ func (h *ProductHandler) GetProducts(c *fiber.Ctx) error {
 // @Accept       json
 // @Produce      json
 // @Param        id   path string true "product   uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
-// @Success      201  {object}  dtos.RespOKDTO
+// @Success      200  {object}  dtos.ProductRespOKDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
 // @Failure      406  {object}  dtos.DetailRespErrDTO
 // @Failure      404  {object}  dtos.RespErrDTO
@@ -77,7 +77,7 @@ func (h *ProductHandler) GetProduct(c *fiber.Ctx) error {
 		return h.RespErr(c, 404, "product not found")
 	}
 
-	return h.RespOK(c, 201, "product found", prod)
+	return h.RespOK(c, 200, "product found", prod)
 }
 
 // * Create product handler
@@ -104,16 +104,6 @@ func (h *ProductHandler) CreateProducts(c *fiber.Ctx) error {
 
 	if err := h.vldSvc.Validate(&body); err != nil {
 		return h.RespValErr(c, 400, "one or more fields are invalid", err)
-	}
-
-	cat, err := h.catSvc.GetByName(body.Category)
-
-	if err != nil {
-		return h.RespErr(c, 500, "error getting category", err.Error())
-	}
-
-	if cat == nil {
-		return h.RespErr(c, 406, "That category does'nt exist")
 	}
 
 	prod := body.AdaptToProduct()

@@ -1,4 +1,4 @@
-package category
+package address
 
 import (
 	"log"
@@ -11,14 +11,14 @@ import (
 
 //* Implementation
 
-type memoryCategoryRepo struct {
-	shared.MemoryRepo[domain.Category]
+type memoryAddressRepo struct {
+	shared.MemoryRepo[domain.Address]
 }
 
 //* Constructor
 
-func NewMemoryCategoryRepository(im ...domain.Category) domain.CategoryRepository {
-	store := utils.NewSyncMap[uuid.UUID, domain.Category]()
+func NewMemoryAddressRepository(im ...domain.Address) domain.AddressRepository {
+	store := utils.NewSyncMap[uuid.UUID, domain.Address]()
 
 	for _, m := range im {
 		if err := store.Set(m.ID, m); err != nil {
@@ -26,8 +26,8 @@ func NewMemoryCategoryRepository(im ...domain.Category) domain.CategoryRepositor
 		}
 	}
 
-	return &memoryCategoryRepo{
-		shared.MemoryRepo[domain.Category]{
+	return &memoryAddressRepo{
+		shared.MemoryRepo[domain.Address]{
 			Store: store,
 		},
 	}

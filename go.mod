@@ -48,6 +48,7 @@ require (
 	github.com/rivo/uniseg v0.4.3 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/stretchr/testify v1.8.1 // indirect
+	github.com/stripe/stripe-go/v74 v74.7.0 // indirect
 	github.com/swaggo/files v1.0.0 // indirect
 	github.com/swaggo/swag v1.8.9 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
