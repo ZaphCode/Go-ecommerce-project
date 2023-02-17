@@ -7,6 +7,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// TODO: move this models to utils package
+
 var m1 = &domain.ExampleModel{
 	Model: domain.Model{
 		ID:        uuid.MustParse("1551f9f0-825a-438c-9307-90cbc0bd5d63"),

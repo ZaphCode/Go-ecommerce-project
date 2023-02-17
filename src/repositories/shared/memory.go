@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"sort"
 
 	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/utils"
@@ -119,6 +120,29 @@ func (r *MemoryRepo[T]) FindWhere(fld, cond string, val any) ([]T, error) {
 	}
 
 	return ms, nil
+}
+
+func (r *MemoryRepo[T]) FindOrderBy(field string, ord string) ([]T, error) {
+	ps, err := r.Store.GetAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch ord {
+	case "ASC":
+		sort.Slice(ps, func(i, j int) bool {
+			return ps[i].GetCreatedDate() < ps[j].GetCreatedDate()
+		})
+	case "DESC":
+		sort.Slice(ps, func(i, j int) bool {
+			return ps[i].GetCreatedDate() > ps[j].GetCreatedDate()
+		})
+	default:
+		return nil, fmt.Errorf("invalid order method. use 'ASC' or 'DESC'")
+	}
+
+	return ps, nil
 }
 
 func (r *MemoryRepo[T]) Update(ID uuid.UUID, uf domain.UpdateFields) error {

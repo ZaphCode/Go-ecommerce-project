@@ -45,7 +45,7 @@ func (r *firestoreProductRepo) FindOrderBy(field string, ord string) ([]domain.P
 	ss, err := r.Client.Collection(r.CollName).OrderBy(field, d).Documents(context.TODO()).GetAll()
 
 	if err != nil {
-		return nil, fmt.Errorf("documents.GetAll(): %w", err)
+		return nil, fmt.Errorf("error getting documents: %s", err)
 	}
 
 	ps := make([]domain.Product, len(ss))
@@ -54,7 +54,7 @@ func (r *firestoreProductRepo) FindOrderBy(field string, ord string) ([]domain.P
 		var p domain.Product
 
 		if err := s.DataTo(&p); err != nil {
-			return nil, fmt.Errorf("snapshot.DataTo(): %w", err)
+			return nil, fmt.Errorf("error parsing document %s", err)
 		}
 
 		ps[i] = p

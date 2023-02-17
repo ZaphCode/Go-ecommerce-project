@@ -10,16 +10,20 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// TODO: Add card and addr repo to user service
+
 type userService struct {
-	repo domain.UserRepository
+	usrRepo domain.UserRepository
+	//cardRepo domain.CardRepository
+	//addrRepo domain.AddressRepository
 }
 
-func NewUserService(repo domain.UserRepository) domain.UserService {
-	return &userService{repo: repo}
+func NewUserService(usrRepo domain.UserRepository) domain.UserService {
+	return &userService{usrRepo: usrRepo}
 }
 
 func (s *userService) Create(user *domain.User) error {
-	eusr, err := s.repo.FindByField("Email", user.Email)
+	eusr, err := s.usrRepo.FindByField("Email", user.Email)
 
 	if err != nil {
 		return fmt.Errorf("internal server error: %s", err)
@@ -58,7 +62,7 @@ func (s *userService) Create(user *domain.User) error {
 		user.ImageUrl = fmt.Sprintf("https://api.dicebear.com/5.x/bottts-neutral/svg?seed=%d", user.CreatedAt)
 	}
 
-	if err := s.repo.Save(user); err != nil {
+	if err := s.usrRepo.Save(user); err != nil {
 		return err
 	}
 
@@ -68,42 +72,37 @@ func (s *userService) Create(user *domain.User) error {
 }
 
 func (s *userService) GetAll() ([]domain.User, error) {
-	return s.repo.Find()
+	return s.usrRepo.Find()
 }
 
 func (s *userService) GetByID(ID uuid.UUID) (*domain.User, error) {
-	return s.repo.FindByID(ID)
+	return s.usrRepo.FindByID(ID)
 }
 
 func (s *userService) GetByEmail(email string) (*domain.User, error) {
-	return s.repo.FindByField("Email", email)
+	return s.usrRepo.FindByField("Email", email)
 }
 
 func (s *userService) VerifyEmail(ID uuid.UUID) error {
-	return s.repo.UpdateField(ID, "VerifiedEmail", true)
+	return s.usrRepo.UpdateField(ID, "VerifiedEmail", true)
 }
 
 func (s *userService) UpdatePassword(ID uuid.UUID, password string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	if err != nil {
-		return fmt.Errorf("bycrypt.GenPass(): %w", err)
+		return fmt.Errorf("error hasing password %w", err)
 	}
 
-	return s.repo.UpdateField(ID, "Password", string(hash))
+	return s.usrRepo.UpdateField(ID, "Password", string(hash))
 }
 
 func (s *userService) Update(ID uuid.UUID, uf domain.UpdateFields) error {
-	/*&domain.User{
-		Username:   user.Username,
-		CustomerID: user.CustomerID,
-		ImageUrl:   user.ImageUrl,
-		Age:        user.Age,
-		Role:       user.Role,
-	}*/
-	return s.repo.Update(ID, uf)
+	delete(uf, "Email")
+	delete(uf, "Model")
+	return s.usrRepo.Update(ID, uf)
 }
 
 func (s *userService) Delete(ID uuid.UUID) error {
-	return s.repo.Remove(ID)
+	return s.usrRepo.Remove(ID)
 }

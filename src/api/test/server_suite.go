@@ -47,7 +47,7 @@ func (s *ServerSuite) SetupSuite() {
 
 	// Repos
 	userRepo := user.NewMemoryUserRepository(utils.UserAdmin, utils.UserExp1, utils.UserExp2)
-	prodRepo := product.NewMemoryProductRepository(utils.ProductExp1)
+	prodRepo := product.NewMemoryProductRepository(utils.ProductExp1, utils.ProductExp2)
 	catRepo := category.NewMemoryCategoryRepository(utils.CategoryExp1, utils.CategoryExp2)
 
 	// Services
@@ -157,11 +157,7 @@ func (s *ServerSuite) ShowResponse(path string, resp []byte) {
 	s.T().Logf("\n\n >>> %s : %s \n\n", path, result)
 }
 
-func (s *ServerSuite) MakeReq(
-	met, path string,
-	body any,
-	hdrs ...map[string]string,
-) *http.Request {
+func (s *ServerSuite) MakeReq(met, path string, body any, hdrs ...map[string]string) *http.Request {
 	var reqBody io.Reader = nil
 
 	if body != nil {

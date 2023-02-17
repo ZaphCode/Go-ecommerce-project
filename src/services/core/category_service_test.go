@@ -123,22 +123,22 @@ func (s *CategoryServiceSuite) TestCategoryService_GetAll() {
 
 func (s *CategoryServiceSuite) TestCategoryService_GetByID() {
 	testCases := []struct {
-		desc     string
-		id       uuid.UUID
-		wantErr  bool
-		wantProd bool
+		desc         string
+		id           uuid.UUID
+		wantErr      bool
+		wantCategory bool
 	}{
 		{
-			desc:     "proper work",
-			id:       utils.CategoryExp1.ID,
-			wantErr:  false,
-			wantProd: true,
+			desc:         "proper work",
+			id:           utils.CategoryExp1.ID,
+			wantErr:      false,
+			wantCategory: true,
 		},
 		{
-			desc:     "not found",
-			id:       uuid.New(),
-			wantErr:  false,
-			wantProd: false,
+			desc:         "not found",
+			id:           uuid.New(),
+			wantErr:      false,
+			wantCategory: false,
 		},
 	}
 	for _, tC := range testCases {
@@ -147,7 +147,7 @@ func (s *CategoryServiceSuite) TestCategoryService_GetByID() {
 
 			s.Equal(tC.wantErr, (err != nil), "expect error fail")
 
-			s.Equal(tC.wantProd, (got != nil), "expect category fail")
+			s.Equal(tC.wantCategory, (got != nil), "expect category fail")
 		})
 	}
 }

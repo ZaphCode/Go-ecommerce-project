@@ -2,6 +2,7 @@ package dtos
 
 import (
 	"github.com/ZaphCode/clean-arch/src/domain"
+	"github.com/ZaphCode/clean-arch/src/utils"
 	"github.com/google/uuid"
 )
 
@@ -9,8 +10,8 @@ type NewProductDTO struct {
 	Category     string   `json:"category" validation:"required" example:"clothes"`
 	Name         string   `json:"name" validate:"required,min=4,max=50" example:"Black T-Shirt Addidas"`
 	Description  string   `json:"description" validate:"required,min=4,max=200" example:"The best T-shirt in the world."`
-	Price        int      `json:"price" validate:"required,number,gte=0" example:"2599"`
-	DiscountRate int      `json:"discount_rate" validate:"number,gte=0,lte=100" example:"23.4"`
+	Price        uint     `json:"price" validate:"required,number,gte=0" example:"2599"`
+	DiscountRate uint     `json:"discount_rate" validate:"number,gte=0,lte=100" example:"23.4"`
 	ImagesUrl    []string `json:"images_url" validate:"required,min=1,max=10,dive,url" example:"https://example.com/image1.png,https://example.com/image2.png"`
 	Tags         []string `json:"tags" validate:"required,max=6" example:"t-shirts,clothes,addidas"`
 	Avalible     bool     `json:"avalible"`
@@ -36,30 +37,16 @@ type ProductDTO struct { //? Documentation
 }
 
 type UpdateProductDTO struct {
-	Category     string   `json:"category" example:"clothes"`
-	Name         string   `json:"name" validate:"min=4,max=50" example:"Black T-Shirt Addidas"`
-	Description  string   `json:"description" validate:"min=4,max=200" example:"The best T-shirt in the world."`
-	Price        *int     `json:"price" validate:"number,gte=0" example:"2599"`
-	DiscountRate *int     `json:"discount_rate" validate:"number,gte=0,lte=100" example:"23.4"`
-	ImagesUrl    []string `json:"images_url" validate:"min=1,max=10,dive,url" example:"https://example.com/image1.png,https://example.com/image2.png"`
-	Tags         []string `json:"tags" validate:"max=6" example:"t-shirts,clothes,addidas"`
-	Avalible     *bool    `json:"avalible"`
+	Category     string   `json:"category,omitempty" example:"clothes"`
+	Name         string   `json:"name,omitempty" validate:"omitempty,min=4,max=50" example:"Black T-Shirt Addidas"`
+	Description  string   `json:"description,omitempty" validate:"omitempty,min=4,max=200" example:"The best T-shirt in the world."`
+	Price        *uint    `json:"price,omitempty" validate:"omitempty,number,gte=0" example:"2599"`
+	DiscountRate *uint    `json:"discount_rate,omitempty" validate:"omitempty,number,gte=0,lte=100" example:"23.4"`
+	ImagesUrl    []string `json:"images_url,omitempty" validate:"omitempty,min=1,max=10,dive,url" example:"https://example.com/image1.png,https://example.com/image2.png"`
+	Tags         []string `json:"tags,omitempty" validate:"omitempty,max=6" example:"t-shirts,clothes,addidas"`
+	Avalible     *bool    `json:"avalible,omitempty"`
 }
 
-func (dto UpdateProductDTO) AdaptToProduct() (prod domain.Product) {
-	prod.Category = dto.Category
-	prod.Name = dto.Name
-	prod.Description = dto.Description
-	prod.ImagesUrl = dto.ImagesUrl
-	prod.Tags = dto.Tags
-	if dto.Price != nil {
-		prod.Price = *dto.Price
-	}
-	if dto.DiscountRate != nil {
-		prod.DiscountRate = *dto.DiscountRate
-	}
-	if dto.Avalible != nil {
-		prod.Avalible = *dto.Avalible
-	}
-	return
+func (dto UpdateProductDTO) AdaptToUpdateFields() domain.UpdateFields {
+	return utils.StructToMap(dto)
 }

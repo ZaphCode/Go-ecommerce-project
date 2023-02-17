@@ -1,4 +1,4 @@
-package product
+package order
 
 import (
 	"log"
@@ -11,14 +11,14 @@ import (
 
 //* Implementation
 
-type memoryProductRepo struct {
-	shared.MemoryRepo[domain.Product]
+type memoryOrderRepo struct {
+	shared.MemoryRepo[domain.Order]
 }
 
 //* Constructor
 
-func NewMemoryProductRepository(im ...domain.Product) domain.ProductRepository {
-	store := utils.NewSyncMap[uuid.UUID, domain.Product]()
+func NewMemoryOrderRepository(im ...domain.Order) domain.OrderRepository {
+	store := utils.NewSyncMap[uuid.UUID, domain.Order]()
 
 	for _, m := range im {
 		if err := store.Set(m.ID, m); err != nil {
@@ -26,8 +26,8 @@ func NewMemoryProductRepository(im ...domain.Product) domain.ProductRepository {
 		}
 	}
 
-	return &memoryProductRepo{
-		shared.MemoryRepo[domain.Product]{
+	return &memoryOrderRepo{
+		shared.MemoryRepo[domain.Order]{
 			Store: store,
 		},
 	}

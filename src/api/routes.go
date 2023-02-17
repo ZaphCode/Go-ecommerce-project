@@ -40,6 +40,7 @@ func (s *Server) CreateProductRoutes(
 	r.Get("/all", prodHdlr.GetProducts)
 	r.Get("/get/:id", prodHdlr.GetProduct)
 	r.Post("/create", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.CreateProducts)
+	r.Put("/update/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.UpdateProduct)
 	r.Delete("/delete/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.DeleteProduct)
 }
 

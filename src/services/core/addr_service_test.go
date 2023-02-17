@@ -55,7 +55,6 @@ func (s *AddressServiceSuite) TestAddressService_Create() {
 			wantErr: true,
 		},
 		{
-			// TODO: FILL THIS
 			desc: "proper work",
 			input: domain.Address{
 				Name:       "Main house",
@@ -89,6 +88,37 @@ func (s *AddressServiceSuite) TestAddressService_Create() {
 }
 
 func (s *AddressServiceSuite) TestAddressService_GetByID() {
+	testCases := []struct {
+		desc         string
+		id           uuid.UUID
+		wantErr      bool
+		wantCategory bool
+	}{
+		{
+			desc:         "proper work",
+			id:           utils.AddrExp2.ID,
+			wantErr:      false,
+			wantCategory: true,
+		},
+		{
+			desc:         "not found",
+			id:           uuid.New(),
+			wantErr:      false,
+			wantCategory: false,
+		},
+	}
+	for _, tC := range testCases {
+		s.Run(tC.desc, func() {
+			got, err := s.service.GetByID(tC.id)
+
+			s.Equal(tC.wantErr, (err != nil), "expect error fail")
+
+			s.Equal(tC.wantCategory, (got != nil), "expect category fail")
+		})
+	}
+}
+
+func (s *AddressServiceSuite) TestAddressService_GetAllByUserID() {
 	testCases := []struct {
 		desc      string
 		id        uuid.UUID

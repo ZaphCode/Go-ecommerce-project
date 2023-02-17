@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -315,6 +316,94 @@ func TestIsZeroValue(t *testing.T) {
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
 			require.Equal(t, tC.expect, IsZeroValue(tC.value), "wrong result")
+		})
+	}
+}
+
+func TestStructToMap(t *testing.T) {
+	type args struct {
+		strc interface{}
+	}
+	tests := []struct {
+		name string
+		args args
+		want map[string]any
+	}{
+		{
+			name: "normal fields",
+			args: args{
+				strc: struct {
+					Name  string
+					Age   int
+					Check bool
+				}{"A", 2, true},
+			},
+			want: map[string]any{
+				"Name":  "A",
+				"Age":   2,
+				"Check": true,
+			},
+		},
+		{
+			name: "skip zero",
+			args: args{
+				strc: struct {
+					Name  string
+					Age   int
+					Check bool
+				}{"", 2, true},
+			},
+			want: map[string]any{
+				"Age":   2,
+				"Check": true,
+			},
+		},
+		{
+			name: "skip nil",
+			args: args{
+				strc: struct {
+					Name  string
+					Age   *int
+					Check *bool
+				}{"B", nil, nil},
+			},
+			want: map[string]any{
+				"Name": "B",
+			},
+		},
+		{
+			name: "accept ptr values",
+			args: args{
+				strc: struct {
+					Name  *string
+					Age   *int
+					Check *bool
+				}{PTR("C"), PTR(24), nil},
+			},
+			want: map[string]any{
+				"Name": "C",
+				"Age":  24,
+			},
+		},
+		{
+			name: "accept ptr values",
+			args: args{
+				strc: struct {
+					Name  string
+					Age   *int
+					Check *bool
+				}{Check: PTR(false)},
+			},
+			want: map[string]any{
+				"Check": false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := StructToMap(tt.args.strc); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("StructToUpdateMap() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }

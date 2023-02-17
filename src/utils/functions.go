@@ -16,6 +16,10 @@ func ItemInSlice[T comparable](a T, list []T) bool {
 	return false
 }
 
+func PTR[T any](v T) *T {
+	return &v
+}
+
 func RandomString(n int) string {
 	rand.Seed(time.Now().UnixNano())
 
@@ -150,4 +154,32 @@ func UpdateStructFields(strc interface{}, uf map[string]interface{}) error {
 
 func IsZeroValue(v interface{}) bool {
 	return reflect.DeepEqual(v, reflect.Zero(reflect.TypeOf(v)).Interface())
+}
+
+func StructToMap(strc interface{}) map[string]any {
+	v := reflect.ValueOf(strc)
+
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	fldMap := make(map[string]any)
+
+	for i := 0; i < v.NumField(); i++ {
+		fldName := v.Type().Field(i).Name
+		fldVal := v.Field(i)
+
+		if !fldVal.IsZero() {
+			if fldVal.Kind() == reflect.Ptr {
+				fldVal = fldVal.Elem()
+			}
+			fldMap[fldName] = fldVal.Interface()
+		}
+	}
+
+	return fldMap
 }

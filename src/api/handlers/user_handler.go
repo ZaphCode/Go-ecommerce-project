@@ -44,9 +44,7 @@ func NewUserHandler(
 // @Failure      401  {object}  dtos.DetailRespErrDTO
 // @Router       /user/get/{id} [get]
 func (h *UserHandler) GetUser(c *fiber.Ctx) error {
-	id := c.Params("id")
-
-	uid, err := uuid.Parse(id)
+	uid, err := uuid.Parse(c.Params("id"))
 
 	if err != nil {
 		return h.RespErr(c, 406, "invalid user id")
@@ -136,8 +134,7 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 // @Failure      400  {object}  dtos.ValidationRespErrDTO
 // @Router       /user/update/{id} [put]
 func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
-	id := c.Params("id")
-	uid, err := uuid.Parse(id)
+	uid, err := uuid.Parse(c.Params("id"))
 
 	if err != nil {
 		return h.RespErr(c, 406, "invalid user id")
@@ -149,17 +146,13 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 		return h.RespErr(c, 422, "error parsing the request body", err.Error())
 	}
 
-	uflds := make(domain.UpdateFields)
-
 	if err := h.vldSvc.Validate(&body); err != nil {
 		return h.RespValErr(c, 400, "one or more fields are invalid", err)
 	}
 
-	if err := c.BodyParser(&uflds); err != nil {
-		return h.RespErr(c, 422, "error parsing the request body", err.Error())
-	}
+	uf := body.AdaptToUpdateFields()
 
-	if err := h.usrSvc.Update(uid, uflds); err != nil {
+	if err := h.usrSvc.Update(uid, uf); err != nil {
 		return h.RespErr(c, 500, "create user error", err.Error())
 	}
 
@@ -167,7 +160,6 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 
 	if err != nil {
 		return h.RespErr(c, 500, "retriving updated user error", err.Error())
-
 	}
 
 	return h.RespOK(c, 200, "user updated!", upUsr)
@@ -187,15 +179,14 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 // @Failure      406  {object}  dtos.RespErrDTO
 // @Router       /user/delete/{id} [delete]
 func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
-	id := c.Params("id")
-	uid, err := uuid.Parse(id)
+	uid, err := uuid.Parse(c.Params("id"))
 
 	if err != nil {
 		return h.RespErr(c, 406, "invalid user id")
 	}
 
 	if err := h.usrSvc.Delete(uid); err != nil {
-		return h.RespErr(c, 500, "error deliting user", err.Error())
+		return h.RespErr(c, 500, "error deleting user", err.Error())
 	}
 
 	return h.RespOK(c, 200, "user deleted")

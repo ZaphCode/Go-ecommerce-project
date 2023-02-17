@@ -2,6 +2,7 @@ package dtos
 
 import (
 	"github.com/ZaphCode/clean-arch/src/domain"
+	"github.com/ZaphCode/clean-arch/src/utils"
 	"github.com/google/uuid"
 )
 
@@ -39,22 +40,15 @@ type UserDTO struct { //? For documentation
 // ----------------------------------------------------------
 
 type UpdateUserDTO struct {
-	Username      string `json:"username" validate:"omitempty,min=4,max=15" example:"John Doe"`
-	ImageUrl      string `json:"image_url" validate:"omitempty,url" example:"https://nwdistrict.ifas.ufl.edu/nat/files/2021/01/Groundhog.jpg"`
-	Age           uint16 `json:"age" validate:"omitempty,number,gte=15" example:"20"`
-	VerifiedEmail *bool  `json:"verified_email" validate:"omitempty"`
-	Role          string `json:"role" validate:"omitempty,oneof=user moderator" example:"user"`
+	Username      string  `json:"username,omitempty" validate:"omitempty,min=4,max=15" example:"John Doe"`
+	ImageUrl      string  `json:"image_url,omitempty" validate:"omitempty,url" example:"https://nwdistrict.ifas.ufl.edu/nat/files/2021/01/Groundhog.jpg"`
+	Age           *uint16 `json:"age,omitempty" validate:"omitempty,number,gte=15" example:"20"`
+	VerifiedEmail *bool   `json:"verified_email,omitempty"`
+	Role          string  `json:"role,omitempty" validate:"omitempty,oneof=user moderator" example:"user"`
 }
 
-func (dto UpdateUserDTO) AdaptToUser() (user domain.User) {
-	user.Username = dto.Username
-	user.ImageUrl = dto.ImageUrl
-	if dto.VerifiedEmail != nil {
-		user.VerifiedEmail = *dto.VerifiedEmail
-	}
-	user.Role = dto.Role
-	user.Age = dto.Age
-	return
+func (dto UpdateUserDTO) AdaptToUpdateFields() domain.UpdateFields {
+	return utils.StructToMap(dto)
 }
 
 // ----------------------------------------------------------

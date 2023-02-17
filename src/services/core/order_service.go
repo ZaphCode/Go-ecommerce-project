@@ -43,6 +43,14 @@ func (s *orderService) GetAll() ([]domain.Order, error) {
 	return s.ordRepo.Find()
 }
 
+func (s *orderService) UpdateStatus(ID uuid.UUID, status string) error {
+	return s.ordRepo.UpdateField(ID, "Status", status)
+}
+
 func (s *orderService) GetAllByUserID(ID uuid.UUID) ([]domain.Order, error) {
 	return s.ordRepo.FindWhere("UserID", "==", ID)
+}
+
+func (s *orderService) Delete(ID uuid.UUID) error {
+	return s.ordRepo.Remove(ID)
 }

@@ -10,22 +10,40 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type ProductRoutesSuite struct {
+type UserRoutesSuite struct {
 	ServerSuite
 	bp string
 }
 
-func TestProductRoutesSuite(t *testing.T) {
-	prs := new(ProductRoutesSuite)
-	prs.bp = "/api/product"
+func TestUserRoutesSuite(t *testing.T) {
+	prs := new(UserRoutesSuite)
+	prs.bp = "/api/user"
 	suite.Run(t, prs)
 }
 
-func (s *ProductRoutesSuite) TestProductRoutes_GetAll() {
+func (s *UserRoutesSuite) TestUserRoutes_GetAll() {
 	testCases := []TryRouteTestCase{
 		{
-			desc:          "Get all products",
+			desc:          "Get all users",
 			req:           s.MakeReq("GET", s.bp+"/all", nil),
+			showResp:      true,
+			wantStatus:    http.StatusUnauthorized,
+			bodyValidator: s.CheckFail,
+		},
+		{
+			desc: "User not authorized",
+			req: s.MakeReq("GET", s.bp+"/all", nil, map[string]string{
+				s.cfg.Api.AccessTokenHeader: s.userAccessToken,
+			}),
+			showResp:      true,
+			wantStatus:    http.StatusForbidden,
+			bodyValidator: s.CheckFail,
+		},
+		{
+			desc: "Mod/Admin authorized",
+			req: s.MakeReq("GET", s.bp+"/all", nil, map[string]string{
+				s.cfg.Api.AccessTokenHeader: s.modAccessToken,
+			}),
 			showResp:      true,
 			wantStatus:    http.StatusOK,
 			bodyValidator: s.CheckSuccess,
@@ -34,25 +52,47 @@ func (s *ProductRoutesSuite) TestProductRoutes_GetAll() {
 	s.RunRequests(testCases)
 }
 
-func (s *ProductRoutesSuite) TestProductRoutes_GetByID() {
+func (s *UserRoutesSuite) TestUserRoutes_GetByID() {
 	testCases := []TryRouteTestCase{
 		{
-			desc:          "Invalid product id",
-			req:           s.MakeReq("GET", s.bp+"/get/dafadf", nil),
+			desc:          "Get all users",
+			req:           s.MakeReq("GET", s.bp+"/all", nil),
+			showResp:      true,
+			wantStatus:    http.StatusUnauthorized,
+			bodyValidator: s.CheckFail,
+		},
+		{
+			desc: "User not authorized",
+			req: s.MakeReq("GET", s.bp+"/all", nil, map[string]string{
+				s.cfg.Api.AccessTokenHeader: s.userAccessToken,
+			}),
+			showResp:      true,
+			wantStatus:    http.StatusForbidden,
+			bodyValidator: s.CheckFail,
+		},
+		{
+			desc: "Invalid user id",
+			req: s.MakeReq("GET", s.bp+"/get/dafadf", nil, map[string]string{
+				s.cfg.Api.AccessTokenHeader: s.modAccessToken,
+			}),
 			showResp:      true,
 			wantStatus:    http.StatusNotAcceptable,
 			bodyValidator: s.CheckFail,
 		},
 		{
-			desc:          "Not found product",
-			req:           s.MakeReq("GET", s.bp+"/get/"+uuid.New().String(), nil),
+			desc: "User not found",
+			req: s.MakeReq("GET", s.bp+"/get/"+uuid.New().String(), nil, map[string]string{
+				s.cfg.Api.AccessTokenHeader: s.modAccessToken,
+			}),
 			showResp:      true,
 			wantStatus:    http.StatusNotFound,
 			bodyValidator: s.CheckFail,
 		},
 		{
-			desc:          "Get product success",
-			req:           s.MakeReq("GET", s.bp+"/get/"+utils.ProductExp1.ID.String(), nil),
+			desc: "Get user success",
+			req: s.MakeReq("GET", s.bp+"/get/"+utils.UserExp1.ID.String(), nil, map[string]string{
+				s.cfg.Api.AccessTokenHeader: s.modAccessToken,
+			}),
 			showResp:      true,
 			wantStatus:    http.StatusFound,
 			bodyValidator: s.CheckSuccess,
@@ -61,7 +101,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_GetByID() {
 	s.RunRequests(testCases)
 }
 
-func (s *ProductRoutesSuite) TestProductRoutes_Delete() {
+func (s *UserRoutesSuite) TestUserRoutes_Delete() {
 	testCases := []TryRouteTestCase{
 		{
 			desc:          "Not token provided",
@@ -89,7 +129,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Delete() {
 			bodyValidator: s.CheckFail,
 		},
 		{
-			desc: "Invalid product id",
+			desc: "Invalid user id",
 			req: s.MakeReq("DELETE", s.bp+"/delete/dafadf", nil, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 			}),
@@ -98,7 +138,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Delete() {
 			bodyValidator: s.CheckFail,
 		},
 		{
-			desc: "Not found product",
+			desc: "User not found",
 			req: s.MakeReq("DELETE", s.bp+"/delete/"+uuid.New().String(), nil, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 			}),
@@ -107,8 +147,8 @@ func (s *ProductRoutesSuite) TestProductRoutes_Delete() {
 			bodyValidator: s.CheckFail,
 		},
 		{
-			desc: "Delete product success",
-			req: s.MakeReq("DELETE", s.bp+"/delete/"+utils.ProductExp1.ID.String(), nil, map[string]string{
+			desc: "Delete user success",
+			req: s.MakeReq("DELETE", s.bp+"/delete/"+utils.UserExp2.ID.String(), nil, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 			}),
 			showResp:      true,
@@ -119,18 +159,19 @@ func (s *ProductRoutesSuite) TestProductRoutes_Delete() {
 	s.RunRequests(testCases)
 }
 
-func (s *ProductRoutesSuite) TestProductRoutes_Create() {
+func (s *UserRoutesSuite) TestUserRoutes_Create() {
+	path := s.bp + "/create"
 	testCases := []TryRouteTestCase{
 		{
 			desc:          "No token provided",
-			req:           s.MakeReq("POST", s.bp+"/Create", nil),
+			req:           s.MakeReq("POST", path, nil),
 			showResp:      true,
 			wantStatus:    http.StatusUnauthorized,
 			bodyValidator: s.CheckFail,
 		},
 		{
 			desc: "User has not permissions",
-			req: s.MakeReq("POST", s.bp+"/Create", nil, map[string]string{
+			req: s.MakeReq("POST", path, nil, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.userAccessToken,
 			}),
 			showResp:      true,
@@ -139,7 +180,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Create() {
 		},
 		{
 			desc: "Mod has not permissions",
-			req: s.MakeReq("POST", s.bp+"/Create", nil, map[string]string{
+			req: s.MakeReq("POST", path, nil, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.modAccessToken,
 			}),
 			showResp:      true,
@@ -148,7 +189,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Create() {
 		},
 		{
 			desc: "Unprocesable json",
-			req: s.MakeReq("POST", s.bp+"/Create", nil, map[string]string{
+			req: s.MakeReq("POST", path, nil, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 			}),
 			showResp:      true,
@@ -157,9 +198,12 @@ func (s *ProductRoutesSuite) TestProductRoutes_Create() {
 		},
 		{
 			desc: "Invalid request body",
-			req: s.MakeReq("POST", s.bp+"/Create", dtos.NewProductDTO{
-				Price:        0,
-				DiscountRate: 120,
+			req: s.MakeReq("POST", path, dtos.NewUserDTO{
+				Email:         "omar#gmail.com",
+				VerifiedEmail: true,
+				Role:          "seller",
+				Password:      "abc",
+				ImageUrl:      "a",
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 				"Content-Type":              "application/json",
@@ -169,15 +213,14 @@ func (s *ProductRoutesSuite) TestProductRoutes_Create() {
 			bodyValidator: s.CheckFail,
 		},
 		{
-			desc: "Unexisting category",
-			req: s.MakeReq("POST", s.bp+"/Create", dtos.NewProductDTO{
-				Category:     "toys",
-				Name:         "Woody toy story",
-				Description:  "Best toy ever",
-				ImagesUrl:    []string{"https://toy.com/woody"},
-				Tags:         []string{"toys"},
-				Price:        14,
-				DiscountRate: 10,
+			desc: "Existing email",
+			req: s.MakeReq("POST", path, dtos.NewUserDTO{
+				Username:      "juan camanei",
+				Email:         "john@testing.com",
+				VerifiedEmail: true,
+				Password:      "password12345",
+				Role:          "user",
+				Age:           23,
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 				"Content-Type":              "application/json",
@@ -188,14 +231,13 @@ func (s *ProductRoutesSuite) TestProductRoutes_Create() {
 		},
 		{
 			desc: "Create success",
-			req: s.MakeReq("POST", s.bp+"/Create", dtos.NewProductDTO{
-				Category:     "clothes",
-				Name:         "Woody toy story hat",
-				Description:  "Best cowboy hat",
-				ImagesUrl:    []string{"https://toy.com/hat"},
-				Tags:         []string{"clothes", "hat"},
-				Price:        1400,
-				DiscountRate: 0,
+			req: s.MakeReq("POST", path, dtos.NewUserDTO{
+				Username:      "Gavino",
+				Email:         "gabi@hotmail.com.mx",
+				VerifiedEmail: false,
+				Password:      "contrasenauwu",
+				Role:          "moderator",
+				Age:           25,
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 				"Content-Type":              "application/json",
@@ -208,8 +250,9 @@ func (s *ProductRoutesSuite) TestProductRoutes_Create() {
 	s.RunRequests(testCases)
 }
 
-func (s *ProductRoutesSuite) TestProductRoutes_Update() {
+func (s *UserRoutesSuite) TestUserRoutes_Update() {
 	path := s.bp + "/update/"
+
 	testCases := []TryRouteTestCase{
 		{
 			desc:          "No token provided",
@@ -247,7 +290,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Update() {
 		},
 		{
 			desc: "Unprocesable json",
-			req: s.MakeReq("PUT", path+utils.ProductExp2.ID.String(), nil, map[string]string{
+			req: s.MakeReq("PUT", path+utils.UserExp2.ID.String(), nil, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 			}),
 			showResp:      true,
@@ -256,10 +299,10 @@ func (s *ProductRoutesSuite) TestProductRoutes_Update() {
 		},
 		{
 			desc: "Invalid request body",
-			req: s.MakeReq("PUT", path+utils.ProductExp2.ID.String(), dtos.UpdateProductDTO{
-				Category:     " a ",
-				DiscountRate: utils.PTR[uint](200),
-				ImagesUrl:    []string{"A"},
+			req: s.MakeReq("PUT", path+utils.UserExp1.ID.String(), dtos.UpdateUserDTO{
+				Username: "Fizz bar",
+				Age:      utils.PTR[uint16](12),
+				Role:     "helper",
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 				"Content-Type":              "application/json",
@@ -269,7 +312,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Update() {
 			bodyValidator: s.CheckFail,
 		},
 		{
-			desc: "Product not found",
+			desc: "User not found",
 			req: s.MakeReq("PUT", path+utils.AddrExp1.ID.String(), dtos.UpdateProductDTO{
 				DiscountRate: utils.PTR[uint](10),
 			}, map[string]string{
@@ -281,23 +324,11 @@ func (s *ProductRoutesSuite) TestProductRoutes_Update() {
 			bodyValidator: s.CheckFail,
 		},
 		{
-			desc: "Category to update not found",
-			req: s.MakeReq("PUT", path+utils.ProductExp2.ID.String(), dtos.UpdateProductDTO{
-				Category: "toys",
-			}, map[string]string{
-				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
-				"Content-Type":              "application/json",
-			}),
-			showResp:      true,
-			wantStatus:    http.StatusInternalServerError,
-			bodyValidator: s.CheckFail,
-		},
-		{
 			desc: "Update success",
-			req: s.MakeReq("PUT", path+utils.ProductExp2.ID.String(), dtos.UpdateProductDTO{
-				Category:     "clothes",
-				Price:        utils.PTR[uint](1500),
-				DiscountRate: utils.PTR[uint](12),
+			req: s.MakeReq("PUT", path+utils.UserExp1.ID.String(), dtos.UpdateUserDTO{
+				Role:          "moderator",
+				Username:      "Fizz bar",
+				VerifiedEmail: utils.PTR(false),
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 				"Content-Type":              "application/json",
