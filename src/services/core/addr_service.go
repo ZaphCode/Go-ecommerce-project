@@ -53,14 +53,22 @@ func (s *addressService) GetByID(ID uuid.UUID) (*domain.Address, error) {
 	return s.addrRepo.FindByID(ID)
 }
 
-func (s *addressService) Update(ID uuid.UUID, uf domain.UpdateFields) error {
+func (s *addressService) Update(addrID, usrID uuid.UUID, uf domain.UpdateFields) error {
+	if !s.CanMutate(addrID, usrID) {
+		return fmt.Errorf("cannot update that address")
+	}
+
 	delete(uf, "UserID")
 	delete(uf, "Model")
-	return s.addrRepo.Update(ID, uf)
+
+	return s.addrRepo.Update(addrID, uf)
 }
 
-func (s *addressService) Delete(ID uuid.UUID) error {
-	return s.addrRepo.Remove(ID)
+func (s *addressService) Delete(addrID, usrID uuid.UUID) error {
+	if !s.CanMutate(addrID, usrID) {
+		return fmt.Errorf("cannot delete that address")
+	}
+	return s.addrRepo.Remove(addrID)
 }
 
 func (s *addressService) GetAllByUserID(ID uuid.UUID) ([]domain.Address, error) {
@@ -71,4 +79,14 @@ func (s *addressService) GetAllByUserID(ID uuid.UUID) ([]domain.Address, error) 
 	}
 
 	return s.addrRepo.FindWhere("UserID", "==", ID)
+}
+
+func (s *addressService) CanMutate(addrID, usrID uuid.UUID) bool {
+	addr, err := s.addrRepo.FindByID(addrID)
+
+	if err != nil || addr == nil {
+		return false
+	}
+
+	return addr.UserID == usrID
 }

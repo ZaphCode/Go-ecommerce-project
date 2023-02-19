@@ -52,7 +52,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_GetByID() {
 		},
 		{
 			desc:          "Get product success",
-			req:           s.MakeReq("GET", s.bp+"/get/"+utils.ProductExp1.ID.String(), nil),
+			req:           s.MakeReq("GET", s.bp+"/get/"+utils.ProductExp2.ID.String(), nil),
 			showResp:      true,
 			wantStatus:    http.StatusFound,
 			bodyValidator: s.CheckSuccess,
@@ -170,7 +170,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Create() {
 		},
 		{
 			desc: "Unexisting category",
-			req: s.MakeReq("POST", s.bp+"/Create", dtos.NewProductDTO{
+			req: s.MakeReq("POST", s.bp+"/create", dtos.NewProductDTO{
 				Category:     "toys",
 				Name:         "Woody toy story",
 				Description:  "Best toy ever",
@@ -188,12 +188,12 @@ func (s *ProductRoutesSuite) TestProductRoutes_Create() {
 		},
 		{
 			desc: "Create success",
-			req: s.MakeReq("POST", s.bp+"/Create", dtos.NewProductDTO{
-				Category:     "clothes",
-				Name:         "Woody toy story hat",
-				Description:  "Best cowboy hat",
-				ImagesUrl:    []string{"https://toy.com/hat"},
-				Tags:         []string{"clothes", "hat"},
+			req: s.MakeReq("POST", s.bp+"/create", dtos.NewProductDTO{
+				Category:     "headsets",
+				Name:         "Logitech g613",
+				Description:  "Best cheap headsets",
+				ImagesUrl:    []string{"https://logi.com/headsets"},
+				Tags:         []string{"headsets", "tech"},
 				Price:        1400,
 				DiscountRate: 0,
 			}, map[string]string{

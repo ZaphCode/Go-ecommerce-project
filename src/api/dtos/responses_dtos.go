@@ -35,6 +35,18 @@ type ProductsRespOKDTO struct {
 	Data []ProductDTO `json:"data"`
 }
 
+//* -------- ADDRESS ----------
+
+type AddressRespOKDTO struct {
+	RespOKDTO
+	Data AddressDTO `json:"data"`
+}
+
+type AddressesRespOKDTO struct {
+	RespOKDTO
+	Data []AddressDTO `json:"data"`
+}
+
 //* ------ CATEGORIES ----------
 
 type CategoryRespOKDTO struct {

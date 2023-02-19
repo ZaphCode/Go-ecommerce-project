@@ -48,8 +48,8 @@ func (s *AddressServiceSuite) TestAddressService_Create() {
 		{
 			desc: "user that does not exist",
 			input: domain.Address{
-				UserID: uuid.New(),
 				Name:   "Test address",
+				UserID: uuid.New(),
 				// rest...
 			},
 			wantErr: true,
@@ -58,8 +58,8 @@ func (s *AddressServiceSuite) TestAddressService_Create() {
 			desc: "proper work",
 			input: domain.Address{
 				Name:       "Main house",
-				UserID:     utils.UserExp1.ID,
 				City:       "CMDX",
+				UserID:     utils.UserExp1.ID,
 				Country:    "Mexico",
 				PostalCode: "13513",
 				Line1:      "Pato 24",
@@ -175,23 +175,85 @@ func (s *AddressServiceSuite) TestAddressService_GetAll() {
 func (s *AddressServiceSuite) TestAddressService_Delete() {
 	testCases := []struct {
 		desc    string
-		id      uuid.UUID
+		addrID  uuid.UUID
+		usrID   uuid.UUID
 		wantErr bool
 	}{
 		{
 			desc:    "card not found",
-			id:      uuid.New(),
+			addrID:  uuid.New(),
+			wantErr: true,
+		},
+		{
+			desc:    "not owner",
+			addrID:  utils.AddrExp1.ID,
+			usrID:   utils.UserExp2.ID,
 			wantErr: true,
 		},
 		{
 			desc:    "proper work: card found",
-			id:      utils.AddrExp1.ID,
+			addrID:  utils.AddrExp1.ID,
+			usrID:   utils.UserExp1.ID,
 			wantErr: false,
 		},
 	}
 	for _, tC := range testCases {
 		s.Run(tC.desc, func() {
-			err := s.service.Delete(tC.id)
+			err := s.service.Delete(tC.addrID, tC.usrID)
+
+			s.Equal(tC.wantErr, (err != nil), "expect error fail")
+
+			if err != nil {
+				s.T().Logf("\n\n Error >>> %s \n\n", err.Error())
+			}
+		})
+	}
+}
+
+func (s *AddressServiceSuite) TestAddressService_Update() {
+	type args struct {
+		uf     domain.UpdateFields
+		addrID uuid.UUID
+		usrID  uuid.UUID
+	}
+	testCases := []struct {
+		desc    string
+		args    args
+		wantErr bool
+	}{
+		{
+			desc: "address not found",
+			args: args{
+				usrID:  uuid.New(),
+				addrID: uuid.New(),
+				uf:     domain.UpdateFields{},
+			},
+			wantErr: true,
+		},
+		{
+			desc: "Invalid owner",
+			args: args{
+				addrID: utils.AddrExp1.ID,
+				usrID:  uuid.New(),
+				uf:     domain.UpdateFields{},
+			},
+			wantErr: true,
+		},
+		{
+			desc: "proper work: card found",
+			args: args{
+				addrID: utils.AddrExp1.ID,
+				usrID:  utils.AddrExp1.UserID,
+				uf: domain.UpdateFields{
+					"Name": "Random address",
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tC := range testCases {
+		s.Run(tC.desc, func() {
+			err := s.service.Update(tC.args.addrID, tC.args.usrID, tC.args.uf)
 
 			s.Equal(tC.wantErr, (err != nil), "expect error fail")
 

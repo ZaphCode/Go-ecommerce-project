@@ -97,8 +97,7 @@ func (h *CategoryHandler) CreateCategory(c *fiber.Ctx) error {
 // @Failure      406  {object}  dtos.DetailRespErrDTO
 // @Router       /category/delete/{id} [delete]
 func (h *CategoryHandler) DeleteCategory(c *fiber.Ctx) error {
-	id := c.Params("id")
-	uid, err := uuid.Parse(id)
+	uid, err := uuid.Parse(c.Params("id"))
 
 	if err != nil {
 		return h.RespErr(c, 406, "invalid category id")

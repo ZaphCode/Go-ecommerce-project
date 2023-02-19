@@ -256,7 +256,7 @@ func (s *ProductServiceSuite) TestProductService_Update() {
 			id:      utils.ProductExp2.ID,
 			uf: domain.UpdateFields{
 				"Name":  "Corsair Void Pro masters",
-				"Price": 7777,
+				"Price": uint(7777),
 			},
 			validationFn: func() {
 				p, _ := s.service.prodRepo.FindByID(utils.ProductExp2.ID)

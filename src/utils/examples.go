@@ -77,6 +77,15 @@ var CategoryExp2 = domain.Category{
 	Name: "clothes",
 }
 
+var CategoryExp3 = domain.Category{
+	Model: domain.Model{
+		ID:        uuid.MustParse("be17f397-d069-403f-ae0c-8f6c65b12415"),
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	},
+	Name: "mouses",
+}
+
 //* Products
 
 var ProductExp1 = domain.Product{

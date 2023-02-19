@@ -21,8 +21,12 @@ type Address struct {
 //* Service
 
 type AddressService interface {
-	ServiceCrudOperations[Address]
-	GetAllByUserID(ID uuid.UUID) ([]Address, error)
+	Create(addr *Address) error
+	GetAll() ([]Address, error)
+	GetByID(addrID uuid.UUID) (*Address, error)
+	Update(addrID, usrID uuid.UUID, uf UpdateFields) error
+	Delete(addrID, usrID uuid.UUID) error
+	GetAllByUserID(usrID uuid.UUID) ([]Address, error)
 }
 
 //* Repository

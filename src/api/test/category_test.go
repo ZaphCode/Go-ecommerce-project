@@ -82,7 +82,7 @@ func (s *CategoryRoutesSuite) TestCategoryRoutes_Delete() {
 		},
 		{
 			desc: "Delete category success",
-			req: s.MakeReq("DELETE", path+utils.CategoryExp1.ID.String(), nil, map[string]string{
+			req: s.MakeReq("DELETE", path+utils.CategoryExp3.ID.String(), nil, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.modAccessToken,
 			}),
 			showResp:      true,

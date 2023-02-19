@@ -53,3 +53,14 @@ func (s *Server) CreateCategoryRoutes(
 	r.Post("/create", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.ModeratorRole), catHdlr.CreateCategory)
 	r.Delete("/delete/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.ModeratorRole), catHdlr.DeleteCategory)
 }
+
+func (s *Server) CreateAdreesesRoutes(
+	addrHdlr *handlers.AddressHandler,
+	authMdlw *middlewares.AuthMiddleware,
+) {
+	r := s.app.Group("/api/address")
+	r.Get("/list", authMdlw.AuthRequired, addrHdlr.GetUserAddress)
+	r.Post("/create", authMdlw.AuthRequired, addrHdlr.CreateAddress)
+	r.Put("/update/:id", authMdlw.AuthRequired, addrHdlr.UpdateAddress)
+	//r.Delete("/delete/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.ModeratorRole), catHdlr.DeleteCategory)
+}

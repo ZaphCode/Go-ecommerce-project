@@ -11,6 +11,7 @@ import (
 	"github.com/ZaphCode/clean-arch/src/api"
 	"github.com/ZaphCode/clean-arch/src/api/handlers"
 	"github.com/ZaphCode/clean-arch/src/api/middlewares"
+	"github.com/ZaphCode/clean-arch/src/repositories/address"
 	"github.com/ZaphCode/clean-arch/src/repositories/category"
 	"github.com/ZaphCode/clean-arch/src/repositories/product"
 	"github.com/ZaphCode/clean-arch/src/repositories/user"
@@ -48,12 +49,14 @@ func (s *ServerSuite) SetupSuite() {
 	// Repos
 	userRepo := user.NewMemoryUserRepository(utils.UserAdmin, utils.UserExp1, utils.UserExp2)
 	prodRepo := product.NewMemoryProductRepository(utils.ProductExp1, utils.ProductExp2)
-	catRepo := category.NewMemoryCategoryRepository(utils.CategoryExp1, utils.CategoryExp2)
+	catRepo := category.NewMemoryCategoryRepository(utils.CategoryExp1, utils.CategoryExp2, utils.CategoryExp3)
+	addrRepo := address.NewMemoryAddressRepository(utils.AddrExp1, utils.AddrExp2)
 
 	// Services
 	userSvc := core.NewUserService(userRepo)
 	prodSvc := core.NewProductService(prodRepo, catRepo)
 	catSvc := core.NewCategoryService(catRepo, prodRepo)
+	addrSvc := core.NewAddressService(addrRepo, userRepo)
 	emailSvc := email.NewSmtpEmailService()
 	vldSvc := validation.NewValidationService()
 	jwtSvc := auth.NewJWTService()
@@ -63,6 +66,7 @@ func (s *ServerSuite) SetupSuite() {
 
 	// Handlers
 	usrHdlr := handlers.NewUserHandler(userSvc, vldSvc)
+	addrHdlr := handlers.NewAddressHandler(userSvc, addrSvc, vldSvc)
 	authHdlr := handlers.NewAuthHandler(userSvc, emailSvc, jwtSvc, vldSvc)
 	prodHdlr := handlers.NewProdutHandler(prodSvc, catSvc, vldSvc)
 	catHdlr := handlers.NewCategoryHandler(prodSvc, catSvc, vldSvc)
@@ -78,6 +82,7 @@ func (s *ServerSuite) SetupSuite() {
 	server.CreateUserRoutes(usrHdlr, authMdlw)
 	server.CreateProductRoutes(prodHdlr, authMdlw)
 	server.CreateCategoryRoutes(catHdlr, authMdlw)
+	server.CreateAdreesesRoutes(addrHdlr, authMdlw)
 
 	s.server = server
 
