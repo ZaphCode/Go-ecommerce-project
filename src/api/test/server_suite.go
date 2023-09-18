@@ -13,14 +13,18 @@ import (
 	"github.com/ZaphCode/clean-arch/src/api/middlewares"
 	"github.com/ZaphCode/clean-arch/src/repositories/address"
 	"github.com/ZaphCode/clean-arch/src/repositories/category"
+	"github.com/ZaphCode/clean-arch/src/repositories/order"
 	"github.com/ZaphCode/clean-arch/src/repositories/product"
 	"github.com/ZaphCode/clean-arch/src/repositories/user"
 	"github.com/ZaphCode/clean-arch/src/services/auth"
 	"github.com/ZaphCode/clean-arch/src/services/core"
 	"github.com/ZaphCode/clean-arch/src/services/email"
+	"github.com/ZaphCode/clean-arch/src/services/payment"
 	"github.com/ZaphCode/clean-arch/src/services/validation"
 	"github.com/ZaphCode/clean-arch/src/utils"
 	"github.com/stretchr/testify/suite"
+	"github.com/stripe/stripe-go/v74"
+	"github.com/stripe/stripe-go/v74/paymentmethod"
 )
 
 type TryRouteTestCase struct {
@@ -38,6 +42,7 @@ type ServerSuite struct {
 	adminAccessToken string
 	modAccessToken   string
 	userAccessToken  string
+	paymentID        string
 }
 
 func (s *ServerSuite) SetupSuite() {
@@ -51,18 +56,22 @@ func (s *ServerSuite) SetupSuite() {
 	prodRepo := product.NewMemoryProductRepository(utils.ProductExp1, utils.ProductExp2)
 	catRepo := category.NewMemoryCategoryRepository(utils.CategoryExp1, utils.CategoryExp2, utils.CategoryExp3)
 	addrRepo := address.NewMemoryAddressRepository(utils.AddrExp1, utils.AddrExp2)
+	ordRepo := order.NewMemoryOrderRepository()
 
 	// Services
 	userSvc := core.NewUserService(userRepo)
 	prodSvc := core.NewProductService(prodRepo, catRepo)
 	catSvc := core.NewCategoryService(catRepo, prodRepo)
 	addrSvc := core.NewAddressService(addrRepo, userRepo)
+	ordSvc := core.NewOrderService(ordRepo, addrRepo)
+	pmSvc := payment.NewStripePaymentService(s.cfg.Stripe.SecretKey, userRepo)
 	emailSvc := email.NewSmtpEmailService()
 	vldSvc := validation.NewValidationService()
 	jwtSvc := auth.NewJWTService()
 
 	// Midlewares
 	authMdlw := middlewares.NewAuthMiddleware(jwtSvc)
+	paymMdlw := middlewares.NewPaymentMiddleware(pmSvc)
 
 	// Handlers
 	usrHdlr := handlers.NewUserHandler(userSvc, vldSvc)
@@ -70,6 +79,8 @@ func (s *ServerSuite) SetupSuite() {
 	authHdlr := handlers.NewAuthHandler(userSvc, emailSvc, jwtSvc, vldSvc)
 	prodHdlr := handlers.NewProdutHandler(prodSvc, catSvc, vldSvc)
 	catHdlr := handlers.NewCategoryHandler(prodSvc, catSvc, vldSvc)
+	crdHdlr := handlers.NewCardHandler(userSvc, pmSvc, vldSvc)
+	ordHdlr := handlers.NewOrderHandler(userSvc, ordSvc, prodSvc, pmSvc, vldSvc)
 
 	// Server
 	server := api.New()
@@ -83,6 +94,8 @@ func (s *ServerSuite) SetupSuite() {
 	server.CreateProductRoutes(prodHdlr, authMdlw)
 	server.CreateCategoryRoutes(catHdlr, authMdlw)
 	server.CreateAdreesesRoutes(addrHdlr, authMdlw)
+	server.CreateOrderRoutes(ordHdlr, paymMdlw, authMdlw)
+	server.CreateCardRoutes(crdHdlr, paymMdlw, authMdlw)
 
 	s.server = server
 
@@ -115,6 +128,25 @@ func (s *ServerSuite) SetupSuite() {
 	s.NoError(err, "should not be error")
 
 	s.userAccessToken = ut
+
+	params := &stripe.PaymentMethodParams{
+		Card: &stripe.PaymentMethodCardParams{
+			Number:   stripe.String("5555555555554444"),
+			ExpMonth: stripe.Int64(4),
+			ExpYear:  stripe.Int64(2025),
+			CVC:      stripe.String("314"),
+		},
+		BillingDetails: &stripe.PaymentMethodBillingDetailsParams{
+			Name: stripe.String("FROM SERVER SUITE"),
+		},
+		Type: stripe.String("card"),
+	}
+
+	pm, err := paymentmethod.New(params)
+
+	s.NoError(err, "should not be error")
+
+	s.paymentID = pm.ID
 }
 
 func (s *ServerSuite) RunRequests(testCases []TryRouteTestCase) {
@@ -131,7 +163,7 @@ func (s *ServerSuite) RunRequests(testCases []TryRouteTestCase) {
 
 			resBody, err := io.ReadAll(res.Body)
 
-			s.Require().NoError(err, "readig response error!")
+			s.Require().NoError(err, "reading response error!")
 
 			if tC.showResp {
 				s.ShowResponse(res.Request.URL.Path, resBody)
@@ -192,11 +224,11 @@ func (s *ServerSuite) MakeReq(met, path string, body any, hdrs ...map[string]str
 func (s *ServerSuite) CheckSuccess(jsm map[string]any) {
 	status, ok := jsm["status"]
 	s.True(ok, "should contain status")
-	s.Equal("success", status, "status sould be success")
+	s.Equal("success", status, "status should be success")
 }
 
 func (s *ServerSuite) CheckFail(jsm map[string]any) {
 	status, ok := jsm["status"]
 	s.True(ok, "should contain failure")
-	s.Equal("failure", status, "status sould be failure")
+	s.Equal("failure", status, "status should be failure")
 }

@@ -11,8 +11,8 @@ type Product struct {
 	Category     string   `json:"category"`
 	Name         string   `json:"name"`
 	Description  string   `json:"description"`
-	Price        uint     `json:"price"`
-	DiscountRate uint     `json:"discount_rate"`
+	Price        int64    `json:"price"`
+	DiscountRate int64    `json:"discount_rate"`
 	ImagesUrl    []string `json:"images_url"`
 	Tags         []string `json:"tags"`
 	Avalible     bool     `json:"avalible"`

@@ -32,14 +32,14 @@ func NewAddressHandler(
 // * Get user address handler
 // @Summary      Get auth user addresses
 // @Description  Get all addresses from auth user
-// @Tags         addresses
+// @Tags         address
 // @Accept       json
 // @Produce      json
 // @Security     BearerAuth
 // @Success      200  {object}  dtos.AddressesRespOKDTO
 // @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
-// @Router       /address/create [get]
+// @Router       /address/list [get]
 func (h *AddressHandler) GetUserAddress(c *fiber.Ctx) error {
 	ud, ok := c.Locals("user-data").(*auth.Claims)
 
@@ -59,11 +59,11 @@ func (h *AddressHandler) GetUserAddress(c *fiber.Ctx) error {
 // * Create address handler
 // @Summary      Create new address
 // @Description  Create address
-// @Tags         addresses
+// @Tags         address
 // @Accept       json
 // @Produce      json
 // @Security     BearerAuth
-// @Param        address_data  body dtos.NewProductDTO true "address data"
+// @Param        address_data  body dtos.NewAddressDTO true "address data"
 // @Success      201  {object}  dtos.AddressRespOKDTO
 // @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
@@ -99,23 +99,24 @@ func (h *AddressHandler) CreateAddress(c *fiber.Ctx) error {
 // * Update address handler
 // @Summary      Update address
 // @Description  Update address
-// @Tags         addresses
+// @Tags         address
 // @Accept       json
 // @Produce      json
 // @Security     BearerAuth
-// @Param        address_data  body dtos.NewProductDTO true "address data"
+// @Param        id   path string true "address  uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
+// @Param        address_data  body dtos.UpdateAddressDTO true "address data"
 // @Success      200  {object}  dtos.AddressRespOKDTO
 // @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
 // @Failure      422  {object}  dtos.DetailRespErrDTO
 // @Failure      406  {object}  dtos.RespErrDTO
 // @Failure      400  {object}  dtos.ValidationRespErrDTO
-// @Router       /address/create [put]
+// @Router       /address/update/{id} [put]
 func (h *AddressHandler) UpdateAddress(c *fiber.Ctx) error {
 	uid, err := uuid.Parse(c.Params("id"))
 
 	if err != nil {
-		return h.RespErr(c, 406, "invalid category id")
+		return h.RespErr(c, 406, "invalid address id")
 	}
 
 	body := dtos.UpdateAddressDTO{}
@@ -147,4 +148,37 @@ func (h *AddressHandler) UpdateAddress(c *fiber.Ctx) error {
 	}
 
 	return h.RespOK(c, 200, "address saved", addr)
+}
+
+// * Delete address handler
+// @Summary      Delete address
+// @Description  Delete address
+// @Tags         address
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path string true "address  uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
+// @Success      200  {object}  dtos.RespOKDTO
+// @Failure      401  {object}  dtos.AuthRespErrDTO
+// @Failure      500  {object}  dtos.DetailRespErrDTO
+// @Failure      406  {object}  dtos.DetailRespErrDTO
+// @Router       /address/delete/{id} [delete]
+func (h *AddressHandler) DeleteAddress(c *fiber.Ctx) error {
+	uid, err := uuid.Parse(c.Params("id"))
+
+	if err != nil {
+		return h.RespErr(c, 406, "invalid address id")
+	}
+
+	ud, ok := c.Locals("user-data").(*auth.Claims)
+
+	if !ok {
+		return h.RespErr(c, 500, "internal server error", "something went wrong")
+	}
+
+	if err := h.addrSvc.Delete(uid, ud.ID); err != nil {
+		return h.RespErr(c, 500, "error deleting address", err.Error())
+	}
+
+	return h.RespOK(c, 200, "address deleted")
 }

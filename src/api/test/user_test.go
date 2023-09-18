@@ -314,7 +314,7 @@ func (s *UserRoutesSuite) TestUserRoutes_Update() {
 		{
 			desc: "User not found",
 			req: s.MakeReq("PUT", path+utils.AddrExp1.ID.String(), dtos.UpdateProductDTO{
-				DiscountRate: utils.PTR[uint](10),
+				DiscountRate: utils.PTR[int64](10),
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 				"Content-Type":              "application/json",

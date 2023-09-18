@@ -25,7 +25,7 @@ type RepositoryCrudOperations[T DomainModel] interface {
 // ---------------------------------------------------------------
 
 type DomainModel interface {
-	User | Address | Category | Product | Order | Card | ExampleModel
+	User | Address | Category | Product | Order | ExampleModel
 
 	GetStringID() string
 	GetCreatedDate() int64

@@ -10,11 +10,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// TODO: Add card and addr repo to user service
+// TODO: Add addr repo to user service
 
 type userService struct {
 	usrRepo domain.UserRepository
-	//cardRepo domain.CardRepository
 	//addrRepo domain.AddressRepository
 }
 

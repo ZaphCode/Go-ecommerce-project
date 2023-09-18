@@ -42,8 +42,6 @@ func TestSyncMapSuite(t *testing.T) {
 //* Life cycle
 
 func (s *SyncMapSuite) SetupSuite() {
-	s.T().Log("\n--------- Init ----------")
-
 	s.syancMap = NewSyncMap[uuid.UUID, ExampleModel]()
 }
 

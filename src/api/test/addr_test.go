@@ -169,12 +169,63 @@ func (s *AddressRoutesSuite) TestAddressRoutes_Update() {
 		},
 		{
 			desc: "Update success",
-			req: s.MakeReq("PUT", path+utils.AddrExp1.ID.String(), dtos.NewAddressDTO{
+			req: s.MakeReq("PUT", path+utils.AddrExp2.ID.String(), dtos.NewAddressDTO{
 				Country: "México",
 				State:   "Baja California Sur",
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.userAccessToken,
 				"Content-Type":              "application/json",
+			}),
+			showResp:      true,
+			wantStatus:    http.StatusOK,
+			bodyValidator: s.CheckSuccess,
+		},
+	}
+	s.RunRequests(testCases)
+}
+
+func (s *AddressRoutesSuite) TestAddressRoutes_Delete() {
+	path := s.bp + "/delete/"
+
+	testCases := []TryRouteTestCase{
+		{
+			desc:          "No token provided",
+			req:           s.MakeReq("DELETE", path+"k", nil),
+			showResp:      true,
+			wantStatus:    http.StatusUnauthorized,
+			bodyValidator: s.CheckFail,
+		},
+		{
+			desc: "Invalid uuid",
+			req: s.MakeReq("DELETE", path+"kfad", nil, map[string]string{
+				s.cfg.Api.AccessTokenHeader: s.userAccessToken,
+			}),
+			showResp:      true,
+			wantStatus:    http.StatusNotAcceptable,
+			bodyValidator: s.CheckFail,
+		},
+		{
+			desc: "Not found",
+			req: s.MakeReq("DELETE", path+uuid.New().String(), nil, map[string]string{
+				s.cfg.Api.AccessTokenHeader: s.userAccessToken,
+			}),
+			showResp:      true,
+			wantStatus:    http.StatusInternalServerError,
+			bodyValidator: s.CheckFail,
+		},
+		{
+			desc: "Not owner",
+			req: s.MakeReq("DELETE", path+utils.AddrExp2.ID.String(), nil, map[string]string{
+				s.cfg.Api.AccessTokenHeader: s.modAccessToken,
+			}),
+			showResp:      true,
+			wantStatus:    http.StatusInternalServerError,
+			bodyValidator: s.CheckFail,
+		},
+		{
+			desc: "Delete success",
+			req: s.MakeReq("DELETE", path+utils.AddrExp1.ID.String(), nil, map[string]string{
+				s.cfg.Api.AccessTokenHeader: s.userAccessToken,
 			}),
 			showResp:      true,
 			wantStatus:    http.StatusOK,

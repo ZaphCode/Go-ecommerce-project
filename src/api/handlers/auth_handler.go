@@ -283,7 +283,7 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 		}()
 	}
 
-	accessToken, atErr := h.jwtSvc.CreateToken(
+	_, atErr := h.jwtSvc.CreateToken(
 		auth.Claims{ID: user.ID, Role: user.Role},
 		shared.AccessTokenExp, cfg.Api.AccessTokenSecret,
 	)
@@ -305,11 +305,12 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 		SameSite: "lax",
 	})
 
-	return h.RespOK(c, 200, "sign in successfully", fiber.Map{
-		"user":          user,
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
-	})
+	return c.Redirect(cfg.Api.ClientOrigin)
+	// return h.RespOK(c, 200, "sign in successfully", fiber.Map{
+	// 	"user":          user,
+	// 	"access_token":  accessToken,
+	// 	"refresh_token": refreshToken,
+	// })
 }
 
 // * Get OAuth url handler

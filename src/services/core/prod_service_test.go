@@ -256,7 +256,7 @@ func (s *ProductServiceSuite) TestProductService_Update() {
 			id:      utils.ProductExp2.ID,
 			uf: domain.UpdateFields{
 				"Name":  "Corsair Void Pro masters",
-				"Price": uint(7777),
+				"Price": int64(7777),
 			},
 			validationFn: func() {
 				p, _ := s.service.prodRepo.FindByID(utils.ProductExp2.ID)
@@ -367,6 +367,15 @@ func (s *ProductServiceSuite) TestProductService_CalculateTotalPrice() {
 			input: []domain.OrderProduct{
 				{ID: uuid.New(), Quantity: 4},
 				{ID: utils.ProductExp2.ID, Quantity: 7},
+			},
+			wantOutput: 0,
+			wantErr:    true,
+		},
+		{
+			desc: "product that does not exist",
+			input: []domain.OrderProduct{
+				{ID: utils.AddrExp2.ID, Quantity: 4},
+				{ID: utils.AddrExp1.ID, Quantity: 7},
 			},
 			wantOutput: 0,
 			wantErr:    true,

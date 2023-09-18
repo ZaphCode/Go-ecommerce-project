@@ -173,7 +173,7 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 // @Produce      json
 // @Security     BearerAuth
 // @Param        id   path string true "product   uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
-// @Success      201  {object}  dtos.RespOKDTO
+// @Success      200  {object}  dtos.RespOKDTO
 // @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
 // @Failure      406  {object}  dtos.DetailRespErrDTO

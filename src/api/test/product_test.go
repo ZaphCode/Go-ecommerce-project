@@ -123,14 +123,14 @@ func (s *ProductRoutesSuite) TestProductRoutes_Create() {
 	testCases := []TryRouteTestCase{
 		{
 			desc:          "No token provided",
-			req:           s.MakeReq("POST", s.bp+"/Create", nil),
+			req:           s.MakeReq("POST", s.bp+"/create", nil),
 			showResp:      true,
 			wantStatus:    http.StatusUnauthorized,
 			bodyValidator: s.CheckFail,
 		},
 		{
 			desc: "User has not permissions",
-			req: s.MakeReq("POST", s.bp+"/Create", nil, map[string]string{
+			req: s.MakeReq("POST", s.bp+"/create", nil, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.userAccessToken,
 			}),
 			showResp:      true,
@@ -139,7 +139,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Create() {
 		},
 		{
 			desc: "Mod has not permissions",
-			req: s.MakeReq("POST", s.bp+"/Create", nil, map[string]string{
+			req: s.MakeReq("POST", s.bp+"/create", nil, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.modAccessToken,
 			}),
 			showResp:      true,
@@ -148,7 +148,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Create() {
 		},
 		{
 			desc: "Unprocesable json",
-			req: s.MakeReq("POST", s.bp+"/Create", nil, map[string]string{
+			req: s.MakeReq("POST", s.bp+"/create", nil, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 			}),
 			showResp:      true,
@@ -157,7 +157,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Create() {
 		},
 		{
 			desc: "Invalid request body",
-			req: s.MakeReq("POST", s.bp+"/Create", dtos.NewProductDTO{
+			req: s.MakeReq("POST", s.bp+"/create", dtos.NewProductDTO{
 				Price:        0,
 				DiscountRate: 120,
 			}, map[string]string{
@@ -258,7 +258,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Update() {
 			desc: "Invalid request body",
 			req: s.MakeReq("PUT", path+utils.ProductExp2.ID.String(), dtos.UpdateProductDTO{
 				Category:     " a ",
-				DiscountRate: utils.PTR[uint](200),
+				DiscountRate: utils.PTR[int64](200),
 				ImagesUrl:    []string{"A"},
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
@@ -271,7 +271,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Update() {
 		{
 			desc: "Product not found",
 			req: s.MakeReq("PUT", path+utils.AddrExp1.ID.String(), dtos.UpdateProductDTO{
-				DiscountRate: utils.PTR[uint](10),
+				DiscountRate: utils.PTR[int64](10),
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 				"Content-Type":              "application/json",
@@ -296,8 +296,8 @@ func (s *ProductRoutesSuite) TestProductRoutes_Update() {
 			desc: "Update success",
 			req: s.MakeReq("PUT", path+utils.ProductExp2.ID.String(), dtos.UpdateProductDTO{
 				Category:     "clothes",
-				Price:        utils.PTR[uint](1500),
-				DiscountRate: utils.PTR[uint](12),
+				Price:        utils.PTR[int64](1500),
+				DiscountRate: utils.PTR[int64](12),
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
 				"Content-Type":              "application/json",

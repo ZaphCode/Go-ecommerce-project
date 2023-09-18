@@ -68,6 +68,10 @@ func (r *FirestoreRepo[T]) Find() ([]T, error) {
 		var m T
 
 		if err := s.DataTo(&m); err != nil {
+			// v, err := s.DataAt("ID")
+
+			// if err :=
+			// continue
 			return nil, fmt.Errorf("error parsing a %s: %w", r.ModelName, err)
 		}
 

@@ -1,5 +1,75 @@
 basePath: /api
 definitions:
+  github_com_ZaphCode_clean-arch_src_api_dtos.AddressDTO:
+    properties:
+      city:
+        example: Los Angeles
+        maxLength: 30
+        type: string
+      country:
+        example: USA
+        maxLength: 30
+        type: string
+      created_at:
+        example: 1674405183
+        type: integer
+      id:
+        example: 8ded83fe-93c8-11ed-ab0f-d8bbc1a27048
+        type: string
+      line1:
+        example: Lolipop
+        maxLength: 20
+        type: string
+      line2:
+        example: Wolfstreet
+        maxLength: 20
+        type: string
+      name:
+        example: main card
+        maxLength: 20
+        type: string
+      postal_code:
+        example: "24156"
+        type: string
+      state:
+        example: California
+        maxLength: 40
+        type: string
+      updated_at:
+        example: 1674405181
+        type: integer
+    required:
+    - city
+    - country
+    - line1
+    - name
+    - postal_code
+    - state
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.AddressRespOKDTO:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressDTO'
+      message:
+        example: Data retrived!
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.AddressesRespOKDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressDTO'
+        type: array
+      message:
+        example: Data retrived!
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
   github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO:
     properties:
       detail:
@@ -10,6 +80,49 @@ definitions:
         type: string
       status:
         example: failure
+        type: string
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.CardDTO:
+    properties:
+      brand:
+        example: visa
+        type: string
+      country:
+        example: USA
+        type: string
+      created_at:
+        example: 1674405183
+        type: integer
+      exp_month:
+        example: 11
+        type: integer
+      exp_year:
+        example: 2025
+        type: integer
+      id:
+        example: 8ded83fe-93c8-11ed-ab0f-d8bbc1a27048
+        type: string
+      last4:
+        example: "1429"
+        type: string
+      name:
+        example: Main card
+        type: string
+      updated_at:
+        example: 1674405181
+        type: integer
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.CardsRespOKDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CardDTO'
+        type: array
+      message:
+        example: Data retrived!
+        type: string
+      status:
+        example: success
         type: string
     type: object
   github_com_ZaphCode_clean-arch_src_api_dtos.CategoriesRespOKDTO:
@@ -66,6 +179,43 @@ definitions:
         example: failure
         type: string
     type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.NewAddressDTO:
+    properties:
+      city:
+        example: Los Angeles
+        maxLength: 30
+        type: string
+      country:
+        example: USA
+        maxLength: 30
+        type: string
+      line1:
+        example: Lolipop
+        maxLength: 20
+        type: string
+      line2:
+        example: Wolfstreet
+        maxLength: 20
+        type: string
+      name:
+        example: main card
+        maxLength: 20
+        type: string
+      postal_code:
+        example: "24156"
+        type: string
+      state:
+        example: California
+        maxLength: 40
+        type: string
+    required:
+    - city
+    - country
+    - line1
+    - name
+    - postal_code
+    - state
+    type: object
   github_com_ZaphCode_clean-arch_src_api_dtos.NewCategoryDTO:
     properties:
       name:
@@ -74,6 +224,21 @@ definitions:
         type: string
     required:
     - name
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.NewOrderDTO:
+    properties:
+      address_id:
+        type: string
+      payment_id:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_domain.OrderProduct'
+        type: array
+    required:
+    - address_id
+    - payment_id
+    - products
     type: object
   github_com_ZaphCode_clean-arch_src_api_dtos.NewProductDTO:
     properties:
@@ -88,10 +253,10 @@ definitions:
         minLength: 4
         type: string
       discount_rate:
-        example: 23.4
+        example: 23
         maximum: 100
         minimum: 0
-        type: number
+        type: integer
       images_url:
         example:
         - https://example.com/image1.png
@@ -121,7 +286,6 @@ definitions:
         type: array
     required:
     - description
-    - discount_rate
     - images_url
     - name
     - price
@@ -163,6 +327,39 @@ definitions:
     - password
     - username
     type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.OrderDTO:
+    properties:
+      address_id:
+        type: string
+      amount:
+        example: 14500
+        type: integer
+      created_at:
+        example: 1674405183
+        type: integer
+      id:
+        example: 8ded83fe-93c8-11ed-ab0f-d8bbc1a27048
+        type: string
+      paid:
+        example: true
+        type: boolean
+      payment_id:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_domain.OrderProduct'
+        type: array
+      status:
+        example: pending
+        type: string
+      updated_at:
+        example: 1674405181
+        type: integer
+    required:
+    - address_id
+    - payment_id
+    - products
+    type: object
   github_com_ZaphCode_clean-arch_src_api_dtos.ProductDTO:
     properties:
       avalible:
@@ -179,10 +376,10 @@ definitions:
         minLength: 4
         type: string
       discount_rate:
-        example: 23.4
+        example: 23
         maximum: 100
         minimum: 0
-        type: number
+        type: integer
       id:
         example: 8ded83fe-93c8-11ed-ab0f-d8bbc1a27048
         type: string
@@ -218,7 +415,6 @@ definitions:
         type: integer
     required:
     - description
-    - discount_rate
     - images_url
     - name
     - price
@@ -346,6 +542,81 @@ definitions:
         example: success
         type: string
     type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.UpdateAddressDTO:
+    properties:
+      city:
+        example: Los Angeles
+        maxLength: 30
+        type: string
+      country:
+        example: USA
+        maxLength: 30
+        type: string
+      line1:
+        example: Lolipop
+        maxLength: 20
+        type: string
+      line2:
+        example: Wolfstreet
+        maxLength: 20
+        type: string
+      name:
+        example: main card
+        maxLength: 20
+        type: string
+      postal_code:
+        example: "24156"
+        type: string
+      state:
+        example: California
+        maxLength: 40
+        type: string
+    type: object
+  github_com_ZaphCode_clean-arch_src_api_dtos.UpdateProductDTO:
+    properties:
+      avalible:
+        type: boolean
+      category:
+        example: clothes
+        type: string
+      description:
+        example: The best T-shirt in the world.
+        maxLength: 200
+        minLength: 4
+        type: string
+      discount_rate:
+        example: 23
+        maximum: 100
+        minimum: 0
+        type: integer
+      images_url:
+        example:
+        - https://example.com/image1.png
+        - https://example.com/image2.png
+        items:
+          type: string
+        maxItems: 10
+        minItems: 1
+        type: array
+      name:
+        example: Black T-Shirt Addidas
+        maxLength: 50
+        minLength: 4
+        type: string
+      price:
+        example: 2599
+        minimum: 0
+        type: integer
+      tags:
+        example:
+        - t-shirts
+        - clothes
+        - addidas
+        items:
+          type: string
+        maxItems: 6
+        type: array
+    type: object
   github_com_ZaphCode_clean-arch_src_api_dtos.UpdateUserDTO:
     properties:
       age:
@@ -460,6 +731,13 @@ definitions:
         example: failure
         type: string
     type: object
+  github_com_ZaphCode_clean-arch_src_domain.OrderProduct:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    type: object
 host: localhost:9000
 info:
   contact:
@@ -473,6 +751,157 @@ info:
   title: Fiber Example API
   version: "1.0"
 paths:
+  /address/create:
+    post:
+      consumes:
+      - application/json
+      description: Create address
+      parameters:
+      - description: address data
+        in: body
+        name: address_data
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewAddressDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressRespOKDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Create new address
+      tags:
+      - address
+  /address/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete address
+      parameters:
+      - description: address  uuid
+        example: 3afc3021-9395-11ed-a8b6-d8bbc1a27045
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Delete address
+      tags:
+      - address
+  /address/list:
+    get:
+      consumes:
+      - application/json
+      description: Get all addresses from auth user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressesRespOKDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Get auth user addresses
+      tags:
+      - address
+  /address/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update address
+      parameters:
+      - description: address  uuid
+        example: 3afc3021-9395-11ed-a8b6-d8bbc1a27045
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: address data
+        in: body
+        name: address_data
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UpdateAddressDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressRespOKDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Update address
+      tags:
+      - address
   /auth/{provider}/callback:
     get:
       consumes:
@@ -537,8 +966,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.URLRespOKDTO'
-        "406":
-          description: Not Acceptable
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
       summary: Get OAuth url
@@ -624,8 +1053,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
-        "403":
-          description: Forbidden
+        "401":
+          description: Unauthorized
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
         "404":
@@ -690,6 +1119,79 @@ paths:
       summary: Sign up
       tags:
       - auth
+  /card/list:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a card from user acount
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CardsRespOKDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Remove card
+      tags:
+      - card
+    get:
+      consumes:
+      - application/json
+      description: Get all cards from auth user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CardsRespOKDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Get auth user cards
+      tags:
+      - card
+    post:
+      consumes:
+      - application/json
+      description: Save card to user acount
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CardsRespOKDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Save card
+      tags:
+      - card
   /category/all:
     get:
       consumes:
@@ -793,6 +1295,50 @@ paths:
       summary: Delete category
       tags:
       - category
+  /order/new:
+    post:
+      consumes:
+      - application/json
+      description: Create order
+      parameters:
+      - description: order data
+        in: body
+        name: order_data
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewOrderDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.OrderDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Create new order
+      tags:
+      - order
   /product/all:
     get:
       consumes:
@@ -871,8 +1417,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
             $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO'
         "401":
@@ -890,6 +1436,90 @@ paths:
       security:
       - BearerAuth: []
       summary: Delete product
+      tags:
+      - product
+  /product/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get product by id
+      parameters:
+      - description: product   uuid
+        example: 3afc3021-9395-11ed-a8b6-d8bbc1a27045
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductRespOKDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      summary: Get product
+      tags:
+      - product
+  /product/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update product
+      parameters:
+      - description: product   uuid
+        example: 3afc3021-9395-11ed-a8b6-d8bbc1a27045
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: product data
+        in: body
+        name: product_data
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UpdateProductDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductRespOKDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Update product
       tags:
       - product
   /user/all:

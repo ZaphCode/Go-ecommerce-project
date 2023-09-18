@@ -24,6 +24,242 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/address/create": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Create new address",
+                "parameters": [
+                    {
+                        "description": "address data",
+                        "name": "address_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewAddressDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressRespOKDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Delete address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "3afc3021-9395-11ed-a8b6-d8bbc1a27045",
+                        "description": "address  uuid",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get all addresses from auth user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Get auth user addresses",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressesRespOKDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/update/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Update address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "3afc3021-9395-11ed-a8b6-d8bbc1a27045",
+                        "description": "address  uuid",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "address data",
+                        "name": "address_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UpdateAddressDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressRespOKDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/me": {
             "get": {
                 "security": [
@@ -150,8 +386,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
                         }
                     },
-                    "403": {
-                        "description": "Forbidden",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
                         }
@@ -345,8 +581,124 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.URLRespOKDTO"
                         }
                     },
-                    "406": {
-                        "description": "Not Acceptable",
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/card/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get all cards from auth user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "card"
+                ],
+                "summary": "Get auth user cards",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CardsRespOKDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Save card to user acount",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "card"
+                ],
+                "summary": "Save card",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CardsRespOKDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Remove a card from user acount",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "card"
+                ],
+                "summary": "Remove card",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CardsRespOKDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
                         }
@@ -514,6 +866,75 @@ const docTemplate = `{
                 }
             }
         },
+        "/order/new": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Create new order",
+                "parameters": [
+                    {
+                        "description": "order data",
+                        "name": "order_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewOrderDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.OrderDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
         "/product/all": {
             "get": {
                 "description": "Get all products",
@@ -641,8 +1062,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO"
                         }
@@ -655,6 +1076,134 @@ const docTemplate = `{
                     },
                     "406": {
                         "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/get/{id}": {
+            "get": {
+                "description": "Get product by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Get product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "3afc3021-9395-11ed-a8b6-d8bbc1a27045",
+                        "description": "product   uuid",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductRespOKDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/update/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Update product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "3afc3021-9395-11ed-a8b6-d8bbc1a27045",
+                        "description": "product   uuid",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "product data",
+                        "name": "product_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UpdateProductDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductRespOKDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
                         "schema": {
                             "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO"
                         }
@@ -962,6 +1511,100 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_ZaphCode_clean-arch_src_api_dtos.AddressDTO": {
+            "type": "object",
+            "required": [
+                "city",
+                "country",
+                "line1",
+                "name",
+                "postal_code",
+                "state"
+            ],
+            "properties": {
+                "city": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "example": "Los Angeles"
+                },
+                "country": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "example": "USA"
+                },
+                "created_at": {
+                    "type": "integer",
+                    "example": 1674405183
+                },
+                "id": {
+                    "type": "string",
+                    "example": "8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"
+                },
+                "line1": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "example": "Lolipop"
+                },
+                "line2": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "example": "Wolfstreet"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "example": "main card"
+                },
+                "postal_code": {
+                    "type": "string",
+                    "example": "24156"
+                },
+                "state": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "example": "California"
+                },
+                "updated_at": {
+                    "type": "integer",
+                    "example": 1674405181
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.AddressRespOKDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressDTO"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.AddressesRespOKDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressDTO"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
         "github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO": {
             "type": "object",
             "properties": {
@@ -976,6 +1619,66 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "example": "failure"
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.CardDTO": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string",
+                    "example": "visa"
+                },
+                "country": {
+                    "type": "string",
+                    "example": "USA"
+                },
+                "created_at": {
+                    "type": "integer",
+                    "example": 1674405183
+                },
+                "exp_month": {
+                    "type": "integer",
+                    "example": 11
+                },
+                "exp_year": {
+                    "type": "integer",
+                    "example": 2025
+                },
+                "id": {
+                    "type": "string",
+                    "example": "8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"
+                },
+                "last4": {
+                    "type": "string",
+                    "example": "1429"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Main card"
+                },
+                "updated_at": {
+                    "type": "integer",
+                    "example": 1674405181
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.CardsRespOKDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CardDTO"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
                 }
             }
         },
@@ -1056,6 +1759,53 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.NewAddressDTO": {
+            "type": "object",
+            "required": [
+                "city",
+                "country",
+                "line1",
+                "name",
+                "postal_code",
+                "state"
+            ],
+            "properties": {
+                "city": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "example": "Los Angeles"
+                },
+                "country": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "example": "USA"
+                },
+                "line1": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "example": "Lolipop"
+                },
+                "line2": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "example": "Wolfstreet"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "example": "main card"
+                },
+                "postal_code": {
+                    "type": "string",
+                    "example": "24156"
+                },
+                "state": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "example": "California"
+                }
+            }
+        },
         "github_com_ZaphCode_clean-arch_src_api_dtos.NewCategoryDTO": {
             "type": "object",
             "required": [
@@ -1069,11 +1819,32 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.NewOrderDTO": {
+            "type": "object",
+            "required": [
+                "address_id",
+                "payment_id",
+                "products"
+            ],
+            "properties": {
+                "address_id": {
+                    "type": "string"
+                },
+                "payment_id": {
+                    "type": "string"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_domain.OrderProduct"
+                    }
+                }
+            }
+        },
         "github_com_ZaphCode_clean-arch_src_api_dtos.NewProductDTO": {
             "type": "object",
             "required": [
                 "description",
-                "discount_rate",
                 "images_url",
                 "name",
                 "price",
@@ -1094,10 +1865,10 @@ const docTemplate = `{
                     "example": "The best T-shirt in the world."
                 },
                 "discount_rate": {
-                    "type": "number",
+                    "type": "integer",
                     "maximum": 100,
                     "minimum": 0,
-                    "example": 23.4
+                    "example": 23
                 },
                 "images_url": {
                     "type": "array",
@@ -1183,11 +1954,56 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.OrderDTO": {
+            "type": "object",
+            "required": [
+                "address_id",
+                "payment_id",
+                "products"
+            ],
+            "properties": {
+                "address_id": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "integer",
+                    "example": 14500
+                },
+                "created_at": {
+                    "type": "integer",
+                    "example": 1674405183
+                },
+                "id": {
+                    "type": "string",
+                    "example": "8ded83fe-93c8-11ed-ab0f-d8bbc1a27048"
+                },
+                "paid": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "payment_id": {
+                    "type": "string"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ZaphCode_clean-arch_src_domain.OrderProduct"
+                    }
+                },
+                "status": {
+                    "type": "string",
+                    "example": "pending"
+                },
+                "updated_at": {
+                    "type": "integer",
+                    "example": 1674405181
+                }
+            }
+        },
         "github_com_ZaphCode_clean-arch_src_api_dtos.ProductDTO": {
             "type": "object",
             "required": [
                 "description",
-                "discount_rate",
                 "images_url",
                 "name",
                 "price",
@@ -1212,10 +2028,10 @@ const docTemplate = `{
                     "example": "The best T-shirt in the world."
                 },
                 "discount_rate": {
-                    "type": "number",
+                    "type": "integer",
                     "maximum": 100,
                     "minimum": 0,
-                    "example": 23.4
+                    "example": 23
                 },
                 "id": {
                     "type": "string",
@@ -1434,6 +2250,104 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.UpdateAddressDTO": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "example": "Los Angeles"
+                },
+                "country": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "example": "USA"
+                },
+                "line1": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "example": "Lolipop"
+                },
+                "line2": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "example": "Wolfstreet"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "example": "main card"
+                },
+                "postal_code": {
+                    "type": "string",
+                    "example": "24156"
+                },
+                "state": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "example": "California"
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_api_dtos.UpdateProductDTO": {
+            "type": "object",
+            "properties": {
+                "avalible": {
+                    "type": "boolean"
+                },
+                "category": {
+                    "type": "string",
+                    "example": "clothes"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 4,
+                    "example": "The best T-shirt in the world."
+                },
+                "discount_rate": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0,
+                    "example": 23
+                },
+                "images_url": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "https://example.com/image1.png",
+                        "https://example.com/image2.png"
+                    ]
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 4,
+                    "example": "Black T-Shirt Addidas"
+                },
+                "price": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 2599
+                },
+                "tags": {
+                    "type": "array",
+                    "maxItems": 6,
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "t-shirts",
+                        "clothes",
+                        "addidas"
+                    ]
+                }
+            }
+        },
         "github_com_ZaphCode_clean-arch_src_api_dtos.UpdateUserDTO": {
             "type": "object",
             "properties": {
@@ -1588,6 +2502,17 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "example": "failure"
+                }
+            }
+        },
+        "github_com_ZaphCode_clean-arch_src_domain.OrderProduct": {
+            "type": "object",
+            "properties": {
+                "product_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
                 }
             }
         }

@@ -9,16 +9,17 @@ import (
 type Order struct {
 	Model
 	UserID    uuid.UUID      `json:"user_id"`
+	AddressID uuid.UUID      `json:"address_id"`
 	PaymentID string         `json:"payment_id"`
 	Amount    int64          `json:"amount"`
 	Status    string         `json:"status"`
+	Paid      bool           `json:"paid"`
 	Products  []OrderProduct `json:"products"`
-	Address   *Address       `json:"address"`
 }
 
 type OrderProduct struct {
 	ID       uuid.UUID `json:"product_id"`
-	Quantity int       `json:"quantitu"`
+	Quantity uint      `json:"quantity"`
 }
 
 //* Service
@@ -28,6 +29,7 @@ type OrderService interface {
 	GetAll() ([]Order, error)
 	GetAllByUserID(ursID uuid.UUID) ([]Order, error)
 	UpdateStatus(ID uuid.UUID, status string) error
+	SetPaidStatus(ID uuid.UUID, paid bool) error
 	Delete(ID uuid.UUID) error
 }
 

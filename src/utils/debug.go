@@ -30,3 +30,39 @@ func PrintWD() {
 	}
 	fmt.Println(">>>", dir)
 }
+
+func PrintColor(color string, values ...interface{}) {
+	switch color {
+	case "black":
+		fmt.Printf("\x1b[30m")
+	case "red":
+		fmt.Printf("\x1b[31m")
+	case "green":
+		fmt.Printf("\x1b[32m")
+	case "blue":
+		fmt.Printf("\x1b[34m")
+	case "yellow":
+		fmt.Printf("\x1b[33m")
+	case "cyan":
+		fmt.Printf("\x1b[36m")
+	case "magenta":
+		fmt.Printf("\x1b[35m")
+	case "gray":
+		fmt.Printf("\x1b[90m")
+	case "white":
+		fmt.Printf("\x1b[37m")
+	default:
+		fmt.Println("Invalid color:", color)
+		return
+	}
+
+	fmt.Print(values...)
+
+	fmt.Println("\x1b[0m")
+}
+
+func PrintBlueTesting(t *testing.T, values ...interface{}) {
+	fmt.Printf("\n\n\x1b[34m >>> ") // blue
+	fmt.Print(values...)
+	fmt.Printf("\x1b[0m\n\n")
+}

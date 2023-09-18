@@ -96,7 +96,7 @@ func (s *AddressServiceSuite) TestAddressService_GetByID() {
 	}{
 		{
 			desc:         "proper work",
-			id:           utils.AddrExp2.ID,
+			id:           utils.AddrExp1.ID,
 			wantErr:      false,
 			wantCategory: true,
 		},
@@ -192,7 +192,7 @@ func (s *AddressServiceSuite) TestAddressService_Delete() {
 		},
 		{
 			desc:    "proper work: card found",
-			addrID:  utils.AddrExp1.ID,
+			addrID:  utils.AddrExp2.ID,
 			usrID:   utils.UserExp1.ID,
 			wantErr: false,
 		},

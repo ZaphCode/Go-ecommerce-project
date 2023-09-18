@@ -31,7 +31,7 @@ var UserExp1 = domain.User{
 		CreatedAt: time.Now().Unix(),
 		UpdatedAt: time.Now().Unix(),
 	},
-	CustomerID:    "",
+	CustomerID:    "cus_NokAmwAreSjg1Y",
 	Username:      "John Doe",
 	Email:         "john@testing.com",
 	Password:      "$2a$10$0W5T1cZiUrBc8xJCViVh2.BYE7oMXuE8ogfXjDjbu4KRg4GiQqgeS",
@@ -122,37 +122,35 @@ var ProductExp2 = domain.Product{
 
 //* Cards
 
-var CardExp1 = domain.Card{
-	Model: domain.Model{
-		ID:        uuid.MustParse("e67ab973-8a23-4fab-8724-58410a82fde4"),
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
-	},
-	UserID:    UserExp1.ID,
-	Country:   "USA",
-	Name:      "main card",
-	ExpMonth:  12,
-	ExpYear:   2024,
-	Brand:     "visa",
-	Last4:     "4534",
-	PaymentID: "cd_fasdfjkalkfjklvlakje",
-}
+// var CardExp1 = payment.Card{
+// 	// Model: domain.Model{
+// 	// 	ID:        uuid.MustParse("e67ab973-8a23-4fab-8724-58410a82fde4"),
+// 	// 	CreatedAt: time.Now().Unix(),
+// 	// 	UpdatedAt: time.Now().Unix(),
+// 	// },
+// 	Country:   "USA",
+// 	Name:      "main card",
+// 	ExpMonth:  12,
+// 	ExpYear:   2024,
+// 	Brand:     "visa",
+// 	Last4:     "4534",
+// 	PaymentID: "cd_fasdfjkalkfjklvlakje",
+// }
 
-var CardExp2 = domain.Card{
-	Model: domain.Model{
-		ID:        uuid.MustParse("b601782a-9fc2-4a27-9a50-3cb55133d2f6"),
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
-	},
-	UserID:    UserExp1.ID,
-	Country:   "USA",
-	Name:      "digital card",
-	ExpMonth:  3,
-	ExpYear:   2025,
-	Brand:     "visa",
-	Last4:     "6660",
-	PaymentID: "cd_jfladsflkajcvlajldjeP",
-}
+// var CardExp2 = payment.Card{
+// 	// Model: domain.Model{
+// 	// 	ID:        uuid.MustParse("b601782a-9fc2-4a27-9a50-3cb55133d2f6"),
+// 	// 	CreatedAt: time.Now().Unix(),
+// 	// 	UpdatedAt: time.Now().Unix(),
+// 	// },
+// 	Country:   "USA",
+// 	Name:      "digital card",
+// 	ExpMonth:  3,
+// 	ExpYear:   2025,
+// 	Brand:     "visa",
+// 	Last4:     "6660",
+// 	PaymentID: "cd_jfladsflkajcvlajldjeP",
+// }
 
 //* Addresses
 

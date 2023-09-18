@@ -33,7 +33,6 @@ const (
 	ProdColl  = "products"
 	AddrColl  = "addresses"
 	OrderColl = "orders"
-	CardColl  = "cards"
 	CategColl = "categories"
 )
 
@@ -41,4 +40,10 @@ const (
 
 var (
 	ErrNotFound = errors.New("resourse not found")
+)
+
+const (
+	StatusPending   = "pending"
+	StatusComing    = "coming"
+	StatusCompleted = "completed"
 )

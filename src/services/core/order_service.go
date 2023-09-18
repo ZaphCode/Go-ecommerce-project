@@ -5,21 +5,22 @@ import (
 	"time"
 
 	"github.com/ZaphCode/clean-arch/src/domain"
+	"github.com/ZaphCode/clean-arch/src/utils"
 	"github.com/google/uuid"
 )
 
 type orderService struct {
-	ordRepo domain.OrderRepository
-	usrRepo domain.UserRepository
+	ordRepo  domain.OrderRepository
+	addrRepo domain.AddressRepository
 }
 
 func NewOrderService(
 	ordRepo domain.OrderRepository,
-	usrRepo domain.UserRepository,
+	addrRepo domain.AddressRepository,
 ) domain.OrderService {
 	return &orderService{
-		ordRepo: ordRepo,
-		usrRepo: usrRepo,
+		ordRepo:  ordRepo,
+		addrRepo: addrRepo,
 	}
 }
 
@@ -30,7 +31,12 @@ func (s *orderService) Create(ord *domain.Order) error {
 		return fmt.Errorf("error generating uuid: %s", err)
 	}
 
+	if addr, err := s.addrRepo.FindByID(ord.AddressID); err != nil || addr == nil {
+		return fmt.Errorf("invalid address id")
+	}
+
 	ord.ID = ID
+	ord.Status = utils.StatusPending
 	ord.CreatedAt = time.Now().Unix()
 	ord.UpdatedAt = time.Now().Unix()
 
@@ -45,6 +51,10 @@ func (s *orderService) GetAll() ([]domain.Order, error) {
 
 func (s *orderService) UpdateStatus(ID uuid.UUID, status string) error {
 	return s.ordRepo.UpdateField(ID, "Status", status)
+}
+
+func (s *orderService) SetPaidStatus(ID uuid.UUID, paid bool) error {
+	return s.ordRepo.UpdateField(ID, "Paid", paid)
 }
 
 func (s *orderService) GetAllByUserID(ID uuid.UUID) ([]domain.Order, error) {

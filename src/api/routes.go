@@ -62,5 +62,26 @@ func (s *Server) CreateAdreesesRoutes(
 	r.Get("/list", authMdlw.AuthRequired, addrHdlr.GetUserAddress)
 	r.Post("/create", authMdlw.AuthRequired, addrHdlr.CreateAddress)
 	r.Put("/update/:id", authMdlw.AuthRequired, addrHdlr.UpdateAddress)
-	//r.Delete("/delete/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.ModeratorRole), catHdlr.DeleteCategory)
+	r.Delete("/delete/:id", authMdlw.AuthRequired, addrHdlr.DeleteAddress)
+}
+
+func (s *Server) CreateCardRoutes(
+	crdHdlr *handlers.CardHandler,
+	paymMdlw *middlewares.PaymentMiddleware,
+	authMdlw *middlewares.AuthMiddleware,
+) {
+	r := s.app.Group("/api/card")
+	r.Get("/list", authMdlw.AuthRequired, paymMdlw.CustomerIDRequired, crdHdlr.GetUserCards)
+	r.Post("/save", authMdlw.AuthRequired, paymMdlw.CustomerIDRequired, crdHdlr.SaveUserCard)
+	r.Delete("/remove/:id", authMdlw.AuthRequired, paymMdlw.CustomerIDRequired, crdHdlr.RemoveUserCard)
+}
+
+func (s *Server) CreateOrderRoutes(
+	ordHdlr *handlers.OrderHandler,
+	paymMdlw *middlewares.PaymentMiddleware,
+	authMdlw *middlewares.AuthMiddleware,
+) {
+	r := s.app.Group("/api/order")
+	r.Get("/list", authMdlw.AuthRequired, paymMdlw.CustomerIDRequired, ordHdlr.GetOrders)
+	r.Post("/new", authMdlw.AuthRequired, paymMdlw.CustomerIDRequired, ordHdlr.CreateOrder)
 }

@@ -7,11 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type Claims struct {
-	ID   uuid.UUID `json:"id"`
-	Role string    `json:"role"`
-}
-
 //* Services
 
 type JWTService interface {
@@ -22,4 +17,11 @@ type JWTService interface {
 type OAuthService interface {
 	GetOAuthUser(code string) (*domain.User, error)
 	GetOAuthUrl() string
+}
+
+//* Models
+
+type Claims struct {
+	ID   uuid.UUID `json:"id"`
+	Role string    `json:"role"`
 }

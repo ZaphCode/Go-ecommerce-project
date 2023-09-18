@@ -128,6 +128,10 @@ func (s *prodService) Delete(ID uuid.UUID) error {
 }
 
 func (s *prodService) CalculateTotalPrice(ops []domain.OrderProduct) (int64, error) {
+	if len(ops) == 0 || ops == nil {
+		return 0, fmt.Errorf("missing products")
+	}
+
 	var total float32 = 0
 
 	for _, op := range ops {
