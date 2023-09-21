@@ -54,7 +54,7 @@ func (s *Server) CreateCategoryRoutes(
 	r.Delete("/delete/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.ModeratorRole), catHdlr.DeleteCategory)
 }
 
-func (s *Server) CreateAdreesesRoutes(
+func (s *Server) CreateAddressesRoutes(
 	addrHdlr *handlers.AddressHandler,
 	authMdlw *middlewares.AuthMiddleware,
 ) {

@@ -99,7 +99,7 @@ func (s *prodService) Update(ID uuid.UUID, uf domain.UpdateFields) error {
 	return s.prodRepo.Update(ID, uf)
 }
 
-func (s *prodService) SetAvalible(ID uuid.UUID, avl bool) error {
+func (s *prodService) SetAvailable(ID uuid.UUID, avl bool) error {
 	p, err := s.prodRepo.FindByID(ID)
 
 	if err != nil {

@@ -15,7 +15,7 @@ type Product struct {
 	DiscountRate int64    `json:"discount_rate"`
 	ImagesUrl    []string `json:"images_url"`
 	Tags         []string `json:"tags"`
-	Avalible     bool     `json:"avalible"`
+	Available    bool     `json:"available"`
 }
 
 //* Service
@@ -26,7 +26,7 @@ type ProductService interface {
 	GetLatestProds(lim ...int) ([]Product, error)
 	GetByTags(tags ...string) ([]Product, error)
 	GetByCategory(c string) ([]Product, error)
-	SetAvalible(ID uuid.UUID, avl bool) error
+	SetAvailable(ID uuid.UUID, avl bool) error
 }
 
 //* Repository

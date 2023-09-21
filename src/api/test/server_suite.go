@@ -77,7 +77,7 @@ func (s *ServerSuite) SetupSuite() {
 	usrHdlr := handlers.NewUserHandler(userSvc, vldSvc)
 	addrHdlr := handlers.NewAddressHandler(userSvc, addrSvc, vldSvc)
 	authHdlr := handlers.NewAuthHandler(userSvc, emailSvc, jwtSvc, vldSvc)
-	prodHdlr := handlers.NewProdutHandler(prodSvc, catSvc, vldSvc)
+	prodHdlr := handlers.NewProductHandler(prodSvc, catSvc, vldSvc)
 	catHdlr := handlers.NewCategoryHandler(prodSvc, catSvc, vldSvc)
 	crdHdlr := handlers.NewCardHandler(userSvc, pmSvc, vldSvc)
 	ordHdlr := handlers.NewOrderHandler(userSvc, ordSvc, prodSvc, pmSvc, vldSvc)
@@ -93,7 +93,7 @@ func (s *ServerSuite) SetupSuite() {
 	server.CreateUserRoutes(usrHdlr, authMdlw)
 	server.CreateProductRoutes(prodHdlr, authMdlw)
 	server.CreateCategoryRoutes(catHdlr, authMdlw)
-	server.CreateAdreesesRoutes(addrHdlr, authMdlw)
+	server.CreateAddressesRoutes(addrHdlr, authMdlw)
 	server.CreateOrderRoutes(ordHdlr, paymMdlw, authMdlw)
 	server.CreateCardRoutes(crdHdlr, paymMdlw, authMdlw)
 

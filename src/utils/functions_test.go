@@ -168,15 +168,15 @@ func TestRandomString(t *testing.T) {
 		l    int
 	}{
 		{
-			desc: "20 caracters length",
+			desc: "20 characters length",
 			l:    20,
 		},
 		{
-			desc: "10 caracters length",
+			desc: "10 characters length",
 			l:    10,
 		},
 		{
-			desc: "15 caracters length",
+			desc: "15 characters length",
 			l:    15,
 		},
 	}
@@ -185,7 +185,7 @@ func TestRandomString(t *testing.T) {
 		t.Run(tC.desc, func(t *testing.T) {
 			rs := RandomString(tC.l)
 
-			require.Equal(t, tC.l, len(rs), "ivalid length")
+			require.Equal(t, tC.l, len(rs), "invalid length")
 
 			t.Log(rs)
 		})

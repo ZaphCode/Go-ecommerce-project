@@ -25,7 +25,7 @@ func (dto NewProductDTO) AdaptToProduct() (prod domain.Product) {
 	prod.DiscountRate = dto.DiscountRate
 	prod.ImagesUrl = dto.ImagesUrl
 	prod.Tags = dto.Tags
-	prod.Avalible = dto.Avalible
+	prod.Available = dto.Avalible
 	return
 }
 
@@ -44,7 +44,7 @@ type UpdateProductDTO struct {
 	DiscountRate *int64   `json:"discount_rate,omitempty" validate:"omitempty,number,gte=0,lte=100" example:"23"`
 	ImagesUrl    []string `json:"images_url,omitempty" validate:"omitempty,min=1,max=10,dive,url" example:"https://example.com/image1.png,https://example.com/image2.png"`
 	Tags         []string `json:"tags,omitempty" validate:"omitempty,max=6" example:"t-shirts,clothes,addidas"`
-	Avalible     *bool    `json:"available,omitempty"`
+	Available    *bool    `json:"available,omitempty"`
 }
 
 func (dto UpdateProductDTO) AdaptToUpdateFields() domain.UpdateFields {

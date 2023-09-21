@@ -55,7 +55,7 @@ func (s *ProductServiceSuite) TestProductService_Create() {
 				Price:        2424,
 				DiscountRate: 13,
 				Tags:         []string{"blue", "pants", "levis"},
-				Avalible:     true,
+				Available:    true,
 				ImagesUrl:    []string{"https://levis.com/bluepants.jpg"},
 			},
 		},
@@ -69,7 +69,7 @@ func (s *ProductServiceSuite) TestProductService_Create() {
 				Price:        43,
 				DiscountRate: 13,
 				Tags:         []string{"blue", "pants", "levis"},
-				Avalible:     true,
+				Available:    true,
 				ImagesUrl:    []string{"https://levis.com/bluepants.jpg"},
 			},
 		},
@@ -314,7 +314,7 @@ func (s *ProductServiceSuite) TestProductService_SetAvalible() {
 
 				s.NotNil(p, "should exists")
 
-				if p.Avalible != false {
+				if p.Available != false {
 					s.Fail("Should be updated")
 				}
 			},
@@ -322,7 +322,7 @@ func (s *ProductServiceSuite) TestProductService_SetAvalible() {
 	}
 	for _, tC := range testCases {
 		s.Run(tC.desc, func() {
-			err := s.service.SetAvalible(tC.id, tC.avalible)
+			err := s.service.SetAvailable(tC.id, tC.avalible)
 
 			s.Equal(tC.wantErr, (err != nil), "expert error fail")
 

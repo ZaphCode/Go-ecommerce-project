@@ -69,7 +69,7 @@ func main() {
 	//* Handlers
 	usrHdlr := handlers.NewUserHandler(userSvc, vldSvc)
 	authHdlr := handlers.NewAuthHandler(userSvc, emailSvc, jwtSvc, vldSvc)
-	prodHdlr := handlers.NewProdutHandler(prodSvc, catSvc, vldSvc)
+	prodHdlr := handlers.NewProductHandler(prodSvc, catSvc, vldSvc)
 	catHdlr := handlers.NewCategoryHandler(prodSvc, catSvc, vldSvc)
 	addrHdlr := handlers.NewAddressHandler(userSvc, addrSvc, vldSvc)
 	cardHdlr := handlers.NewCardHandler(userSvc, pmSvc, vldSvc)
@@ -86,11 +86,11 @@ func main() {
 	server.CreateUserRoutes(usrHdlr, authMdlw)
 	server.CreateProductRoutes(prodHdlr, authMdlw)
 	server.CreateCategoryRoutes(catHdlr, authMdlw)
-	server.CreateAdreesesRoutes(addrHdlr, authMdlw)
+	server.CreateAddressesRoutes(addrHdlr, authMdlw)
 	server.CreateCardRoutes(cardHdlr, paymMdlw, authMdlw)
 	server.CreateOrderRoutes(ordHdlr, paymMdlw, authMdlw)
 
-	go server.InitBackgroundTaks()
+	go server.InitBackgroundTasks()
 
 	if err := server.Start(":" + cfg.Api.Port); err != nil {
 		log.Fatal(err)

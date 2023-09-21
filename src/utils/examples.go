@@ -101,7 +101,7 @@ var ProductExp1 = domain.Product{
 	DiscountRate: 14,
 	ImagesUrl:    []string{"https://parspng.com/wp-content/uploads/2022/07/Tshirtpng.parspng.com_.png"},
 	Tags:         []string{"clothes", "t-shirt", "black"},
-	Avalible:     true,
+	Available:    true,
 }
 
 var ProductExp2 = domain.Product{
@@ -117,7 +117,7 @@ var ProductExp2 = domain.Product{
 	DiscountRate: 9,
 	ImagesUrl:    []string{"https://http2.mlstatic.com/D_NQ_NP_798698-MLA41021638035_032020-O.jpg"},
 	Tags:         []string{"headsets", "corsair", "technology"},
-	Avalible:     true,
+	Available:    true,
 }
 
 //* Cards

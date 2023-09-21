@@ -34,7 +34,7 @@ func (s *Server) Start(addr string) error {
 	return s.app.Listen(addr)
 }
 
-func (s *Server) InitBackgroundTaks() {
+func (s *Server) InitBackgroundTasks() {
 	ticker := time.NewTicker(3 * time.Hour)
 	docsTicker := time.NewTicker(1000 * time.Millisecond)
 	for {

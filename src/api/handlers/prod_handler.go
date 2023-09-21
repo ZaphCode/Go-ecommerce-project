@@ -16,7 +16,7 @@ type ProductHandler struct {
 	vldSvc  validation.ValidationService
 }
 
-func NewProdutHandler(
+func NewProductHandler(
 	prodSvc domain.ProductService,
 	catSvc domain.CategoryService,
 	vldSvc validation.ValidationService,

@@ -50,7 +50,7 @@ func (h *AddressHandler) GetUserAddress(c *fiber.Ctx) error {
 	as, err := h.addrSvc.GetAllByUserID(ud.ID)
 
 	if err != nil {
-		return h.RespErr(c, 500, "error getting adresses", err.Error())
+		return h.RespErr(c, 500, "error getting addresses", err.Error())
 	}
 
 	return h.RespOK(c, 200, "all address for user", as)
