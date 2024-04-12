@@ -77,7 +77,7 @@ func (h *ProductHandler) GetProduct(c *fiber.Ctx) error {
 		return h.RespErr(c, 404, "product not found")
 	}
 
-	return h.RespOK(c, 302, "product found", prod)
+	return h.RespOK(c, 200, "product found", prod)
 }
 
 // * Create product handler

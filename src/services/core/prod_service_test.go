@@ -233,7 +233,7 @@ func (s *ProductServiceSuite) TestProductService_Update() {
 			},
 		},
 		{
-			desc:    "unexisting field",
+			desc:    "unexciting field",
 			wantErr: true,
 			id:      utils.ProductExp2.ID,
 			uf: domain.UpdateFields{
@@ -291,7 +291,7 @@ func (s *ProductServiceSuite) TestProductService_Update() {
 	}
 }
 
-func (s *ProductServiceSuite) TestProductService_SetAvalible() {
+func (s *ProductServiceSuite) TestProductService_SetAvailable() {
 	testCases := []struct {
 		desc         string
 		id           uuid.UUID

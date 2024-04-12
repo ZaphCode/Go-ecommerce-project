@@ -39,7 +39,7 @@ const (
 //* Errors
 
 var (
-	ErrNotFound = errors.New("resourse not found")
+	ErrNotFound = errors.New("resource not found")
 )
 
 const (

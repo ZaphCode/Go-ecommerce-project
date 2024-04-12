@@ -74,7 +74,7 @@ var CategoryExp2 = domain.Category{
 		CreatedAt: time.Now().Unix(),
 		UpdatedAt: time.Now().Unix(),
 	},
-	Name: "clothes",
+	Name: "tenis",
 }
 
 var CategoryExp3 = domain.Category{
@@ -120,37 +120,61 @@ var ProductExp2 = domain.Product{
 	Available:    true,
 }
 
-//* Cards
+var ProductExpToDev1 = domain.Product{
+	Model: domain.Model{
+		ID:        uuid.MustParse("3480c083-a8ec-11ed-9883-5266b0bd59ca"),
+		CreatedAt: time.Now().Add(time.Hour * 24).Unix(),
+		UpdatedAt: time.Now().Add(time.Hour * 24).Unix(),
+	},
+	Category:     "clothes",
+	Name:         "Adidas Black T-Shirt Basketball",
+	Description:  "The best T-shirt in the world.",
+	Price:        2599,
+	DiscountRate: 30,
+	ImagesUrl: []string{
+		"https://titan22.com/cdn/shop/files/IR8492-A_1082x.png?v=1690430352",
+		"https://titan22.com/cdn/shop/files/IR8492-B_1082x.png?v=1690430352"},
+	Tags:      []string{"t-shirts", "clothes", "Adidas"},
+	Available: true,
+}
 
-// var CardExp1 = payment.Card{
-// 	// Model: domain.Model{
-// 	// 	ID:        uuid.MustParse("e67ab973-8a23-4fab-8724-58410a82fde4"),
-// 	// 	CreatedAt: time.Now().Unix(),
-// 	// 	UpdatedAt: time.Now().Unix(),
-// 	// },
-// 	Country:   "USA",
-// 	Name:      "main card",
-// 	ExpMonth:  12,
-// 	ExpYear:   2024,
-// 	Brand:     "visa",
-// 	Last4:     "4534",
-// 	PaymentID: "cd_fasdfjkalkfjklvlakje",
-// }
+var ProductExpToDev2 = domain.Product{
+	Model: domain.Model{
+		ID:        uuid.MustParse("2229674a-00cc-4846-8f71-4b28b6e246db"),
+		CreatedAt: time.Now().Add(time.Hour * 24).Unix(),
+		UpdatedAt: time.Now().Add(time.Hour * 24).Unix(),
+	},
+	Category:     "clothes",
+	Name:         "Nike Black Cup",
+	Description:  "The best cup. Super comfortable.",
+	Price:        1549,
+	DiscountRate: 0,
+	ImagesUrl: []string{
+		"https://static.nike.com/a/images/t_default/84588c76-14b7-42cb-a65c-5bbb77f6699d/gorra-estructurada-con-cierre-a-presi%C3%B3n-dri-fit-rise-hR0Mq4.png",
+		"https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/ad1dbe01-7a5a-4862-bdd6-416e3a120703/gorra-estructurada-con-cierre-a-presi%C3%B3n-dri-fit-rise-hR0Mq4.png",
+	},
+	Tags:      []string{"cups", "clothes", "Nike"},
+	Available: true,
+}
 
-// var CardExp2 = payment.Card{
-// 	// Model: domain.Model{
-// 	// 	ID:        uuid.MustParse("b601782a-9fc2-4a27-9a50-3cb55133d2f6"),
-// 	// 	CreatedAt: time.Now().Unix(),
-// 	// 	UpdatedAt: time.Now().Unix(),
-// 	// },
-// 	Country:   "USA",
-// 	Name:      "digital card",
-// 	ExpMonth:  3,
-// 	ExpYear:   2025,
-// 	Brand:     "visa",
-// 	Last4:     "6660",
-// 	PaymentID: "cd_jfladsflkajcvlajldjeP",
-// }
+var ProductExpToDev3 = domain.Product{
+	Model: domain.Model{
+		ID:        uuid.MustParse("1119674a-00cc-4846-8f71-4b28b6e246da"),
+		CreatedAt: time.Now().Add(time.Hour * 24).Unix(),
+		UpdatedAt: time.Now().Add(time.Hour * 24).Unix(),
+	},
+	Category:     "tenis",
+	Name:         "Running Tenis Puma Black",
+	Description:  "Very comfortable shoes for running.",
+	Price:        1530,
+	DiscountRate: 10,
+	ImagesUrl: []string{
+		"https://martimx.vtexassets.com/arquivos/ids/489205-800-800?v=637346702472670000&width=800&height=800&aspect=true",
+		"https://martimx.vtexassets.com/arquivos/ids/489294-800-800?v=637346703167700000&width=800&height=800&aspect=true",
+	},
+	Tags:      []string{"shoes", "clothes", "puma"},
+	Available: true,
+}
 
 //* Addresses
 

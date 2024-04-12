@@ -1,13 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/ZaphCode/clean-arch/config"
 	_ "github.com/ZaphCode/clean-arch/docs"
 	"github.com/ZaphCode/clean-arch/src/api"
 	"github.com/ZaphCode/clean-arch/src/api/handlers"
 	"github.com/ZaphCode/clean-arch/src/api/middlewares"
+	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/repositories/address"
 	"github.com/ZaphCode/clean-arch/src/repositories/category"
 	"github.com/ZaphCode/clean-arch/src/repositories/order"
@@ -42,14 +45,44 @@ func init() {
 
 func main() {
 	cfg := config.Get()
-	client := utils.GetFirestoreClient(config.GetFirebaseApp())
+	server := api.New()
 
+	setServerConfiguration(server, cfg)
+
+	go server.InitBackgroundTasks()
+
+	if err := server.Start(":" + cfg.Api.Port); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func setServerConfiguration(server *api.Server, cfg config.Config) {
 	//* Repos
-	userRepo := user.NewFirestoreUserRepository(client, utils.UserColl)
-	prodRepo := product.NewFirestoreProductRepository(client, utils.ProdColl)
-	catRepo := category.NewFirestoreCategoryRepository(client, utils.CategColl)
-	addrRepo := address.NewFirestoreAddressRepository(client, utils.AddrColl)
-	ordRepo := order.NewFirestoreOrderRepository(client, utils.OrderColl)
+	var (
+		userRepo domain.UserRepository
+		prodRepo domain.ProductRepository
+		catRepo  domain.CategoryRepository
+		addrRepo domain.AddressRepository
+		ordRepo  domain.OrderRepository
+	)
+
+	if len(os.Args) > 1 && os.Args[1] == "dev" {
+		//* Development
+		fmt.Println("DEV MODE")
+		userRepo = user.NewMemoryUserRepository(utils.UserAdmin, utils.UserExp1, utils.UserExp2)
+		prodRepo = product.NewMemoryProductRepository(utils.ProductExpToDev3, utils.ProductExpToDev2, utils.ProductExpToDev1)
+		catRepo = category.NewMemoryCategoryRepository(utils.CategoryExp1, utils.CategoryExp2, utils.CategoryExp3)
+		addrRepo = address.NewMemoryAddressRepository(utils.AddrExp1, utils.AddrExp2)
+		ordRepo = order.NewMemoryOrderRepository()
+	} else {
+		//* Production
+		client := utils.GetFirestoreClient(config.GetFirebaseApp())
+		userRepo = user.NewFirestoreUserRepository(client, utils.UserColl)
+		prodRepo = product.NewFirestoreProductRepository(client, utils.ProdColl)
+		catRepo = category.NewFirestoreCategoryRepository(client, utils.CategColl)
+		addrRepo = address.NewFirestoreAddressRepository(client, utils.AddrColl)
+		ordRepo = order.NewFirestoreOrderRepository(client, utils.OrderColl)
+	}
 
 	//* Services
 	userSvc := core.NewUserService(userRepo)
@@ -62,7 +95,7 @@ func main() {
 	vldSvc := validation.NewValidationService()
 	jwtSvc := auth.NewJWTService()
 
-	//* Midlewares
+	//* Middlewares
 	authMdlw := middlewares.NewAuthMiddleware(jwtSvc)
 	paymMdlw := middlewares.NewPaymentMiddleware(pmSvc)
 
@@ -75,9 +108,6 @@ func main() {
 	cardHdlr := handlers.NewCardHandler(userSvc, pmSvc, vldSvc)
 	ordHdlr := handlers.NewOrderHandler(userSvc, ordSvc, prodSvc, pmSvc, vldSvc)
 
-	//* Server
-	server := api.New()
-
 	//* Setup
 	server.SetGlobalMiddlewares()
 
@@ -89,10 +119,4 @@ func main() {
 	server.CreateAddressesRoutes(addrHdlr, authMdlw)
 	server.CreateCardRoutes(cardHdlr, paymMdlw, authMdlw)
 	server.CreateOrderRoutes(ordHdlr, paymMdlw, authMdlw)
-
-	go server.InitBackgroundTasks()
-
-	if err := server.Start(":" + cfg.Api.Port); err != nil {
-		log.Fatal(err)
-	}
 }

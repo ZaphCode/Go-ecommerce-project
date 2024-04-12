@@ -85,5 +85,5 @@ func (s *Server) SetGlobalMiddlewares() {
 }
 
 func (s *Server) TryRoute(req *http.Request) (*http.Response, error) {
-	return s.app.Test(req, -1) // "WITHOT TIMEOUT"
+	return s.app.Test(req, -1) // "WITHOUT TIMEOUT"
 }

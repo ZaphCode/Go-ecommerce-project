@@ -18,7 +18,7 @@ type firebaseUploadServiceImpl struct {
 	folder     string
 }
 
-//* Contructor
+//* Constructor
 
 func NewFirebaseUploadService(
 	client *storage.Client, bucketName, folder string,
