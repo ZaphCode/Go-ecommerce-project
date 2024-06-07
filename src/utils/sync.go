@@ -5,16 +5,6 @@ import (
 	"sync"
 )
 
-type Result[T interface{}] struct {
-	Data  T
-	Error error
-}
-
-func WaitToCloseChan[T interface{}](wg *sync.WaitGroup, ch chan T) {
-	wg.Wait()
-	close(ch)
-}
-
 type SyncMap[K comparable, V interface{}] struct {
 	smap map[K]V
 	mu   sync.RWMutex
