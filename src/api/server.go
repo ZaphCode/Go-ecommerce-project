@@ -3,7 +3,10 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/ZaphCode/clean-arch/config"
@@ -35,17 +38,22 @@ func (s *Server) Start(addr string) error {
 }
 
 func (s *Server) InitBackgroundTasks() {
-	ticker := time.NewTicker(3 * time.Hour)
+	signalCh := make(chan os.Signal, 1)
+	signal.Notify(signalCh, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTSTP)
 	docsTicker := time.NewTicker(1000 * time.Millisecond)
 	for {
 		select {
 		case task := <-s.tasksCh:
 			task()
-		case <-ticker.C:
-			fmt.Println("Tick")
 		case <-docsTicker.C:
 			fmt.Println("check docs on: http://localhost:9000/docs/index.html")
 			docsTicker.Stop()
+		case <-signalCh:
+			fmt.Println("Shutting down the server...")
+			close(s.tasksCh)
+			if err := s.app.Shutdown(); err != nil {
+				fmt.Println("Error shutting down the server")
+			}
 		}
 	}
 }
