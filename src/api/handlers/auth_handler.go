@@ -53,7 +53,6 @@ func NewAuthHandler(
 // @Router       /auth/signup [post]
 func (h *AuthHandler) SignUp(c *fiber.Ctx) error {
 	body := dtos.SignupDTO{}
-	cfg := config.Get()
 
 	if err := c.BodyParser(&body); err != nil {
 		return h.RespErr(c, 422, "error parsing the request body", err.Error())
@@ -69,36 +68,36 @@ func (h *AuthHandler) SignUp(c *fiber.Ctx) error {
 		return h.RespErr(c, 500, "create user error", err.Error())
 	}
 
-	// Send verification email
-	go func() {
-		tokenCode, err := h.jwtSvc.CreateToken(
-			auth.Claims{ID: user.ID, Role: user.Role},
-			time.Hour*24*3, cfg.Api.VerificationSecret,
-		)
+	// // Send verification email
+	// go func() {
+	// 	tokenCode, err := h.jwtSvc.CreateToken(
+	// 		auth.Claims{ID: user.ID, Role: user.Role},
+	// 		time.Hour*24*3, cfg.Api.VerificationSecret,
+	// 	)
 
-		if err != nil {
-			fmt.Println("Error sending email")
-			return
-		}
+	// 	if err != nil {
+	// 		fmt.Println("Error sending email")
+	// 		return
+	// 	}
 
-		err = h.emailSvc.SendEmail(email.EmailData{
-			Email:    user.Email,
-			Subject:  "Pulse | Verify your email!",
-			Template: "change_password.html",
-			Data: fiber.Map{
-				"Name":  user.Username,
-				"Email": user.Email,
-				"Code":  tokenCode,
-			},
-		})
+	// 	err = h.emailSvc.SendEmail(email.EmailData{
+	// 		Email:    user.Email,
+	// 		Subject:  "Pulse | Verify your email!",
+	// 		Template: "change_password.html",
+	// 		Data: fiber.Map{
+	// 			"Name":  user.Username,
+	// 			"Email": user.Email,
+	// 			"Code":  tokenCode,
+	// 		},
+	// 	})
 
-		if err != nil {
-			fmt.Println("Error sending email")
-			return
-		}
+	// 	if err != nil {
+	// 		fmt.Println("Error sending email")
+	// 		return
+	// 	}
 
-		fmt.Println(">>> Email Sent to:", user.Email)
-	}()
+	// 	fmt.Println(">>> Email Sent to:", user.Email)
+	// }()
 
 	return h.RespOK(c, 201, "sign up success", user)
 }
@@ -217,7 +216,7 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 	if !utils.ItemInSlice(provider, providers) {
 		return h.RespErr(c, 406,
 			"invalid oauth provider",
-			fmt.Sprintf("The avalible proveders are: %s", strings.Join(providers, ", ")),
+			fmt.Sprintf("The available providers are: %s", strings.Join(providers, ", ")),
 		)
 	}
 
@@ -251,49 +250,44 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 		user = oauthUser
 	}
 
-	if !user.VerifiedEmail {
-		go func() {
-			tokenCode, err := h.jwtSvc.CreateToken(
-				auth.Claims{ID: user.ID, Role: user.Role},
-				time.Hour*24*3, cfg.Api.VerificationSecret,
-			)
+	// if !user.VerifiedEmail {
+	// 	go func() {
+	// 		tokenCode, err := h.jwtSvc.CreateToken(
+	// 			auth.Claims{ID: user.ID, Role: user.Role},
+	// 			time.Hour*24*3, cfg.Api.VerificationSecret,
+	// 		)
 
-			if err != nil {
-				fmt.Println("Error sending email")
-				return
-			}
+	// 		if err != nil {
+	// 			fmt.Println("Error sending email")
+	// 			return
+	// 		}
 
-			err = h.emailSvc.SendEmail(email.EmailData{
-				Email:    user.Email,
-				Subject:  "Pulse | Verify your email!",
-				Template: "change_password.html",
-				Data: fiber.Map{
-					"Name":  user.Username,
-					"Email": user.Email,
-					"Code":  tokenCode,
-				},
-			})
+	// 		err = h.emailSvc.SendEmail(email.EmailData{
+	// 			Email:    user.Email,
+	// 			Subject:  "Pulse | Verify your email!",
+	// 			Template: "change_password.html",
+	// 			Data: fiber.Map{
+	// 				"Name":  user.Username,
+	// 				"Email": user.Email,
+	// 				"Code":  tokenCode,
+	// 			},
+	// 		})
 
-			if err != nil {
-				fmt.Println("Error sending email")
-				return
-			}
+	// 		if err != nil {
+	// 			fmt.Println("Error sending email")
+	// 			return
+	// 		}
 
-			fmt.Println(">>> Email Sent to:", user.Email)
-		}()
-	}
-
-	_, atErr := h.jwtSvc.CreateToken(
-		auth.Claims{ID: user.ID, Role: user.Role},
-		shared.AccessTokenExp, cfg.Api.AccessTokenSecret,
-	)
+	// 		fmt.Println(">>> Email Sent to:", user.Email)
+	// 	}()
+	// }
 
 	refreshToken, rtErr := h.jwtSvc.CreateToken(
 		auth.Claims{ID: user.ID, Role: user.Role},
 		time.Hour*24*5, cfg.Api.RefreshTokenSecret,
 	)
 
-	if atErr != nil || rtErr != nil {
+	if rtErr != nil {
 		return h.RespErr(c, 500, "error creating tokens", "something went wrong")
 	}
 

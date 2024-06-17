@@ -30,10 +30,7 @@ func (s *jwtServiceImpl) CreateToken(claims Claims, exp time.Duration, secret st
 		},
 	})
 
-	var tokenString string
-	var err error
-
-	tokenString, err = token.SignedString([]byte(secret))
+	tokenString, err := token.SignedString([]byte(secret))
 
 	if err != nil {
 		return "", err
