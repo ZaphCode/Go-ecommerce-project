@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"github.com/ZaphCode/clean-arch/src/api/dtos"
-	_ "github.com/ZaphCode/clean-arch/src/api/dtos"
 	"github.com/ZaphCode/clean-arch/src/api/shared"
 	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/services/payment"

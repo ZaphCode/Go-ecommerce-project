@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"github.com/ZaphCode/clean-arch/config"
+	"github.com/ZaphCode/clean-arch/src/utils"
 )
 
 type smtpEmailServiceImpl struct{}
@@ -15,14 +16,17 @@ func NewSmtpEmailService() EmailService {
 	return new(smtpEmailServiceImpl)
 }
 
-func (s *smtpEmailServiceImpl) SendEmail(data EmailData) error {
+func (s *smtpEmailServiceImpl) sendEmail(data EmailData) error {
 	cfg := config.Get()
+
+	utils.PrintWD()
 
 	subject := fmt.Sprintf("Subject: %s!\n", data.Subject)
 	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 
 	t, err := template.ParseFiles(
-		"./infrastructure/services/email/templates/" + data.Template,
+		// "./src/services/email/templates/" + data.Template,
+		"./templates/" + data.Template,
 	)
 
 	if err != nil {
@@ -36,12 +40,12 @@ func (s *smtpEmailServiceImpl) SendEmail(data EmailData) error {
 	}
 
 	body := buf.String()
-
 	msg := []byte(subject + mime + body)
 
 	sender := cfg.Smtp.Email
+	password := cfg.Smtp.Password
 
-	auth := smtp.PlainAuth("", sender, "tgruuykixcvtnzvj", "smtp.gmail.com")
+	auth := smtp.PlainAuth("", sender, password, "smtp.gmail.com")
 
 	recibers := []string{data.Email}
 
@@ -58,4 +62,30 @@ func (s *smtpEmailServiceImpl) SendEmail(data EmailData) error {
 	}
 
 	return nil
+}
+
+func (s *smtpEmailServiceImpl) SendChangePasswordEmail(email, name, secretCode string) error {
+	data := EmailData{
+		Email:    email,
+		Subject:  "Change Password Request",
+		Template: "change_password.html",
+		Data: map[string]interface{}{
+			"Name":       name,
+			"SecretCode": secretCode,
+		},
+	}
+	return s.sendEmail(data)
+}
+
+func (s *smtpEmailServiceImpl) SendVerifyEmail(email, name, secretCode string) error {
+	data := EmailData{
+		Email:    email,
+		Subject:  "Verify your Email",
+		Template: "change_password.html",
+		Data: map[string]interface{}{
+			"Name":       name,
+			"SecretCode": secretCode,
+		},
+	}
+	return s.sendEmail(data)
 }
