@@ -31,6 +31,7 @@ func (s *ProductServiceSuite) SetupSuite() {
 	catRepo := category.NewMemoryCategoryRepository(
 		utils.CategoryExp1,
 		utils.CategoryExp2,
+		utils.CategoryExp3,
 	)
 
 	s.service = &prodService{

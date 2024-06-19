@@ -6,9 +6,15 @@ import (
 	"os"
 
 	"github.com/ZaphCode/clean-arch/config"
-	_ "github.com/ZaphCode/clean-arch/docs"
+	_ "github.com/ZaphCode/clean-arch/docs" // Swagger docs
 	"github.com/ZaphCode/clean-arch/src/api"
-	"github.com/ZaphCode/clean-arch/src/api/handlers"
+	addressHandler "github.com/ZaphCode/clean-arch/src/api/handlers/address"
+	authHandler "github.com/ZaphCode/clean-arch/src/api/handlers/auth"
+	cardHandler "github.com/ZaphCode/clean-arch/src/api/handlers/card"
+	categoryHandler "github.com/ZaphCode/clean-arch/src/api/handlers/category"
+	orderHandler "github.com/ZaphCode/clean-arch/src/api/handlers/order"
+	productHandler "github.com/ZaphCode/clean-arch/src/api/handlers/product"
+	userHandler "github.com/ZaphCode/clean-arch/src/api/handlers/user"
 	"github.com/ZaphCode/clean-arch/src/api/middlewares"
 	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/repositories/address"
@@ -99,14 +105,14 @@ func setServerConfiguration(server *api.Server, cfg config.Config) {
 	authMdlw := middlewares.NewAuthMiddleware(jwtSvc)
 	paymMdlw := middlewares.NewPaymentMiddleware(pmSvc)
 
-	//* Handlers
-	usrHdlr := handlers.NewUserHandler(userSvc, vldSvc)
-	authHdlr := handlers.NewAuthHandler(userSvc, emailSvc, jwtSvc, vldSvc)
-	prodHdlr := handlers.NewProductHandler(prodSvc, catSvc, vldSvc)
-	catHdlr := handlers.NewCategoryHandler(prodSvc, catSvc, vldSvc)
-	addrHdlr := handlers.NewAddressHandler(userSvc, addrSvc, vldSvc)
-	cardHdlr := handlers.NewCardHandler(userSvc, pmSvc, vldSvc)
-	ordHdlr := handlers.NewOrderHandler(userSvc, ordSvc, prodSvc, pmSvc, vldSvc)
+	// Handlers
+	usrHdlr := userHandler.NewUserHandler(userSvc, vldSvc)
+	addrHdlr := addressHandler.NewAddressHandler(userSvc, addrSvc, vldSvc)
+	authHdlr := authHandler.NewAuthHandler(userSvc, emailSvc, jwtSvc, vldSvc)
+	prodHdlr := productHandler.NewProductHandler(prodSvc, catSvc, vldSvc)
+	catHdlr := categoryHandler.NewCategoryHandler(prodSvc, catSvc, vldSvc)
+	cardHdlr := cardHandler.NewCardHandler(userSvc, pmSvc, vldSvc)
+	ordHdlr := orderHandler.NewOrderHandler(userSvc, ordSvc, prodSvc, pmSvc, vldSvc)
 
 	//* Setup
 	server.SetGlobalMiddlewares()

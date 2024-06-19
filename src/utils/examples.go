@@ -83,7 +83,7 @@ var CategoryExp3 = domain.Category{
 		CreatedAt: time.Now().Unix(),
 		UpdatedAt: time.Now().Unix(),
 	},
-	Name: "mouses",
+	Name: "clothes",
 }
 
 //* Products
@@ -126,7 +126,7 @@ var ProductExpToDev1 = domain.Product{
 		CreatedAt: time.Now().Add(time.Hour * 24).Unix(),
 		UpdatedAt: time.Now().Add(time.Hour * 24).Unix(),
 	},
-	Category:     "clothes",
+	Category:     "tenis",
 	Name:         "Adidas Black T-Shirt Basketball",
 	Description:  "The best T-shirt in the world.",
 	Price:        2599,

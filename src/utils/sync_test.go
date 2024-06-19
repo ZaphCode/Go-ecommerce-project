@@ -19,19 +19,10 @@ type ExampleModel struct {
 	Gay  bool
 }
 
-var m1 = ExampleModel{
-	ID:   uuid.MustParse("1551f9f0-825a-438c-9307-90cbc0bd5d63"),
-	Name: "model 1",
-	Age:  24,
-	Gay:  false,
-}
-
-var m2 = ExampleModel{
-	ID:   uuid.MustParse("9f44a912-40f6-4ca6-b672-4911e3453443"),
-	Name: "model 2",
-	Age:  13,
-	Gay:  true,
-}
+var (
+	m1 ExampleModel
+	m2 ExampleModel
+)
 
 //* Main
 
@@ -42,6 +33,21 @@ func TestSyncMapSuite(t *testing.T) {
 //* Life cycle
 
 func (s *SyncMapSuite) SetupSuite() {
+	m1 = ExampleModel{
+		// ID:   uuid.MustParse("1551f9f0-825a-438c-9307-90cbc0bd5d63"),
+		ID:   uuid.New(),
+		Name: "model 1",
+		Age:  24,
+		Gay:  false,
+	}
+	m2 = ExampleModel{
+		// ID:   uuid.MustParse("9f44a912-40f6-4ca6-b672-4911e3453443"),
+		ID:   uuid.New(),
+		Name: "model 2",
+		Age:  13,
+		Gay:  true,
+	}
+
 	s.syancMap = NewSyncMap[uuid.UUID, ExampleModel]()
 }
 

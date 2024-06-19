@@ -52,7 +52,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_GetByID() {
 		},
 		{
 			desc:          "Get product success",
-			req:           s.MakeReq("GET", s.bp+"/get/"+utils.ProductExp2.ID.String(), nil),
+			req:           s.MakeReq("GET", s.bp+"/get/"+utils.ProductExpToDev1.ID.String(), nil),
 			showResp:      true,
 			wantStatus:    http.StatusFound,
 			bodyValidator: s.CheckSuccess,
@@ -294,7 +294,7 @@ func (s *ProductRoutesSuite) TestProductRoutes_Update() {
 		},
 		{
 			desc: "Update success",
-			req: s.MakeReq("PUT", path+utils.ProductExp2.ID.String(), dtos.UpdateProductDTO{
+			req: s.MakeReq("PUT", path+utils.ProductExpToDev1.ID.String(), dtos.UpdateProductDTO{
 				Category:     "clothes",
 				Price:        utils.PTR[int64](1500),
 				DiscountRate: utils.PTR[int64](12),

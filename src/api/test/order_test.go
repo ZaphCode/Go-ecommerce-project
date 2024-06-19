@@ -116,7 +116,7 @@ func (s *OrderRoutesSuite) TestOrderRoutes_NewOrder() {
 				AddressID: utils.AddrExp1.ID,
 				Products: []domain.OrderProduct{
 					{ID: utils.ProductExp1.ID, Quantity: 13},
-					{ID: utils.ProductExp2.ID, Quantity: 3},
+					{ID: utils.ProductExpToDev1.ID, Quantity: 3},
 				},
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.userAccessToken,
@@ -133,7 +133,7 @@ func (s *OrderRoutesSuite) TestOrderRoutes_NewOrder() {
 				AddressID: utils.AddrExp1.ID,
 				Products: []domain.OrderProduct{
 					{ID: utils.ProductExp1.ID, Quantity: 13},
-					{ID: utils.ProductExp2.ID, Quantity: 3},
+					{ID: utils.ProductExpToDev1.ID, Quantity: 3},
 				},
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.adminAccessToken,
@@ -150,7 +150,7 @@ func (s *OrderRoutesSuite) TestOrderRoutes_NewOrder() {
 				AddressID: utils.AddrExp1.ID,
 				Products: []domain.OrderProduct{
 					{ID: utils.ProductExp1.ID, Quantity: 2},
-					{ID: utils.ProductExp2.ID, Quantity: 3},
+					{ID: utils.ProductExpToDev1.ID, Quantity: 3},
 				},
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.userAccessToken,
@@ -167,7 +167,7 @@ func (s *OrderRoutesSuite) TestOrderRoutes_NewOrder() {
 				AddressID: utils.AddrExp1.ID,
 				Products: []domain.OrderProduct{
 					{ID: utils.ProductExp1.ID, Quantity: 2},
-					{ID: utils.ProductExp2.ID, Quantity: 3},
+					{ID: utils.ProductExpToDev1.ID, Quantity: 3},
 				},
 			}, map[string]string{
 				s.cfg.Api.AccessTokenHeader: s.userAccessToken,

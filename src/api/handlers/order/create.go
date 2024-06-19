@@ -1,56 +1,11 @@
-package handlers
+package order
 
 import (
 	"github.com/ZaphCode/clean-arch/src/api/dtos"
-	"github.com/ZaphCode/clean-arch/src/api/shared"
-	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/services/auth"
-	"github.com/ZaphCode/clean-arch/src/services/payment"
-	"github.com/ZaphCode/clean-arch/src/services/validation"
 	"github.com/ZaphCode/clean-arch/src/utils"
 	"github.com/gofiber/fiber/v2"
 )
-
-type OrderHandler struct {
-	shared.Responder
-	usrSvc  domain.UserService
-	ordSvc  domain.OrderService
-	pmSvc   payment.PaymentService
-	prodSvc domain.ProductService
-	vldSvc  validation.ValidationService
-}
-
-func NewOrderHandler(
-	usrSvc domain.UserService,
-	ordSvc domain.OrderService,
-	prodSvc domain.ProductService,
-	pmSvc payment.PaymentService,
-	vldSvc validation.ValidationService,
-) *OrderHandler {
-	return &OrderHandler{
-		usrSvc:  usrSvc,
-		prodSvc: prodSvc,
-		ordSvc:  ordSvc,
-		pmSvc:   pmSvc,
-		vldSvc:  vldSvc,
-	}
-}
-
-func (h *OrderHandler) GetOrders(c *fiber.Ctx) error {
-	ud, ok := c.Locals("user-data").(*auth.Claims)
-
-	if !ok {
-		return h.RespErr(c, 500, "internal server error", "something went wrong")
-	}
-
-	os, err := h.ordSvc.GetAllByUserID(ud.ID)
-
-	if err != nil {
-		return h.RespErr(c, 500, "error getting user orders", err.Error())
-	}
-
-	return h.RespOK(c, 200, "all orders", os)
-}
 
 // * Create new order handler
 // @Summary      Create new order

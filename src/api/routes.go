@@ -1,13 +1,19 @@
 package api
 
 import (
-	"github.com/ZaphCode/clean-arch/src/api/handlers"
+	addressHandler "github.com/ZaphCode/clean-arch/src/api/handlers/address"
+	authHandler "github.com/ZaphCode/clean-arch/src/api/handlers/auth"
+	cardHandler "github.com/ZaphCode/clean-arch/src/api/handlers/card"
+	categoryHandler "github.com/ZaphCode/clean-arch/src/api/handlers/category"
+	orderHandler "github.com/ZaphCode/clean-arch/src/api/handlers/order"
+	productHandler "github.com/ZaphCode/clean-arch/src/api/handlers/product"
+	userHandler "github.com/ZaphCode/clean-arch/src/api/handlers/user"
 	"github.com/ZaphCode/clean-arch/src/api/middlewares"
 	"github.com/ZaphCode/clean-arch/src/utils"
 )
 
 func (s *Server) CreateAuthRoutes(
-	authHdlr *handlers.AuthHandler,
+	authHdlr *authHandler.AuthHandler,
 	authMdlw *middlewares.AuthMiddleware,
 ) {
 	r := s.app.Group("/api/auth")
@@ -21,7 +27,7 @@ func (s *Server) CreateAuthRoutes(
 }
 
 func (s *Server) CreateUserRoutes(
-	usrHdlr *handlers.UserHandler,
+	usrHdlr *userHandler.UserHandler,
 	authMdlw *middlewares.AuthMiddleware,
 ) {
 	r := s.app.Group("/api/user")
@@ -33,19 +39,19 @@ func (s *Server) CreateUserRoutes(
 }
 
 func (s *Server) CreateProductRoutes(
-	prodHdlr *handlers.ProductHandler,
+	prodHdlr *productHandler.ProductHandler,
 	authMdlw *middlewares.AuthMiddleware,
 ) {
 	r := s.app.Group("/api/product")
 	r.Get("/all", prodHdlr.GetProducts)
 	r.Get("/get/:id", prodHdlr.GetProduct)
-	r.Post("/create", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.CreateProducts)
+	r.Post("/create", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.CreateProduct)
 	r.Put("/update/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.UpdateProduct)
 	r.Delete("/delete/:id", authMdlw.AuthRequired, authMdlw.RoleRequired(utils.AdminRole), prodHdlr.DeleteProduct)
 }
 
 func (s *Server) CreateCategoryRoutes(
-	catHdlr *handlers.CategoryHandler,
+	catHdlr *categoryHandler.CategoryHandler,
 	authMdlw *middlewares.AuthMiddleware,
 ) {
 	r := s.app.Group("/api/category")
@@ -55,7 +61,7 @@ func (s *Server) CreateCategoryRoutes(
 }
 
 func (s *Server) CreateAddressesRoutes(
-	addrHdlr *handlers.AddressHandler,
+	addrHdlr *addressHandler.AddressHandler,
 	authMdlw *middlewares.AuthMiddleware,
 ) {
 	r := s.app.Group("/api/address")
@@ -66,18 +72,18 @@ func (s *Server) CreateAddressesRoutes(
 }
 
 func (s *Server) CreateCardRoutes(
-	crdHdlr *handlers.CardHandler,
+	cardHdlr *cardHandler.CardHandler,
 	paymMdlw *middlewares.PaymentMiddleware,
 	authMdlw *middlewares.AuthMiddleware,
 ) {
 	r := s.app.Group("/api/card")
-	r.Get("/list", authMdlw.AuthRequired, paymMdlw.CustomerIDRequired, crdHdlr.GetUserCards)
-	r.Post("/save", authMdlw.AuthRequired, paymMdlw.CustomerIDRequired, crdHdlr.SaveUserCard)
-	r.Delete("/remove/:id", authMdlw.AuthRequired, paymMdlw.CustomerIDRequired, crdHdlr.RemoveUserCard)
+	r.Get("/list", authMdlw.AuthRequired, paymMdlw.CustomerIDRequired, cardHdlr.GetUserCards)
+	r.Post("/save", authMdlw.AuthRequired, paymMdlw.CustomerIDRequired, cardHdlr.SaveUserCard)
+	r.Delete("/remove/:id", authMdlw.AuthRequired, paymMdlw.CustomerIDRequired, cardHdlr.RemoveUserCard)
 }
 
 func (s *Server) CreateOrderRoutes(
-	ordHdlr *handlers.OrderHandler,
+	ordHdlr *orderHandler.OrderHandler,
 	paymMdlw *middlewares.PaymentMiddleware,
 	authMdlw *middlewares.AuthMiddleware,
 ) {
