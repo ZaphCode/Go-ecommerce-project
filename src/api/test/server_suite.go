@@ -9,7 +9,13 @@ import (
 
 	"github.com/ZaphCode/clean-arch/config"
 	"github.com/ZaphCode/clean-arch/src/api"
-	"github.com/ZaphCode/clean-arch/src/api/handlers"
+	addressHandler "github.com/ZaphCode/clean-arch/src/api/handlers/address"
+	authHandler "github.com/ZaphCode/clean-arch/src/api/handlers/auth"
+	cardHandler "github.com/ZaphCode/clean-arch/src/api/handlers/card"
+	categoryHandler "github.com/ZaphCode/clean-arch/src/api/handlers/category"
+	orderHandler "github.com/ZaphCode/clean-arch/src/api/handlers/order"
+	productHandler "github.com/ZaphCode/clean-arch/src/api/handlers/product"
+	userHandler "github.com/ZaphCode/clean-arch/src/api/handlers/user"
 	"github.com/ZaphCode/clean-arch/src/api/middlewares"
 	"github.com/ZaphCode/clean-arch/src/repositories/address"
 	"github.com/ZaphCode/clean-arch/src/repositories/category"
@@ -24,6 +30,7 @@ import (
 	"github.com/ZaphCode/clean-arch/src/utils"
 	"github.com/stretchr/testify/suite"
 	"github.com/stripe/stripe-go/v74"
+
 	"github.com/stripe/stripe-go/v74/paymentmethod"
 )
 
@@ -53,7 +60,7 @@ func (s *ServerSuite) SetupSuite() {
 
 	// Repos
 	userRepo := user.NewMemoryUserRepository(utils.UserAdmin, utils.UserExp1, utils.UserExp2)
-	prodRepo := product.NewMemoryProductRepository(utils.ProductExp1, utils.ProductExp2)
+	prodRepo := product.NewMemoryProductRepository(utils.ProductExp1, utils.ProductExpToDev1)
 	catRepo := category.NewMemoryCategoryRepository(utils.CategoryExp1, utils.CategoryExp2, utils.CategoryExp3)
 	addrRepo := address.NewMemoryAddressRepository(utils.AddrExp1, utils.AddrExp2)
 	ordRepo := order.NewMemoryOrderRepository()
@@ -74,13 +81,13 @@ func (s *ServerSuite) SetupSuite() {
 	paymMdlw := middlewares.NewPaymentMiddleware(pmSvc)
 
 	// Handlers
-	usrHdlr := handlers.NewUserHandler(userSvc, vldSvc)
-	addrHdlr := handlers.NewAddressHandler(userSvc, addrSvc, vldSvc)
-	authHdlr := handlers.NewAuthHandler(userSvc, emailSvc, jwtSvc, vldSvc)
-	prodHdlr := handlers.NewProductHandler(prodSvc, catSvc, vldSvc)
-	catHdlr := handlers.NewCategoryHandler(prodSvc, catSvc, vldSvc)
-	crdHdlr := handlers.NewCardHandler(userSvc, pmSvc, vldSvc)
-	ordHdlr := handlers.NewOrderHandler(userSvc, ordSvc, prodSvc, pmSvc, vldSvc)
+	usrHdlr := userHandler.NewUserHandler(userSvc, vldSvc)
+	addrHdlr := addressHandler.NewAddressHandler(userSvc, addrSvc, vldSvc)
+	authHdlr := authHandler.NewAuthHandler(userSvc, emailSvc, jwtSvc, vldSvc)
+	prodHdlr := productHandler.NewProductHandler(prodSvc, catSvc, vldSvc)
+	catHdlr := categoryHandler.NewCategoryHandler(prodSvc, catSvc, vldSvc)
+	cardHdlr := cardHandler.NewCardHandler(userSvc, pmSvc, vldSvc)
+	ordHdlr := orderHandler.NewOrderHandler(userSvc, ordSvc, prodSvc, pmSvc, vldSvc)
 
 	// Server
 	server := api.New()
@@ -95,7 +102,7 @@ func (s *ServerSuite) SetupSuite() {
 	server.CreateCategoryRoutes(catHdlr, authMdlw)
 	server.CreateAddressesRoutes(addrHdlr, authMdlw)
 	server.CreateOrderRoutes(ordHdlr, paymMdlw, authMdlw)
-	server.CreateCardRoutes(crdHdlr, paymMdlw, authMdlw)
+	server.CreateCardRoutes(cardHdlr, paymMdlw, authMdlw)
 
 	s.server = server
 

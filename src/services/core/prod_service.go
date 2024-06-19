@@ -110,7 +110,7 @@ func (s *prodService) SetAvailable(ID uuid.UUID, avl bool) error {
 		return fmt.Errorf("product not found")
 	}
 
-	return s.prodRepo.UpdateField(ID, "Avalible", avl)
+	return s.prodRepo.UpdateField(ID, "Available", avl)
 }
 
 func (s *prodService) Delete(ID uuid.UUID) error {
