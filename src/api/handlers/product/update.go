@@ -15,7 +15,7 @@ import (
 // @Security     BearerAuth
 // @Param        id   path string true "product   uuid" example(3afc3021-9395-11ed-a8b6-d8bbc1a27045)
 // @Param        product_data  body dtos.UpdateProductDTO true "product data"
-// @Success      200  {object}  dtos.ProductRespOKDTO
+// @Success      200  {object}  dtos.RespOKDTO
 // @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
 // @Failure      422  {object}  dtos.DetailRespErrDTO
@@ -45,13 +45,5 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 		return h.RespErr(c, 500, "error updating product", err.Error())
 	}
 
-	//TODO ---- Remove this ---------
-	p, err := h.prodSvc.GetByID(uid)
-
-	if err != nil {
-		return h.RespErr(c, 500, "error getting updated product", err.Error())
-	}
-	//TODO --------------------------
-
-	return h.RespOK(c, 200, "product updated", p)
+	return h.RespOK(c, 200, "product updated")
 }

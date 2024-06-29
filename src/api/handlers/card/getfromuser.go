@@ -1,6 +1,8 @@
 package card
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+)
 
 // * Get user cards handler
 // @Summary      Get auth user cards

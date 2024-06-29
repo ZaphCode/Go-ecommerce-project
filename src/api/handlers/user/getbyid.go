@@ -36,5 +36,5 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 		return h.RespErr(c, 404, "user not found")
 	}
 
-	return h.RespOK(c, 302, "user found", user)
+	return h.RespOK(c, 200, "user found", user)
 }

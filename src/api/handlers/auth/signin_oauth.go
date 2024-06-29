@@ -121,6 +121,7 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 	})
 
 	return c.Redirect(cfg.Api.ClientOrigin)
+	
 	// return h.RespOK(c, 200, "sign in successfully", fiber.Map{
 	// 	"user":          user,
 	// 	"access_token":  accessToken,

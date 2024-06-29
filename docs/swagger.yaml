@@ -1,6 +1,13 @@
 basePath: /api
 definitions:
-  github_com_ZaphCode_clean-arch_src_api_dtos.AddressDTO:
+  domain.OrderProduct:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  dtos.AddressDTO:
     properties:
       city:
         example: Los Angeles
@@ -46,10 +53,10 @@ definitions:
     - postal_code
     - state
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.AddressRespOKDTO:
+  dtos.AddressRespOKDTO:
     properties:
       data:
-        $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressDTO'
+        $ref: '#/definitions/dtos.AddressDTO'
       message:
         example: Data retrived!
         type: string
@@ -57,11 +64,11 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.AddressesRespOKDTO:
+  dtos.AddressesRespOKDTO:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressDTO'
+          $ref: '#/definitions/dtos.AddressDTO'
         type: array
       message:
         example: Data retrived!
@@ -70,7 +77,7 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO:
+  dtos.AuthRespErrDTO:
     properties:
       detail:
         example: the token is expired
@@ -82,7 +89,7 @@ definitions:
         example: failure
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.CardDTO:
+  dtos.CardDTO:
     properties:
       brand:
         example: visa
@@ -112,11 +119,11 @@ definitions:
         example: 1674405181
         type: integer
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.CardsRespOKDTO:
+  dtos.CardsRespOKDTO:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CardDTO'
+          $ref: '#/definitions/dtos.CardDTO'
         type: array
       message:
         example: Data retrived!
@@ -125,11 +132,11 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.CategoriesRespOKDTO:
+  dtos.CategoriesRespOKDTO:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CategoryDTO'
+          $ref: '#/definitions/dtos.CategoryDTO'
         type: array
       message:
         example: Data retrived!
@@ -138,7 +145,7 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.CategoryDTO:
+  dtos.CategoryDTO:
     properties:
       created_at:
         example: 1674405183
@@ -156,10 +163,10 @@ definitions:
     required:
     - name
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.CategoryRespOKDTO:
+  dtos.CategoryRespOKDTO:
     properties:
       data:
-        $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CategoryDTO'
+        $ref: '#/definitions/dtos.CategoryDTO'
       message:
         example: Data retrived!
         type: string
@@ -167,7 +174,7 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO:
+  dtos.DetailRespErrDTO:
     properties:
       detail:
         example: error querying the database
@@ -179,7 +186,7 @@ definitions:
         example: failure
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.NewAddressDTO:
+  dtos.NewAddressDTO:
     properties:
       city:
         example: Los Angeles
@@ -216,7 +223,7 @@ definitions:
     - postal_code
     - state
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.NewCategoryDTO:
+  dtos.NewCategoryDTO:
     properties:
       name:
         example: clothes
@@ -225,22 +232,24 @@ definitions:
     required:
     - name
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.NewOrderDTO:
+  dtos.NewOrderDTO:
     properties:
       address_id:
+        example: 8ded83fe-93c8-11ed-ab0f-d8bbc1a27048
         type: string
       payment_id:
+        example: pm_1NKPiEG8UXDxPRbaEDuh6BrU
         type: string
       products:
         items:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_domain.OrderProduct'
+          $ref: '#/definitions/domain.OrderProduct'
         type: array
     required:
     - address_id
     - payment_id
     - products
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.NewProductDTO:
+  dtos.NewProductDTO:
     properties:
       avalible:
         type: boolean
@@ -291,7 +300,7 @@ definitions:
     - price
     - tags
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.NewUserDTO:
+  dtos.NewUserDTO:
     properties:
       age:
         example: 20
@@ -327,9 +336,10 @@ definitions:
     - password
     - username
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.OrderDTO:
+  dtos.OrderDTO:
     properties:
       address_id:
+        example: 8ded83fe-93c8-11ed-ab0f-d8bbc1a27048
         type: string
       amount:
         example: 14500
@@ -344,10 +354,11 @@ definitions:
         example: true
         type: boolean
       payment_id:
+        example: pm_1NKPiEG8UXDxPRbaEDuh6BrU
         type: string
       products:
         items:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_domain.OrderProduct'
+          $ref: '#/definitions/domain.OrderProduct'
         type: array
       status:
         example: pending
@@ -360,7 +371,18 @@ definitions:
     - payment_id
     - products
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.ProductDTO:
+  dtos.OrderRespOKDTO:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.OrderDTO'
+      message:
+        example: Data retrived!
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  dtos.ProductDTO:
     properties:
       avalible:
         type: boolean
@@ -420,10 +442,10 @@ definitions:
     - price
     - tags
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.ProductRespOKDTO:
+  dtos.ProductRespOKDTO:
     properties:
       data:
-        $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductDTO'
+        $ref: '#/definitions/dtos.ProductDTO'
       message:
         example: Data retrived!
         type: string
@@ -431,11 +453,11 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.ProductsRespOKDTO:
+  dtos.ProductsRespOKDTO:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductDTO'
+          $ref: '#/definitions/dtos.ProductDTO'
         type: array
       message:
         example: Data retrived!
@@ -444,7 +466,7 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO:
+  dtos.RespErrDTO:
     properties:
       message:
         example: something went wrong
@@ -453,7 +475,7 @@ definitions:
         example: failure
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO:
+  dtos.RespOKDTO:
     properties:
       message:
         example: Data retrived!
@@ -462,7 +484,15 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.SignInRespOKDTO:
+  dtos.SaveCardDTO:
+    properties:
+      payment_id:
+        example: pm_1NKPiEG8UXDxPRbaEDuh6BrU
+        type: string
+    required:
+    - payment_id
+    type: object
+  dtos.SignInRespOKDTO:
     properties:
       data:
         properties:
@@ -473,7 +503,7 @@ definitions:
             example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNDE0NTYzNiIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.Bl1Rpmk-BrbqtgJA6F9pTAuiOlaPLpdDQ7MJvZ7URSU
             type: string
           user:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserDTO'
+            $ref: '#/definitions/dtos.UserDTO'
         type: object
       message:
         example: Data retrived!
@@ -482,7 +512,7 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.SigninDTO:
+  dtos.SigninDTO:
     properties:
       email:
         example: zaph@fapi.com
@@ -494,7 +524,7 @@ definitions:
     - email
     - password
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.SignupDTO:
+  dtos.SignupDTO:
     properties:
       age:
         example: 18
@@ -518,7 +548,7 @@ definitions:
     - password
     - username
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.TokenRespOKDTO:
+  dtos.TokenRespOKDTO:
     properties:
       data:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
@@ -530,7 +560,7 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.URLRespOKDTO:
+  dtos.URLRespOKDTO:
     properties:
       data:
         example: https://google.com/oauth/pulse
@@ -542,7 +572,7 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.UpdateAddressDTO:
+  dtos.UpdateAddressDTO:
     properties:
       city:
         example: Los Angeles
@@ -572,9 +602,9 @@ definitions:
         maxLength: 40
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.UpdateProductDTO:
+  dtos.UpdateProductDTO:
     properties:
-      avalible:
+      available:
         type: boolean
       category:
         example: clothes
@@ -617,7 +647,7 @@ definitions:
         maxItems: 6
         type: array
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.UpdateUserDTO:
+  dtos.UpdateUserDTO:
     properties:
       age:
         example: 20
@@ -640,7 +670,7 @@ definitions:
       verified_email:
         type: boolean
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.UserDTO:
+  dtos.UserDTO:
     properties:
       age:
         example: 20
@@ -687,10 +717,10 @@ definitions:
     - password
     - username
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO:
+  dtos.UserRespOKDTO:
     properties:
       data:
-        $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserDTO'
+        $ref: '#/definitions/dtos.UserDTO'
       message:
         example: Data retrived!
         type: string
@@ -698,11 +728,11 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.UsersRespOKDTO:
+  dtos.UsersRespOKDTO:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserDTO'
+          $ref: '#/definitions/dtos.UserDTO'
         type: array
       message:
         example: Data retrived!
@@ -711,7 +741,7 @@ definitions:
         example: success
         type: string
     type: object
-  github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO:
+  dtos.ValidationRespErrDTO:
     properties:
       errors:
         items:
@@ -730,13 +760,6 @@ definitions:
       status:
         example: failure
         type: string
-    type: object
-  github_com_ZaphCode_clean-arch_src_domain.OrderProduct:
-    properties:
-      product_id:
-        type: string
-      quantity:
-        type: integer
     type: object
 host: localhost:9000
 info:
@@ -762,30 +785,30 @@ paths:
         name: address_data
         required: true
         schema:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewAddressDTO'
+          $ref: '#/definitions/dtos.NewAddressDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressRespOKDTO'
+            $ref: '#/definitions/dtos.AddressRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+            $ref: '#/definitions/dtos.ValidationRespErrDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Create new address
@@ -809,19 +832,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO'
+            $ref: '#/definitions/dtos.RespOKDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Delete address
@@ -838,15 +861,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressesRespOKDTO'
+            $ref: '#/definitions/dtos.AddressesRespOKDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Get auth user addresses
@@ -869,34 +892,34 @@ paths:
         name: address_data
         required: true
         schema:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UpdateAddressDTO'
+          $ref: '#/definitions/dtos.UpdateAddressDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AddressRespOKDTO'
+            $ref: '#/definitions/dtos.AddressRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+            $ref: '#/definitions/dtos.ValidationRespErrDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Update address
@@ -928,19 +951,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.SignInRespOKDTO'
+            $ref: '#/definitions/dtos.SignInRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       summary: Sign in OAuth
       tags:
       - auth
@@ -965,11 +988,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.URLRespOKDTO'
+            $ref: '#/definitions/dtos.URLRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       summary: Get OAuth url
       tags:
       - auth
@@ -984,15 +1007,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
+            $ref: '#/definitions/dtos.UserRespOKDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
       security:
       - BearerAuth: []
       summary: Get auth user
@@ -1014,19 +1037,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.TokenRespOKDTO'
+            $ref: '#/definitions/dtos.TokenRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       summary: Refresh token
       tags:
       - auth
@@ -1041,34 +1064,34 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.SigninDTO'
+          $ref: '#/definitions/dtos.SigninDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.SignInRespOKDTO'
+            $ref: '#/definitions/dtos.SignInRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+            $ref: '#/definitions/dtos.ValidationRespErrDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       summary: Sign in
       tags:
       - auth
@@ -1081,7 +1104,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO'
+            $ref: '#/definitions/dtos.RespOKDTO'
       summary: Sign out
       tags:
       - auth
@@ -1096,26 +1119,26 @@ paths:
         name: user_data
         required: true
         schema:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.SignupDTO'
+          $ref: '#/definitions/dtos.SignupDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
+            $ref: '#/definitions/dtos.UserRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+            $ref: '#/definitions/dtos.ValidationRespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       summary: Sign up
       tags:
       - auth
@@ -1130,15 +1153,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CardsRespOKDTO'
+            $ref: '#/definitions/dtos.CardsRespOKDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Remove card
@@ -1154,39 +1177,47 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CardsRespOKDTO'
+            $ref: '#/definitions/dtos.CardsRespOKDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Get auth user cards
       tags:
       - card
+  /card/save:
     post:
       consumes:
       - application/json
       description: Save card to user acount
+      parameters:
+      - description: card data
+        in: body
+        name: card_data
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.SaveCardDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CardsRespOKDTO'
+            $ref: '#/definitions/dtos.CardsRespOKDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Save card
@@ -1203,11 +1234,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CategoriesRespOKDTO'
+            $ref: '#/definitions/dtos.CategoriesRespOKDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       summary: Get categories
       tags:
       - category
@@ -1222,34 +1253,34 @@ paths:
         name: category_data
         required: true
         schema:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewCategoryDTO'
+          $ref: '#/definitions/dtos.NewCategoryDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.CategoryRespOKDTO'
+            $ref: '#/definitions/dtos.CategoryRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+            $ref: '#/definitions/dtos.ValidationRespErrDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Create new category
@@ -1273,23 +1304,23 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO'
+            $ref: '#/definitions/dtos.RespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Delete category
@@ -1306,34 +1337,34 @@ paths:
         name: order_data
         required: true
         schema:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewOrderDTO'
+          $ref: '#/definitions/dtos.NewOrderDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.OrderDTO'
+            $ref: '#/definitions/dtos.OrderRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+            $ref: '#/definitions/dtos.ValidationRespErrDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Create new order
@@ -1350,11 +1381,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductsRespOKDTO'
+            $ref: '#/definitions/dtos.ProductsRespOKDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       summary: Get products
       tags:
       - product
@@ -1369,34 +1400,34 @@ paths:
         name: product_data
         required: true
         schema:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewProductDTO'
+          $ref: '#/definitions/dtos.NewProductDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductRespOKDTO'
+            $ref: '#/definitions/dtos.ProductRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+            $ref: '#/definitions/dtos.ValidationRespErrDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Create new product
@@ -1420,19 +1451,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespOKDTO'
+            $ref: '#/definitions/dtos.RespOKDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Delete product
@@ -1456,19 +1487,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductRespOKDTO'
+            $ref: '#/definitions/dtos.ProductRespOKDTO'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       summary: Get product
       tags:
       - product
@@ -1489,34 +1520,34 @@ paths:
         name: product_data
         required: true
         schema:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UpdateProductDTO'
+          $ref: '#/definitions/dtos.UpdateProductDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ProductRespOKDTO'
+            $ref: '#/definitions/dtos.RespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+            $ref: '#/definitions/dtos.ValidationRespErrDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Update product
@@ -1533,11 +1564,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UsersRespOKDTO'
+            $ref: '#/definitions/dtos.UsersRespOKDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Get users
@@ -1554,30 +1585,30 @@ paths:
         name: user_data
         required: true
         schema:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.NewUserDTO'
+          $ref: '#/definitions/dtos.NewUserDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
+            $ref: '#/definitions/dtos.UserRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+            $ref: '#/definitions/dtos.ValidationRespErrDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Create user
@@ -1601,19 +1632,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
+            $ref: '#/definitions/dtos.UserRespOKDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Delete user
@@ -1637,23 +1668,23 @@ paths:
         "302":
           description: Found
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
+            $ref: '#/definitions/dtos.UserRespOKDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Get user
@@ -1676,34 +1707,34 @@ paths:
         name: user_data
         required: true
         schema:
-          $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UpdateUserDTO'
+          $ref: '#/definitions/dtos.UpdateUserDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.UserRespOKDTO'
+            $ref: '#/definitions/dtos.UserRespOKDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.ValidationRespErrDTO'
+            $ref: '#/definitions/dtos.ValidationRespErrDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.AuthRespErrDTO'
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
         "406":
           description: Not Acceptable
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.RespErrDTO'
+            $ref: '#/definitions/dtos.RespErrDTO'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_ZaphCode_clean-arch_src_api_dtos.DetailRespErrDTO'
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
       security:
       - BearerAuth: []
       summary: Update user

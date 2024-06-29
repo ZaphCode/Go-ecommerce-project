@@ -11,10 +11,11 @@ runfrontdev:
 openweb:
 	sleep 3 && open ${FRONTEND_WEB_URL}
 
-# Tarea para ejecutar ambos proyectos en paralelo
 rundev: 
 	$(MAKE) -j 3 runbackdev runfrontdev openweb
 
+gendocs: # install swag v.1.8.9
+	swag init -g cmd/main.go
 
 # Configura la tarea por defecto
 .DEFAULT_GOAL := rundev

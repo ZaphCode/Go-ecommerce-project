@@ -12,10 +12,11 @@ import (
 // @Accept       json
 // @Produce      json
 // @Security     BearerAuth
+// @Param        card_data  body dtos.SaveCardDTO true "card data"
 // @Success      200  {object}  dtos.CardsRespOKDTO
 // @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
-// @Router       /card/list [post]
+// @Router       /card/save [post]
 func (h *CardHandler) SaveUserCard(c *fiber.Ctx) error {
 	cusID, ok := c.Locals("customer-id").(string)
 
