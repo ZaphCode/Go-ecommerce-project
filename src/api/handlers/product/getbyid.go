@@ -1,8 +1,6 @@
 package product
 
 import (
-	"net/http"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -37,5 +35,5 @@ func (h *ProductHandler) GetProduct(c *fiber.Ctx) error {
 		return h.RespErr(c, 404, "product not found")
 	}
 
-	return h.RespOK(c, http.StatusFound, "product found", prod)
+	return h.RespOK(c, 200, "product found", prod)
 }

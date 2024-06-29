@@ -71,6 +71,12 @@ type CategoriesRespOKDTO struct {
 	Data []CategoryDTO `json:"data"`
 }
 
+// * ------ ORDERS ----------
+type OrderRespOKDTO struct {
+	RespOKDTO
+	Data OrderDTO `json:"data"`
+}
+
 //* --------- AUTH -------------
 
 type URLRespOKDTO struct {

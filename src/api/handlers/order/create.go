@@ -15,7 +15,7 @@ import (
 // @Produce      json
 // @Security     BearerAuth
 // @Param        order_data  body dtos.NewOrderDTO true "order data"
-// @Success      200  {object}  dtos.OrderDTO
+// @Success      200  {object}  dtos.OrderRespOKDTO
 // @Failure      401  {object}  dtos.AuthRespErrDTO
 // @Failure      500  {object}  dtos.DetailRespErrDTO
 // @Failure      422  {object}  dtos.DetailRespErrDTO
