@@ -34,10 +34,10 @@ func (m *SyncMap[K, V]) Get(key K) (V, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	var zero V
+	var zeroValue V
 
 	if !m.Exists(key) {
-		return zero, ErrNotFound
+		return zeroValue, ErrNotFound
 	}
 
 	return m.smap[key], nil
