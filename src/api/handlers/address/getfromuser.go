@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// GetUserAddress
 // * Get user address handler
 // @Summary      Get auth user addresses
 // @Description  Get all addresses from auth user
