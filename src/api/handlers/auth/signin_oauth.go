@@ -11,6 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// SignInWihOAuth
 // * Sing in with OAuth handler
 // @Summary      Sign in OAuth
 // @Description  Sing in by OAuth provider (google/github/discord)
@@ -121,7 +122,7 @@ func (h *AuthHandler) SignInWihOAuth(c *fiber.Ctx) error {
 	})
 
 	return c.Redirect(cfg.Api.ClientOrigin)
-	
+
 	// return h.RespOK(c, 200, "sign in successfully", fiber.Map{
 	// 	"user":          user,
 	// 	"access_token":  accessToken,
