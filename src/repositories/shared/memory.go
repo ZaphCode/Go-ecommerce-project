@@ -27,7 +27,7 @@ func NewMemoryRepo[T domain.DomainModel](
 
 func (r *MemoryRepo[T]) Save(m *T) error {
 	if m == nil {
-		return fmt.Errorf("you cant instert nil value")
+		return fmt.Errorf("you cant insert nil value")
 	}
 
 	id, err := uuid.Parse((*m).GetStringID())

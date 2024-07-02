@@ -32,3 +32,13 @@ func NewMemoryCategoryRepository(im ...domain.Category) domain.CategoryRepositor
 		},
 	}
 }
+
+func NewMemoryPersistentCategoryRepository(filename string) domain.CategoryRepository {
+	store := utils.NewSyncMap[uuid.UUID, domain.Category](filename)
+
+	return &memoryCategoryRepo{
+		shared.MemoryRepo[domain.Category]{
+			Store: store,
+		},
+	}
+}

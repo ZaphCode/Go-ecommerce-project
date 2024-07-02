@@ -32,3 +32,13 @@ func NewMemoryUserRepository(im ...domain.User) domain.UserRepository {
 		},
 	}
 }
+
+func NewMemoryPersistentUserRepository(datafile string) domain.UserRepository {
+	store := utils.NewSyncMap[uuid.UUID, domain.User](datafile)
+
+	return &memoryUserRepo{
+		shared.MemoryRepo[domain.User]{
+			Store: store,
+		},
+	}
+}
