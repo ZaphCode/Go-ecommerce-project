@@ -32,3 +32,13 @@ func NewMemoryAddressRepository(im ...domain.Address) domain.AddressRepository {
 		},
 	}
 }
+
+func NewMemoryPersistentAddressRepository(filename string) domain.AddressRepository {
+	store := utils.NewSyncMap[uuid.UUID, domain.Address](filename)
+
+	return &memoryAddressRepo{
+		shared.MemoryRepo[domain.Address]{
+			Store: store,
+		},
+	}
+}

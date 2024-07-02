@@ -32,3 +32,13 @@ func NewMemoryProductRepository(im ...domain.Product) domain.ProductRepository {
 		},
 	}
 }
+
+func NewMemoryPersistentProductRepository(filename string) domain.ProductRepository {
+	store := utils.NewSyncMap[uuid.UUID, domain.Product](filename)
+
+	return &memoryProductRepo{
+		shared.MemoryRepo[domain.Product]{
+			Store: store,
+		},
+	}
+}

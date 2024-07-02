@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"os"
 	"testing"
 
 	"github.com/google/uuid"
@@ -9,7 +10,7 @@ import (
 
 type SyncMapSuite struct {
 	suite.Suite
-	syancMap *SyncMap[uuid.UUID, ExampleModel]
+	syncMap *SyncMap[uuid.UUID, ExampleModel]
 }
 
 type ExampleModel struct {
@@ -48,17 +49,24 @@ func (s *SyncMapSuite) SetupSuite() {
 		Gay:  true,
 	}
 
-	s.syancMap = NewSyncMap[uuid.UUID, ExampleModel]()
+	s.syncMap = NewSyncMap[uuid.UUID, ExampleModel]("example.json")
+}
+
+func (s *SyncMapSuite) TearDownSuite() {
+	if _, err := os.Stat(s.syncMap.datafile); err == nil {
+		err := os.RemoveAll(s.syncMap.datafile)
+		s.NoError(err, "I should not crash")
+	}
 }
 
 func (s *SyncMapSuite) SetupTest() {
-	s.NoError(s.syancMap.Set(m1.ID, m1), "I should not crash")
-	s.NoError(s.syancMap.Set(m2.ID, m2), "I should not crash")
+	s.NoError(s.syncMap.Set(m1.ID, m1), "I should not crash")
+	s.NoError(s.syncMap.Set(m2.ID, m2), "I should not crash")
 }
 
 func (s *SyncMapSuite) TearDownTest() {
-	s.syancMap.Clear()
-	s.Equal(s.syancMap.Count(), 0, "should be 0 because it was cleared")
+	s.syncMap.Clear()
+	s.Equal(s.syncMap.Count(), 0, "should be 0 because it was cleared")
 }
 
 //* Tests
@@ -66,12 +74,12 @@ func (s *SyncMapSuite) TearDownTest() {
 func (s *SyncMapSuite) TestSet() {
 	testCases := []struct {
 		desc    string
-		intput  ExampleModel
+		input   ExampleModel
 		wantErr bool
 	}{
 		{
 			desc: "Save properly",
-			intput: ExampleModel{
+			input: ExampleModel{
 				ID:   uuid.New(),
 				Name: "model 3",
 				Age:  41,
@@ -81,13 +89,13 @@ func (s *SyncMapSuite) TestSet() {
 		},
 		{
 			desc:    "Error saving because already exists",
-			intput:  m1,
+			input:   m1,
 			wantErr: true,
 		},
 	}
 	for _, tC := range testCases {
 		s.Run(tC.desc, func() {
-			err := s.syancMap.Set(tC.intput.ID, tC.intput)
+			err := s.syncMap.Set(tC.input.ID, tC.input)
 			s.Equal(tC.wantErr, (err != nil), "wrong result")
 		})
 	}
@@ -97,13 +105,13 @@ func (s *SyncMapSuite) TestUpdate() {
 	testCases := []struct {
 		desc    string
 		id      uuid.UUID
-		intput  ExampleModel
+		input   ExampleModel
 		wantErr bool
 	}{
 		{
 			desc: "Update properly",
 			id:   m1.ID,
-			intput: ExampleModel{
+			input: ExampleModel{
 				ID:   m1.ID,
 				Name: "model 1 updated",
 				Age:  41,
@@ -114,13 +122,13 @@ func (s *SyncMapSuite) TestUpdate() {
 		{
 			desc:    "Error updating because does'nt exist",
 			id:      uuid.New(),
-			intput:  m2,
+			input:   m2,
 			wantErr: true,
 		},
 	}
 	for _, tC := range testCases {
 		s.Run(tC.desc, func() {
-			err := s.syancMap.Update(tC.id, tC.intput)
+			err := s.syncMap.Update(tC.id, tC.input)
 			s.Equal(tC.wantErr, (err != nil), "wrong result")
 		})
 	}
@@ -129,27 +137,27 @@ func (s *SyncMapSuite) TestUpdate() {
 func (s *SyncMapSuite) TestGet() {
 	testCases := []struct {
 		desc       string
-		intput     uuid.UUID
+		input      uuid.UUID
 		wantOutput ExampleModel
 		wantErr    bool
 	}{
 		{
 			desc:       "Get properly",
-			intput:     m1.ID,
+			input:      m1.ID,
 			wantOutput: m1,
 			wantErr:    false,
 		},
 		{
 			desc:       "Error getting because does'nt exist",
-			intput:     uuid.New(),
+			input:      uuid.New(),
 			wantOutput: ExampleModel{},
 			wantErr:    true,
 		},
 	}
 	for _, tC := range testCases {
 		s.Run(tC.desc, func() {
-			got, err := s.syancMap.Get(tC.intput)
-			s.Equal(tC.wantErr, (err != nil), "wrong result")
+			got, err := s.syncMap.Get(tC.input)
+			s.Equal(tC.wantErr, err != nil, "wrong result")
 
 			s.Equal(tC.wantOutput, got, "should be the same")
 		})
@@ -157,17 +165,17 @@ func (s *SyncMapSuite) TestGet() {
 }
 
 func (s *SyncMapSuite) TestCount() {
-	s.Equal(2, s.syancMap.Count(), "should be 2 because two models were added")
+	s.Equal(2, s.syncMap.Count(), "should be 2 because two models were added")
 }
 
 func (s *SyncMapSuite) TestExists() {
-	s.False(s.syancMap.Exists(uuid.New()), "it should not exists")
+	s.False(s.syncMap.exists(uuid.New()), "it should not exists")
 
-	s.True(s.syancMap.Exists(m1.ID), "should exists")
+	s.True(s.syncMap.exists(m1.ID), "should exists")
 }
 
 func (s *SyncMapSuite) TestGetAll() {
-	ds, err := s.syancMap.GetAll()
+	ds, err := s.syncMap.GetAll()
 
 	s.Require().NoError(err, "should not be error")
 
@@ -177,24 +185,24 @@ func (s *SyncMapSuite) TestGetAll() {
 func (s *SyncMapSuite) TestRemove() {
 	testCases := []struct {
 		desc    string
-		intput  uuid.UUID
+		input   uuid.UUID
 		wantErr bool
 	}{
 		{
 			desc:    "Delete properly",
-			intput:  m1.ID,
+			input:   m1.ID,
 			wantErr: false,
 		},
 		{
 			desc:    "Error deleting because does'nt exist",
-			intput:  uuid.New(),
+			input:   uuid.New(),
 			wantErr: true,
 		},
 	}
 	for _, tC := range testCases {
 		s.Run(tC.desc, func() {
-			err := s.syancMap.Remove(tC.intput)
-			s.Equal(tC.wantErr, (err != nil), "wrong result")
+			err := s.syncMap.Remove(tC.input)
+			s.Equal(tC.wantErr, err != nil, "wrong result")
 		})
 	}
 }

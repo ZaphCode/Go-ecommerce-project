@@ -32,3 +32,13 @@ func NewMemoryOrderRepository(im ...domain.Order) domain.OrderRepository {
 		},
 	}
 }
+
+func NewMemoryPersistentOrderRepository(filename string) domain.OrderRepository {
+	store := utils.NewSyncMap[uuid.UUID, domain.Order](filename)
+
+	return &memoryOrderRepo{
+		shared.MemoryRepo[domain.Order]{
+			Store: store,
+		},
+	}
+}

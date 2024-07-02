@@ -75,11 +75,16 @@ func setServerConfiguration(server *api.Server, cfg config.Config) {
 	if len(os.Args) > 1 && os.Args[1] == "dev" {
 		//* Development
 		fmt.Println("DEV MODE")
-		userRepo = user.NewMemoryUserRepository(utils.UserAdmin, utils.UserExp1, utils.UserExp2)
-		prodRepo = product.NewMemoryProductRepository(utils.ProductExpToDev3, utils.ProductExpToDev2, utils.ProductExpToDev1)
-		catRepo = category.NewMemoryCategoryRepository(utils.CategoryExp1, utils.CategoryExp2, utils.CategoryExp3)
-		addrRepo = address.NewMemoryAddressRepository(utils.AddrExp1, utils.AddrExp2)
-		ordRepo = order.NewMemoryOrderRepository()
+		//userRepo = user.NewMemoryUserRepository(utils.UserAdmin, utils.UserExp1, utils.UserExp2)
+		userRepo = user.NewMemoryPersistentUserRepository("tmpdata/users.json")
+		//prodRepo = product.NewMemoryProductRepository(utils.ProductExpToDev3, utils.ProductExpToDev2, utils.ProductExpToDev1)
+		prodRepo = product.NewMemoryPersistentProductRepository("tmpdata/products.json")
+		//catRepo = category.NewMemoryCategoryRepository(utils.CategoryExp1, utils.CategoryExp2, utils.CategoryExp3)
+		catRepo = category.NewMemoryPersistentCategoryRepository("tmpdata/categories.json")
+		//addrRepo = address.NewMemoryAddressRepository(utils.AddrExp1, utils.AddrExp2)
+		addrRepo = address.NewMemoryPersistentAddressRepository("tmpdata/addresses.json")
+		//ordRepo = order.NewMemoryOrderRepository()
+		ordRepo = order.NewMemoryPersistentOrderRepository("tmpdata/orders.json")
 	} else {
 		//* Production
 		client := utils.GetFirestoreClient(config.GetFirebaseApp())
