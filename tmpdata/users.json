@@ -1,0 +1,26 @@
+{
+  "7ff67012-389c-11ef-8b5b-5e7be0b361c5": {
+    "id": "7ff67012-389c-11ef-8b5b-5e7be0b361c5",
+    "created_at": 1719943028,
+    "updated_at": 1719943028,
+    "customer_id": "cus_QOzARkfPf7LSTG",
+    "username": "ZaphCode",
+    "email": "om4r4rm4@gmail.com",
+    "role": "user",
+    "verified_email": true,
+    "image_url": "https://avatars.githubusercontent.com/u/89287811?v=4",
+    "age": 18
+  },
+  "8e857dce-3899-11ef-b9b9-5e7be0b361c5": {
+    "id": "8e857dce-3899-11ef-b9b9-5e7be0b361c5",
+    "created_at": 1719941764,
+    "updated_at": 1719941764,
+    "customer_id": "cus_QPA1RdFzJcGRwE",
+    "username": "Zaph Test",
+    "email": "zaph.testing@gmail.com",
+    "role": "admin",
+    "verified_email": true,
+    "image_url": "https://lh3.googleusercontent.com/a/ACg8ocJPYcWwj1c9FgVB9rtF0HEqwac7ZNxXr3kTlucOz1sY1pQIyDI=s96-c",
+    "age": 18
+  }
+}
