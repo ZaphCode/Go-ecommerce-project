@@ -1,9 +1,7 @@
 package address
 
 import (
-	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/ZaphCode/clean-arch/src/services/auth"
-	"github.com/ZaphCode/clean-arch/src/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -26,12 +24,11 @@ func (h *AddressHandler) GetUserAddress(c *fiber.Ctx) error {
 		return h.RespErr(c, 500, "internal server error", "something went wrong")
 	}
 
-	_, err := h.addrSvc.GetAllByUserID(ud.ID)
+	as, err := h.addrSvc.GetAllByUserID(ud.ID)
 
 	if err != nil {
 		return h.RespErr(c, 500, "error getting addresses", err.Error())
 	}
 
-	// TODO: implement get all address from user (remove this mock data)
-	return h.RespOK(c, 200, "all address for user", []domain.Address{utils.AddrExp1, utils.AddrExp2})
+	return h.RespOK(c, 200, "all address for user", as)
 }

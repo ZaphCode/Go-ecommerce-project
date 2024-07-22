@@ -8,17 +8,20 @@ import (
 )
 
 // Custom types
+
 type CustomJwtClaims struct {
 	Claims
 	jwt.RegisteredClaims
 }
 
 // Constructor
+
 func NewJWTService() JWTService {
 	return new(jwtServiceImpl)
 }
 
 // Implementation
+
 type jwtServiceImpl struct{}
 
 func (s *jwtServiceImpl) CreateToken(claims Claims, exp time.Duration, secret string) (string, error) {
@@ -40,9 +43,9 @@ func (s *jwtServiceImpl) CreateToken(claims Claims, exp time.Duration, secret st
 }
 
 func (s *jwtServiceImpl) DecodeToken(jwtoken string, secret string) (*Claims, error) {
-	var customJwtClais CustomJwtClaims
+	var customJwtClaims CustomJwtClaims
 
-	token, err := jwt.ParseWithClaims(jwtoken, &customJwtClais, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(jwtoken, &customJwtClaims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
@@ -53,5 +56,5 @@ func (s *jwtServiceImpl) DecodeToken(jwtoken string, secret string) (*Claims, er
 		return nil, err
 	}
 
-	return &customJwtClais.Claims, nil
+	return &customJwtClaims.Claims, nil
 }
