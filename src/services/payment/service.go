@@ -26,5 +26,5 @@ type Card struct {
 	ExpYear    uint16 `json:"exp_year"`
 	Brand      string `json:"brand"`
 	Last4      string `json:"last4"`
-	PaymentID  string `json:"-"` // todo: change for "-"
+	PaymentID  string `json:"payment_id"` // todo: change for "-"
 }

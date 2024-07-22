@@ -2,6 +2,7 @@ package payment
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/ZaphCode/clean-arch/src/domain"
 	"github.com/google/uuid"
@@ -11,7 +12,7 @@ import (
 	"github.com/stripe/stripe-go/v74/paymentmethod"
 )
 
-//! THOOSE TEST DO'NT WORK TOGETHER BECAUSE THE PM IS USED TWICE
+//! THIS TESTS DON'T WORK TOGETHER BECAUSE THE PM IS USED TWICE
 
 //* Implementation
 
@@ -19,7 +20,7 @@ type stripeServiceImpl struct {
 	usrRepo domain.UserRepository
 }
 
-//* Contructor
+//* Constructor
 
 func NewStripePaymentService(sk string, usrRepo domain.UserRepository) PaymentService {
 	stripe.Key = sk
@@ -122,14 +123,14 @@ func (*stripeServiceImpl) GetCustomerCards(custID string) ([]Card, error) {
 		Type:     stripe.String("card"),
 	}
 
-	cards := []Card{}
+	var cards []Card
 
 	i := paymentmethod.List(params)
 
 	for i.Next() {
 		pm := i.PaymentMethod()
 
-		//utils.PrettyPrint(pm)
+		log.Println(pm.Metadata)
 
 		card := Card{
 			CustomerID: pm.Customer.ID,

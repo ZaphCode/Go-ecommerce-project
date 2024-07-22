@@ -153,6 +153,10 @@ func (s *StripeServiceSuite) createPM() string {
 		Type: stripe.String("card"),
 	}
 
+	params.Metadata = map[string]string{
+		"customer_id": utils.UserExp1.CustomerID,
+	}
+
 	pm, err := paymentmethod.New(params)
 
 	s.NoError(err, "should not be error")

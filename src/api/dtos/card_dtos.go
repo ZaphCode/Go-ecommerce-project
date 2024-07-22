@@ -37,6 +37,7 @@ type CardDTO struct {
 	Last4     string    `json:"last4" example:"1429"`
 	CreatedAt int64     `json:"created_at" example:"1674405183"`
 	UpdatedAt int64     `json:"updated_at" example:"1674405181"`
+	PaymentID string    `json:"payment_id" example:"pm_1NKPiEG8UXDxPRbaEDuh6BrU"`
 }
 
 // type UpdateCardDTO struct {
