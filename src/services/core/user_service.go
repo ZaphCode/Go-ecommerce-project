@@ -14,7 +14,6 @@ import (
 
 type userService struct {
 	usrRepo domain.UserRepository
-	//addrRepo domain.AddressRepository
 }
 
 func NewUserService(usrRepo domain.UserRepository) domain.UserService {
@@ -71,19 +70,65 @@ func (s *userService) Create(user *domain.User) error {
 }
 
 func (s *userService) GetAll() ([]domain.User, error) {
-	return s.usrRepo.Find()
+	users, err := s.usrRepo.Find()
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, user := range users {
+		hidePassword(&user)
+	}
+
+	return users, nil
 }
 
 func (s *userService) GetByID(ID uuid.UUID) (*domain.User, error) {
-	return s.usrRepo.FindByID(ID)
+	user, err := s.usrRepo.FindByID(ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	hidePassword(user)
+
+	return user, nil
 }
 
 func (s *userService) GetByEmail(email string) (*domain.User, error) {
-	return s.usrRepo.FindByField("Email", email)
+	user, err := s.usrRepo.FindByField("Email", email)
+
+	if err != nil {
+		return nil, err
+	}
+
+	hidePassword(user)
+
+	return user, nil
 }
 
 func (s *userService) VerifyEmail(ID uuid.UUID) error {
 	return s.usrRepo.UpdateField(ID, "VerifiedEmail", true)
+}
+
+func (s *userService) GetByCredentials(email, password string) (*domain.User, error) {
+	user, err := s.usrRepo.FindByField("Email", email)
+
+	if err != nil {
+		return nil, fmt.Errorf("internal server error: %s", err)
+	}
+
+	if user == nil {
+		return nil, fmt.Errorf("user not found")
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		return nil, fmt.Errorf("invalid password")
+	}
+
+	hidePassword(user)
+
+	return user, nil
 }
 
 func (s *userService) UpdatePassword(ID uuid.UUID, password string) error {
@@ -104,4 +149,12 @@ func (s *userService) Update(ID uuid.UUID, uf domain.UpdateFields) error {
 
 func (s *userService) Delete(ID uuid.UUID) error {
 	return s.usrRepo.Remove(ID)
+}
+
+// Helper functions
+
+func hidePassword(user *domain.User) {
+	if user != nil {
+		user.Password = ""
+	}
 }

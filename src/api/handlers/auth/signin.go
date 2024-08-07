@@ -8,7 +8,6 @@ import (
 	"github.com/ZaphCode/clean-arch/src/api/shared"
 	"github.com/ZaphCode/clean-arch/src/services/auth"
 	"github.com/gofiber/fiber/v2"
-	"golang.org/x/crypto/bcrypt"
 )
 
 // * Sign in handler
@@ -37,18 +36,10 @@ func (h *AuthHandler) SignIn(c *fiber.Ctx) error {
 		return h.RespValErr(c, 400, "one or more fields are invalid", err)
 	}
 
-	user, err := h.usrSvc.GetByEmail(body.Email)
+	user, err := h.usrSvc.GetByCredentials(body.Email, body.Password)
 
 	if err != nil {
-		return h.RespErr(c, 500, "searching user error", err.Error())
-	}
-
-	if user == nil {
-		return h.RespErr(c, 404, "user not found")
-	}
-
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
-		return h.RespErr(c, 401, "invalid password")
+		return h.RespErr(c, 500, "error getting user", err.Error())
 	}
 
 	accessToken, atErr := h.jwtSvc.CreateToken(
