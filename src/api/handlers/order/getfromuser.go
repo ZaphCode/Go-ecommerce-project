@@ -5,8 +5,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// TODO: Add documentation
-
+// * Get user orders handler
+// @Summary      Get auth user orders
+// @Description  Get all orders from auth user
+// @Tags         order
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200  {object}  dtos.OrdersRespOKDTO
+// @Failure      401  {object}  dtos.AuthRespErrDTO
+// @Failure      500  {object}  dtos.DetailRespErrDTO
+// @Router       /order/list [get]
 func (h *OrderHandler) GetOrders(c *fiber.Ctx) error {
 	ud, ok := c.Locals("user-data").(*auth.Claims)
 

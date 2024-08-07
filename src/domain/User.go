@@ -12,7 +12,7 @@ type User struct {
 	Username      string `json:"username"`
 	Email         string `json:"email"`
 	Role          string `json:"role"`
-	Password      string `json:"-"`
+	Password      string `json:"password,omitempty"`
 	VerifiedEmail bool   `json:"verified_email"`
 	ImageUrl      string `json:"image_url"`
 	Age           uint16 `json:"age"`
@@ -23,6 +23,7 @@ type User struct {
 type UserService interface {
 	ServiceCrudOperations[User]
 	GetByEmail(email string) (*User, error)
+	GetByCredentials(email, pass string) (*User, error)
 	VerifyEmail(ID uuid.UUID) error
 	UpdatePassword(ID uuid.UUID, pass string) error
 }

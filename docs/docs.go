@@ -879,6 +879,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/order/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get all orders from auth user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Get auth user orders",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.OrdersRespOKDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.AuthRespErrDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.DetailRespErrDTO"
+                        }
+                    }
+                }
+            }
+        },
         "/order/new": {
             "post": {
                 "security": [
@@ -1681,6 +1721,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Main card"
                 },
+                "payment_id": {
+                    "type": "string",
+                    "example": "pm_1NKPiEG8UXDxPRbaEDuh6BrU"
+                },
                 "updated_at": {
                     "type": "integer",
                     "example": 1674405181
@@ -2033,6 +2077,25 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/dtos.OrderDTO"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Data retrived!"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "dtos.OrdersRespOKDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dtos.OrderDTO"
+                    }
                 },
                 "message": {
                     "type": "string",

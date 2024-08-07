@@ -115,6 +115,9 @@ definitions:
       name:
         example: Main card
         type: string
+      payment_id:
+        example: pm_1NKPiEG8UXDxPRbaEDuh6BrU
+        type: string
       updated_at:
         example: 1674405181
         type: integer
@@ -375,6 +378,19 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/dtos.OrderDTO'
+      message:
+        example: Data retrived!
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  dtos.OrdersRespOKDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.OrderDTO'
+        type: array
       message:
         example: Data retrived!
         type: string
@@ -1326,6 +1342,31 @@ paths:
       summary: Delete category
       tags:
       - category
+  /order/list:
+    get:
+      consumes:
+      - application/json
+      description: Get all orders from auth user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.OrdersRespOKDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.AuthRespErrDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.DetailRespErrDTO'
+      security:
+      - BearerAuth: []
+      summary: Get auth user orders
+      tags:
+      - order
   /order/new:
     post:
       consumes:
